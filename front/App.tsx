@@ -1,40 +1,31 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {variables} from './src/style/variables';
-import LinearGradient from 'react-native-linear-gradient';
+import {GradientButton_S, GradientButton_L} from './src/components/GradientButton';
 
 const App = () => {
   return (
-    <View style={Style.layout}>
-      <LinearGradient
-        style={Style.linearGradient}
-        start={{x: 0, y: 0}}
-        end={{x: 0.6, y: 0.6}}
-        colors={['#FEA97A', '#FF5789']}
-      />
-      <Text style={Style.title}>Sign in with Facebook</Text>
-      <Text style={Style.title}>ㅎㅇㅎㅇ</Text>
+    <View style={styles.container}>
+      <View style={styles.container}>
+        <Text style={styles.title}>윙가디움 레비오사</Text>
+        <GradientButton_S text="확  인" />
+        <GradientButton_L text="로그인" />
+      </View>
     </View>
   );
 };
 
 export default App;
 
-const Style = StyleSheet.create({
-  title: {
-    fontSize: 40,
-    fontFamily: 'Pretendard-Black',
-    color: variables.main,
-  },
-  layout: {
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  linearGradient: {
-    flex: 1,
-    paddingLeft: 200,
-    paddingRight: 200,
-    borderRadius: 5,
+  title: {
+    fontSize: 40,
+    fontFamily: 'Pretendard-Black',
+    color: variables.main,
   },
 });

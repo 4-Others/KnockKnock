@@ -1,22 +1,67 @@
 import React from 'react';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {variables} from '../style/variables';
 import LinearGradient from 'react-native-linear-gradient';
-import {StyleSheet} from 'react-native/types';
 
 interface ComponentType {
   text: string;
 }
 
-const GradientButton: React.FC<ComponentType> = ({text}) => {
+const GradientButton_S: React.FC<ComponentType> = ({text}) => {
   return (
-    <LinearGradient
-      style={{}}
-      start={{x: 0, y: 0}}
-      end={{x: 0.6, y: 0.6}}
-      colors={['#FEA97A', '#FF5789']}
-    />
+    <TouchableOpacity activeOpacity={0.8} style={styles.container}>
+      <LinearGradient
+        style={styles.button_S}
+        start={{x: 0, y: 0}}
+        end={{x: 0.6, y: 0.6}}
+        colors={['#FEA97A', '#FF5789']}>
+        <Text style={styles.text}>{text}</Text>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 };
 
-const Styled = StyleSheet.create({});
+const GradientButton_L: React.FC<ComponentType> = ({text}) => {
+  return (
+    <TouchableOpacity activeOpacity={0.8} style={styles.container}>
+      <LinearGradient
+        style={styles.button_L}
+        start={{x: 0, y: 0}}
+        end={{x: 0.6, y: 0.6}}
+        colors={['#FEA97A', '#FF5789']}>
+        <Text style={styles.text}>{text}</Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
 
-export default GradientButton;
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  button_S: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 107,
+    height: 32,
+    borderRadius: 6,
+  },
+  button_L: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    width: '100%',
+    height: 38,
+    borderRadius: 6,
+  },
+  text: {
+    fontFamily: 'Pretendard-Medium',
+    color: variables.text_7,
+    fontSize: 16,
+  },
+});
+
+export {GradientButton_S, GradientButton_L};

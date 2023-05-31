@@ -7,6 +7,7 @@ export const variables = {
   text_4: '#999999',
   text_5: '#aaaaaa',
   text_6: '#cccccc',
+  text_7: '#ffffff',
   // 라인 컬러 진한 순
   line_1: '#dddddd',
   line_2: '#eeeeee',
