@@ -2,10 +2,12 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 
-export const App = (): JSX.Element => {
+const App = (): JSX.Element => {
   return (
-    <View>
-      <Text>ㅎㅇㅎㅇ</Text>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text style={{fontFamily: 'Pretendard-Bold', fontSize: 20}}>ㅎㅇㅎㅇ</Text>
     </View>
   );
 };
+
+export default App;
