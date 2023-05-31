@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 function App(): JSX.Element {
   return (
     <View>
-      <Text>ㅎㅇ</Text>
+      <Text>ㅎㅇㅎㅇ</Text>
     </View>
   );
 }
