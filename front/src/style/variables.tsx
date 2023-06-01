@@ -45,4 +45,24 @@ export const variables = {
   Mater_13: '#ec9234',
   Mater_14: '#e25d34',
   Mater_15: '#757575',
+  // 폰트 사이즈
+  font_1: 'Pretendard-Bold',
+  font_2: 'Pretendard-SemiBold',
+  font_3: 'Pretendard-Medium',
+  font_4: 'Pretendard-Regular',
+  font_5: 'Pretendard-Light',
+  // 그림자 스타일
+  btn_shadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowOpacity: 0.9,
+    shadowRadius: 2,
+    elevation: 2,
+    shadowInset: [
+      {offsetX: -0.5, offsetY: -0.5, blurRadius: 1, spreadRadius: 1, color: 'rgba(0, 0, 0, 0.1)'},
+    ],
+  },
 };
