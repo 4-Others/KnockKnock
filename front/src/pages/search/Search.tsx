@@ -2,10 +2,10 @@ import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 
-const Calendar = () => {
+const Search = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>응애, 나 애기 Calendar</Text>
+      <Text style={styles.text}>응애, 나 애기 Search</Text>
     </SafeAreaView>
   );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Calendar;
+export default Search;
