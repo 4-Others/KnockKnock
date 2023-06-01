@@ -16,9 +16,10 @@ public class UserDto {
     @Builder
     @AllArgsConstructor
     public static class Signup{
-        @NotNull
         @NotBlank
-        private String id;
+        @NotNull
+        @Email
+        private String email;
 
         @NotNull
         @NotBlank
@@ -26,11 +27,6 @@ public class UserDto {
         @Pattern(regexp = "^(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$",
                 message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
         private String password;
-
-        @NotBlank
-        @NotNull
-        @Email
-        private String email;
     }
     @Getter
     @Builder
@@ -38,7 +34,7 @@ public class UserDto {
     public static class Login{
         @NotBlank
         @NotNull
-        private String id;
+        private String email;
 
         @NotNull
         @NotBlank
@@ -49,9 +45,9 @@ public class UserDto {
     @AllArgsConstructor
     public static class Response{
         private Long userId;
-        private String id;
-        private String password;
         private String email;
+        private String password;
+
     }
 
 }
