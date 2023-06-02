@@ -1,6 +1,7 @@
 import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
+import TabNavigation from '../../navigations/TabNavigation';
 
 const ListBoard = () => {
   return (
