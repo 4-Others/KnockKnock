@@ -2,25 +2,15 @@ import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-n
 import {View} from 'react-native-animatable';
 import React from 'react';
 import {variables} from '../../style/variables';
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import BoardPack from './listBoardItems/BoardPack';
-import BoardTab from './listBoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
-
-const deviceWidth = Dimensions.get('window').width;
+import SymbolMark from '../../../assets/image/SymbolMark';
 
 const ListBoard = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" />
-      <View style={styles.header}>
-        <LogoMark darkMode={false} />
-        <Icon name="menu" style={styles.drawer} />
-      </View>
-      <BoardTab />
-      <View style={styles.body}>
-        <BoardPack />
-      </View>
+      <Text style={styles.text}>응애, 나 애기 ListBoard</Text>
+      <LogoMark darkMode={false} />
+      <SymbolMark darkMode={false} />
     </SafeAreaView>
   );
 };
