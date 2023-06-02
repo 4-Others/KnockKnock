@@ -1,4 +1,4 @@
-package com.others.KnockKnock.security;
+package com.others.KnockKnock.security.jwt;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 

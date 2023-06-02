@@ -1,3 +1,0 @@
-jwt:
-  key: ${JWT_SECRET_KEY}
-  expirationMs: 360

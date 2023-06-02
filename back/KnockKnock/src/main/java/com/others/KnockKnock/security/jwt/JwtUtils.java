@@ -1,4 +1,4 @@
-package com.others.KnockKnock.security;
+package com.others.KnockKnock.security.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;

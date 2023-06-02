@@ -4,7 +4,7 @@ import com.others.KnockKnock.domain.user.dto.UserDto;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.mapper.UserMapper;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import com.others.KnockKnock.security.JwtUtils;
+import com.others.KnockKnock.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,11 @@ public class UserService {
     private final JwtUtils jwtUtils;
 
     public void signup(UserDto.Signup signupDto){
+        //중복 이메일 체크
+        Optional<User> existingUser = userRepository.findByEmail(signupDto.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
         User user = User.builder()
                 .email(signupDto.getEmail())
                 .password(signupDto.getPassword())
