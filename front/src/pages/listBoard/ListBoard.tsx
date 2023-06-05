@@ -3,14 +3,12 @@ import {View} from 'react-native-animatable';
 import React from 'react';
 import {variables} from '../../style/variables';
 import LogoMark from '../../../assets/image/LogoMark';
-import SymbolMark from '../../../assets/image/SymbolMark';
 
 const ListBoard = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.text}>응애, 나 애기 ListBoard</Text>
       <LogoMark darkMode={false} />
-      <SymbolMark darkMode={false} />
     </SafeAreaView>
   );
 };
@@ -44,6 +42,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#eeeeee',
+  },
+  symbolLogo: {
+    width: 140,
+    height: 60,
   },
 });
 
