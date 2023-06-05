@@ -1,8 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet} from 'react-native';
-import {variables} from '../style/variables';
-import Icon from 'react-native-vector-icons/Ionicons';
+import CustomIcon from '../components/CustomIcon';
 import ListBoard from '../pages/listBoard/ListBoard';
 import Calendar from '../pages/calendar/Calendar';
 import ListAdd from '../pages/listAdd/ListAdd';
@@ -12,30 +10,46 @@ import Notifications from '../pages/notifications/Notifications';
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = () => {
-  Icon.loadFont();
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) => {
-          let iconName;
+        tabBarIcon: ({focused}) => {
+          let iconSource;
 
           if (route.name === 'List Board') {
-            iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
+            iconSource = focused
+              ? require('../../assets/image/iconOn_listBoard.png')
+              : require('../../assets/image/iconOff_listBoard.png');
           } else if (route.name === 'Calendar') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
+            iconSource = focused
+              ? require('../../assets/image/iconOn_calendar.png')
+              : require('../../assets/image/iconOff_calendar.png');
           } else if (route.name === 'Add') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
+            iconSource = focused
+              ? require('../../assets/image/iconOn_listAdd.png')
+              : require('../../assets/image/iconOff_listAdd.png');
           } else if (route.name === 'Search') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
+            iconSource = focused
+              ? require('../../assets/image/iconOn_search.png')
+              : require('../../assets/image/iconOff_search.png');
           } else if (route.name === 'Notifications') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
+            iconSource = focused
+              ? require('../../assets/image/iconOn_notification.png')
+              : require('../../assets/image/iconOff_notification.png');
           }
 
-          return <Icon name={`${iconName}`} size={30} color={'#aaaaaa'} />;
+          return <CustomIcon source={iconSource} size={50} />;
         },
-        tabBarActiveTintColor: '#ff5789',
-        tabBarInactiveTintColor: '#aaaaaa',
         tabBarShowLabel: false,
+        tabBarStyle: {
+          paddingLeft: 47,
+          paddingRight: 47,
+          height: 60,
+          backgroundColor: '#ffffff',
+        },
+        tabBarItemStyle: {
+          flex: 1,
+        },
       })}>
       <Tab.Screen name="List Board" component={ListBoard} />
       <Tab.Screen name="Calendar" component={Calendar} />
@@ -45,18 +59,5 @@ const TabNavigation = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontFamily: 'Pretendard-Medium',
-    color: variables.main,
-    fontSize: 30,
-  },
-});
 
 export default TabNavigation;
