@@ -1,0 +1,7 @@
+jwt:
+  key: ${JWT_SECRET_KEY}
+  expirationMs: 3600000
+token:
+  expiration:
+    access: 3600000
+    refresh: 86400000
