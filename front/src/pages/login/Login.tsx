@@ -1,5 +1,7 @@
 import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
 import React from 'react';
+import {useNavigation, StackActions} from '@react-navigation/native';
+import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
 import {CheckBox} from '../../components/CheckBox';
 
@@ -19,8 +21,9 @@ const Login: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.text}>Login 겸 Home</Text>
-      <Button title="Go to Details" onPress={() => (navigation.navigate as any)('SignUp')} />
-    </SafeAreaView>
+      <Button title="회원가입" onPress={handleSignUp} />
+      <GradientButton_L text="로그인" />
+    </View>
   );
 };
 
