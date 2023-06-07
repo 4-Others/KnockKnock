@@ -16,7 +16,7 @@ export default Agree;
 const styles = StyleSheet.create({
   text: {
     fontFamily: variables.font_4,
-    fontSize: 20,
+    fontSize: 24,
     textAlign: 'left',
     marginBottom: 5,
   },

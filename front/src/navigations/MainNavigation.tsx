@@ -4,7 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
-import {Image, TouchableOpacity} from 'react-native';
+import {Image, TouchableOpacity, StyleSheet} from 'react-native';
 import BackBtn from '../components/BackBtn';
 
 const Stack = createStackNavigator();
@@ -75,14 +75,17 @@ const MainNavigation = () => {
                 title: '회원가입',
                 headerBackTitleVisible: false,
                 headerBackImage: () => <BackBtn goBack={() => goBack(navigation)} />,
-                headerRight: () => (
-                  <TouchableOpacity onPress={next}>
-                    <Image
-                      source={require('front/assets/image/check_btn.png')}
-                      style={{marginRight: 24, width: 24, height: 24}}
-                    />
-                  </TouchableOpacity>
-                ),
+                headerRight: () =>
+                  locate !== 'Success' ? (
+                    <TouchableOpacity onPress={next}>
+                      <Image
+                        source={require('front/assets/image/check_btn.png')}
+                        style={{marginRight: 24, width: 24, height: 24}}
+                      />
+                    </TouchableOpacity>
+                  ) : null,
+                headerStyle: styles.headerStyle, // 추가
+                headerTitleAlign: 'left', // 왼쪽 정렬 추가
               })}>
               {props => <SignUp {...props} deps={deps} locate={locate} />}
             </Stack.Screen>
@@ -92,5 +95,11 @@ const MainNavigation = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  headerStyle: {
+    height: 80,
+  },
+});
 
 export default MainNavigation;
