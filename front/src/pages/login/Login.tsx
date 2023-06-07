@@ -1,25 +1,23 @@
-import {StyleSheet, SafeAreaView, Text, Button, Image} from 'react-native';
+import {View, StyleSheet, Text, Button, Image} from 'react-native';
 import React from 'react';
+import {useNavigation, StackActions} from '@react-navigation/native';
+import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
-import {StackNavigationProp} from '@react-navigation/stack';
 
-type RootStackParamList = {
-  Home: undefined;
-  Details: {id: string};
-  Login: {id: number; name: string};
-};
+const Login: React.FC = () => {
+  const navigation = useNavigation();
 
-type LoginScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
-};
+  const handleSignUp = () => {
+    navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
+  };
 
-const Login: React.FC<LoginScreenProps> = ({navigation}) => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Image source={require('front/assets/image/SymbolLogo.png')} style={styles.symbolLogo} />
       <Text style={styles.text}>Login 겸 Home</Text>
-      <Button title="Go to Details" onPress={() => (navigation.navigate as any)('SignUp')} />
-    </SafeAreaView>
+      <Button title="회원가입" onPress={handleSignUp} />
+      <GradientButton_L text="로그인" />
+    </View>
   );
 };
 
