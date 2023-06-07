@@ -6,7 +6,7 @@ import TabNavigation from './TabNavigation';
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
-  const isLogin = false;
+  const isLogin = true;
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator
