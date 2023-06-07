@@ -1,32 +1,26 @@
 import React from 'react';
-import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
-import {variables} from '../../style/variables';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
 import ProgressBar from '../../components/ProgressBar';
+import Agree from './screen/Agree';
+import Email from './screen/Email';
+import Password from './screen/Password';
+import Success from './screen/Success';
 
-type RootStackParamList = {
-  Home: undefined;
-  Details: {id: string};
-  SignUp: {id: number; name: string};
-};
-
-type SignUpScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'SignUp'>;
-};
-
-interface Task {
-  completed: boolean;
+interface SignUpProps {
+  locate: string;
+  deps: {[key: string]: any}[];
 }
 
-const SignUp: React.FC<SignUpScreenProps & {tasks: Record<string, Task>}> = ({
-  navigation,
-  tasks,
-}) => {
+const SignUp: React.FC<SignUpProps> = ({locate, deps}) => {
   return (
     <SafeAreaView style={styles.container}>
-      <ProgressBar tasks={tasks} />
-      <Text style={styles.text}>SignUp</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <ProgressBar deps={deps} />
+      <View style={styles.contents}>
+        {locate === 'Agree' && <Agree />}
+        {locate === 'Email' && <Email />}
+        {locate === 'Password' && <Password />}
+        {locate === 'Success' && <Success />}
+      </View>
     </SafeAreaView>
   );
 };
@@ -34,13 +28,12 @@ const SignUp: React.FC<SignUpScreenProps & {tasks: Record<string, Task>}> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
-  text: {
-    fontFamily: 'Pretendard-Medium',
-    color: variables.main,
-    fontSize: 30,
+  contents: {
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingTop: 20,
   },
 });
 

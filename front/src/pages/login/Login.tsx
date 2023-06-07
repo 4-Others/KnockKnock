@@ -1,25 +1,46 @@
-import {StyleSheet, SafeAreaView, Text, Button, Image} from 'react-native';
-import React from 'react';
+import {View, StyleSheet, Text, Button, Image, TextInput, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {useNavigation, StackActions} from '@react-navigation/native';
+import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
-import {StackNavigationProp} from '@react-navigation/stack';
 
-type RootStackParamList = {
-  Home: undefined;
-  Details: {id: string};
-  Login: {id: number; name: string};
-};
+const Login: React.FC = () => {
+  const navigation = useNavigation();
+  const [id, setId] = useState('');
+  const [pw, setPw] = useState('');
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
-type LoginScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
-};
+  const handleSignUp = () => {
+    navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
+  };
 
-const Login: React.FC<LoginScreenProps> = ({navigation}) => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Image source={require('front/assets/image/SymbolLogo.png')} style={styles.symbolLogo} />
-      <Text style={styles.text}>Login 겸 Home</Text>
-      <Button title="Go to Details" onPress={() => (navigation.navigate as any)('SignUp')} />
-    </SafeAreaView>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={[styles.input, styles.inputBottomLine]}
+          onChangeText={setId}
+          value={id}
+          placeholder="아이디"
+        />
+        <TextInput style={styles.input} onChangeText={setPw} value={pw} placeholder="비밀번호" />
+      </View>
+      <View style={styles.loginMenu}>
+        <View style={styles.autoLogin}></View>
+        <View style={styles.textBtns}>
+          <TouchableOpacity>
+            <Text style={styles.textBtn}>계정 찾기</Text>
+          </TouchableOpacity>
+          <View style={styles.VerticalBar}></View>
+          <TouchableOpacity onPress={handleSignUp}>
+            <Text style={styles.textBtn}>회원가입</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <GradientButton_L text="로그인" />
+    </View>
   );
 };
 
@@ -29,6 +50,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+    paddingLeft: 24,
+    paddingRight: 24,
   },
   text: {
     fontFamily: 'Pretendard-Medium',
@@ -36,9 +59,46 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   symbolLogo: {
-    width: 140,
-    height: 60,
+    width: 180,
+    height: 80,
+    marginBottom: 30,
   },
+  inputContainer: {
+    borderColor: variables.line_1,
+    borderWidth: 1,
+    width: '100%',
+    borderRadius: 6,
+  },
+  input: {
+    fontFamily: variables.font_4,
+    fontSize: 14,
+    width: '100%',
+    padding: 16,
+    height: 48,
+  },
+  inputBottomLine: {
+    borderBottomColor: variables.line_1,
+    borderBottomWidth: 1,
+  },
+  loginMenu: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  autoLogin: {},
+  textBtns: {display: 'flex', flexDirection: 'row', alignItems: 'center'},
+  VerticalBar: {
+    marginLeft: 8,
+    marginRight: 8,
+    height: 10,
+    width: 1,
+    backgroundColor: variables.line_2,
+  },
+  textBtn: {fontFamily: variables.font_4, fontSize: 14, color: variables.text_3},
+  checkbox: {},
 });
 
 export default Login;

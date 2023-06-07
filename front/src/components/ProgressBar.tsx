@@ -1,24 +1,18 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import * as Progress from 'react-native-progress';
 
-interface Task {
-  completed: boolean;
-}
-
 interface ProgressBarProps {
-  tasks: {[key: string]: Task};
+  deps: {[key: string]: boolean}[];
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({tasks}) => {
-  const tasksValue = Object.values(tasks);
-  const length = tasksValue.length;
-  const completed = tasksValue.filter(task => task.completed === true).length;
-
+const ProgressBar: React.FC<ProgressBarProps> = ({deps}) => {
+  const total = deps.length;
+  const completed = deps.filter(dep => Object.values(dep)[0] === true).length;
   return (
     <View style={styles.progressBar}>
       <Progress.Bar
-        progress={completed / length}
+        progress={completed / total}
         width={null}
         height={2}
         color={'#1b1b1b'}
