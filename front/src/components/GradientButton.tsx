@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 10,
   },
   button_S: {
     justifyContent: 'center',
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     width: '100%',
-    height: 38,
+    height: 44,
     borderRadius: 6,
   },
   text: {
