@@ -1,2 +1,7 @@
 jwt:
-  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  key: ${JWT_SECRET_KEY}
+  expirationMs: 3600000
+token:
+  expiration:
+    access: 3600000
+    refresh: 86400000

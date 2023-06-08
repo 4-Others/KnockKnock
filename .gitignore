@@ -162,3 +162,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# ios
+Podfile.lock
+package-lock.json
+

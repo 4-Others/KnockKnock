@@ -1,7 +1,6 @@
 package com.others.KnockKnock.audit;
 
 import com.others.KnockKnock.utils.DateUtil;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
