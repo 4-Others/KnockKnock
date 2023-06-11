@@ -5,6 +5,17 @@ import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
 import {CheckBox} from '../../components/CheckBox';
 
+export const CheckBox: React.FC = () => {
+  const [on, setOn] = useState(false);
+  return (
+    <TouchableOpacity
+      onPress={() => setOn(!on)}
+      style={on ? styles.checkState : styles.unCheckState}>
+      <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
+    </TouchableOpacity>
+  );
+};
+
 const Login: React.FC = () => {
   const navigation = useNavigation();
   const [id, setId] = useState('');

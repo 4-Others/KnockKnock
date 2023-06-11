@@ -1,6 +1,28 @@
 import * as React from 'react';
 import {SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, Linking} from 'react-native';
 import {variables} from '../../../style/variables';
+import {CheckBox} from '../../login/Login';
+
+interface CheckBtn {
+  text: string;
+  link: string;
+}
+
+export const CheckBtn: React.FC<CheckBtn> = ({text, link}) => {
+  const [on, setOn] = React.useState(false);
+  return (
+    <TouchableOpacity style={styles.essential} onPress={() => setOn(!on)}>
+      <Image
+        style={on ? styles.checkImg : styles.unCheckImg}
+        source={require('front/assets/image/check.png')}
+      />
+      <Text style={styles.unCheckText}>{text}</Text>
+      <Text style={styles.linkText} onPress={() => Linking.openURL(link)}>
+        보기
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 interface CheckBtnProps {
   text: string;
