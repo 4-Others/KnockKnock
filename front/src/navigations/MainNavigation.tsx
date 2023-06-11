@@ -32,10 +32,11 @@ const MainNavigation = () => {
   };
 
   const goBack = (navigation: any) => {
+    // signup 컴포넌트 제어
     const lastTrueIndex = deps
       .map((dep, index) => ({...dep, index}))
       .filter(dep => Object.values(dep)[0] === true);
-    console.log(lastTrueIndex);
+
     if (lastTrueIndex.length > 1) {
       const updatedDeps = [...deps];
       const lastTrueIndexValue = lastTrueIndex[lastTrueIndex.length - 1].index;
@@ -51,7 +52,6 @@ const MainNavigation = () => {
 
   const [locate, setLocate] = useState<string>('Agree');
   useEffect(() => {
-    console.log(deps);
     const trueDeps = deps.filter(dep => Object.values(dep)[0] === true);
     const nextDeps = trueDeps[trueDeps.length - 1] || 1;
     const taskKeys = Object.keys(nextDeps);

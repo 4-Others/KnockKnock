@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
 import ProgressBar from '../../components/ProgressBar';
 import Agree from './screen/Agree';
 import Email from './screen/Email';
