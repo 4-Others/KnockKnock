@@ -1,19 +1,19 @@
 import * as React from 'react';
 import {SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, Linking} from 'react-native';
 import {variables} from '../../../style/variables';
-import {CheckBox} from '../../login/Login';
 
-interface CheckBtn {
+interface CheckBtnProps {
   text: string;
   link: string;
+  on: boolean;
+  onPress: () => void;
 }
 
-export const CheckBtn: React.FC<CheckBtn> = ({text, link}) => {
-  const [on, setOn] = React.useState(false);
+const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
   return (
-    <TouchableOpacity style={styles.essential} onPress={() => setOn(!on)}>
+    <TouchableOpacity style={styles.essential} onPress={onPress}>
       <Image
-        style={on ? styles.checkImg : styles.unCheckImg}
+        style={on ? [styles.checkImg, styles.largeCheck] : [styles.unCheckImg, styles.largeCheck]}
         source={require('front/assets/image/check.png')}
       />
       <Text style={styles.unCheckText}>{text}</Text>
