@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
@@ -10,7 +10,7 @@ import BackBtn from '../components/BackBtn';
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
-  const isLogin = false;
+  const isLogin = true;
 
   const [deps, setDeps] = useState([
     {Agree: true},
@@ -61,10 +61,22 @@ const MainNavigation = () => {
   }, [deps]);
 
   return (
-    <NavigationContainer independent={true}>
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: 'white',
+        },
+      }}
+      independent={true}>
       <Stack.Navigator initialRouteName="Login">
         <>
-          <Stack.Screen name="TabNavigator" component={TabNavigation} />
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigation}
+            options={{headerShown: false}}
+          />
           <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
           <Stack.Screen
             name="SignUp"
