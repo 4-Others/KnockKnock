@@ -36,12 +36,18 @@ const styles = StyleSheet.create({
     paddingLeft: 22,
   },
   drawer: {
+    position: 'absolute',
     fontFamily: 'Pretendard-Medium',
     color: variables.text_1,
     fontSize: 18,
+    top: 15,
+    right: 22,
   },
   body: {
-    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#eeeeee',
   },
 });
 
