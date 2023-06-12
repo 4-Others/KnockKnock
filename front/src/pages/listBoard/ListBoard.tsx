@@ -51,7 +51,10 @@ const styles = StyleSheet.create({
     borderTopColor: '#eeeeee',
   },
   body: {
-    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#eeeeee',
   },
 });
 
