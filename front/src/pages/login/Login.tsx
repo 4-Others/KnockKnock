@@ -24,6 +24,10 @@ const Login: React.FC = () => {
     navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
   };
 
+  const linkToMain = () => {
+    navigation.dispatch(StackActions.push('TabNavigator', {locate: undefined}));
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -53,7 +57,7 @@ const Login: React.FC = () => {
         </View>
       </View>
 
-      <GradientButton_L text="로그인" />
+      <GradientButton_L text="로그인" onPress={linkToMain} />
     </View>
   );
 };

@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   text: {
+    color: variables.text_1,
     fontFamily: variables.font_4,
     fontSize: 24,
     textAlign: 'left',
