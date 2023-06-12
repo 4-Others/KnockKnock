@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
 import ProgressBar from '../../components/ProgressBar';
 import Agree from './screen/Agree';
 import Email from './screen/Email';
@@ -29,11 +29,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    width: '100%',
+    height: '100%',
   },
   contents: {
     paddingLeft: 24,
     paddingRight: 24,
     paddingTop: 20,
+    paddingBottom: 20,
   },
 });
 
