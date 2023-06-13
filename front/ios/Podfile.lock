@@ -429,9 +429,7 @@ PODS:
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNReanimated (1.13.4):
-  - RNReanimated (1.13.4):
     - React-Core
-
   - RNScreens (3.20.0):
     - React-Core
     - React-RCTImage
@@ -674,7 +672,6 @@ SPEC CHECKSUMS:
 
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: c1b56d030d1616239861534d9adb531f8cffab68
-
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
