@@ -133,4 +133,41 @@ const styles = StyleSheet.create({
     height: 1.2,
     backgroundColor: variables.text_6,
   },
+  innerShadow: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: 50,
+    height: 178,
+    backgroundColor: 'transparent',
+    borderColor: variables.line_1,
+    ...Platform.select({
+      ios: {
+        borderRadius: 12,
+        borderWidth: 0.1,
+        overflow: 'hidden',
+        shadowOffset: {width: 1, height: 1},
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+      },
+      android: {borderTopRightRadius: 12, borderBottomRightRadius: 12, borderWidth: 0.4},
+    }),
+  },
+  buttonIcon: {
+    ...Platform.select({
+      ios: {marginLeft: 12},
+      android: {marginLeft: 10},
+    }),
+    marginVertical: 15,
+    color: variables.text_5,
+    fontSize: 40,
+  },
+  partition: {
+    ...Platform.select({
+      ios: {marginLeft: 16},
+      android: {marginLeft: 13},
+    }),
+    width: 16,
+    height: 1.2,
+    backgroundColor: variables.text_6,
+  },
 });
