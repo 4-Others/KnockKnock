@@ -1,68 +1,79 @@
-import {View, Text, ImageBackground, Animated, Dimensions, StyleSheet} from 'react-native';
-import React, {useRef, useEffect} from 'react';
-import {Swipeable} from 'react-native-gesture-handler';
+import {
+  View,
+  Text,
+  ImageBackground,
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Platform,
+} from 'react-native';
+import React, {useRef} from 'react';
+import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 
-const window = Dimensions.get('window');
+const deviceWidth = Dimensions.get('window').width;
 
 const BoardAll = () => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const translateX = animatedValue.interpolate({
-    inputRange: [0, 50],
-    outputRange: [-1, 0],
-    extrapolate: 'clamp',
-  });
-  useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: window.width * 2 - 100,
-      duration: 1000,
-      delay: 3000,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-  const renderRightActions = () => {
+  const swipeRef = useRef(null);
+
+  const renderRightActions = (dragX: any) => {
+    const translate = dragX.interpolate({
+      ...Platform.select({
+        ios: {inputRange: [0, 8, 10, 10], outputRange: [-74, 0, 0, 0]},
+        android: {inputRange: [0, 8, 10, 10], outputRange: [-80, 0, 0, 0]},
+      }),
+    });
     return (
-      <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translateX}]}]}>
-        <Text>INVITE</Text>
-        <Text>DELETE</Text>
+      <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
+        <View style={styles.innerShadow}>
+          <RectButton>
+            <Text style={styles.buttonIcon}>+</Text>
+            <View style={styles.partition} />
+            <Text style={styles.buttonIcon}>=</Text>
+          </RectButton>
+        </View>
       </Animated.View>
     );
   };
 
   return (
-    <Swipeable renderRightActions={renderRightActions}>
-      <View style={styles.container}>
+    <View style={styles.fullWidth}>
+      <Swipeable
+        ref={swipeRef}
+        friction={2}
+        renderRightActions={renderRightActions}
+        rightThreshold={15}
+        overshootRight={false}>
         <ImageBackground
           source={require('../../../../assets/image/card_graphic.png')}
           style={styles.container}>
           <Text style={styles.title}>전체</Text>
-          <View style={styles.totalContainer}>
+          <View style={styles.textContainer}>
             <Text style={styles.total}>total memo</Text>
             <Text style={styles.number}>94</Text>
           </View>
         </ImageBackground>
-      </View>
-    </Swipeable>
+      </Swipeable>
+    </View>
   );
 };
 
 export default BoardAll;
 
 const styles = StyleSheet.create({
+  fullWidth: {
+    width: deviceWidth,
+    height: 178,
+  },
   container: {
+    ...Platform.select({
+      ios: {marginLeft: 50},
+      android: {marginLeft: 60},
+    }),
     width: 272,
     height: 178,
     backgroundColor: variables.Mater_15,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-
-    elevation: 4,
   },
   texture: {width: 272, height: 178},
   title: {
@@ -72,7 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: variables.text_7,
   },
-  totalContainer: {
+  textContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     marginTop: 55,
@@ -91,12 +102,47 @@ const styles = StyleSheet.create({
     color: variables.text_7,
   },
   swipeContainer: {
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    width: 272,
+    width: 50,
     height: 178,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#eeeeee',
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
+  },
+  innerShadow: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: 50,
+    height: 178,
+    backgroundColor: 'transparent',
+    borderColor: variables.line_1,
+    ...Platform.select({
+      ios: {
+        borderRadius: 12,
+        borderWidth: 0.1,
+        overflow: 'hidden',
+        shadowOffset: {width: 1, height: 1},
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+      },
+      android: {borderTopRightRadius: 12, borderBottomRightRadius: 12, borderWidth: 0.4},
+    }),
+  },
+  buttonIcon: {
+    ...Platform.select({
+      ios: {marginLeft: 12},
+      android: {marginLeft: 10},
+    }),
+    marginVertical: 15,
+    color: variables.text_5,
+    fontSize: 40,
+  },
+  partition: {
+    ...Platform.select({
+      ios: {marginLeft: 16},
+      android: {marginLeft: 13},
+    }),
+    width: 16,
+    height: 1.2,
+    backgroundColor: variables.text_6,
   },
 });
