@@ -23,7 +23,10 @@ end
 
 target 'front' do
   config = use_native_modules!
-
+  use_frameworks!
+  pod 'lottie-ios'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'react-native-pager-view', :path => '../node_modules/react-native-pager-view'
   # Flags change depending on the env values.
   flags = get_default_flags()
 
