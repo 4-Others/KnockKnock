@@ -15,8 +15,11 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.others.KnockKnock.utils.DateUtil.convertLocalDateTimeToFormatString;
 import static com.others.KnockKnock.utils.DateUtil.parseStringToLocalDateTime;
@@ -29,37 +32,48 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
 
     public void createNotifications(Calendar calendar) {
-        List<Notification> notifications =
-            calendar.getAlerts().stream()
-                .map(alert -> {
-                    LocalDateTime notifyAt = parseStringToLocalDateTime(calendar.getStartAt()).minusMinutes(alert);
-
-                    return Notification.builder()
-                               .calendar(calendar)
-                               .user(calendar.getUser())
-                               .title(calendar.getTitle())
-                               .notifyAt(convertLocalDateTimeToFormatString(notifyAt))
-                               .delivered(false)
-                               .read(false)
-                               .build();
-                })
-                .collect(Collectors.toList());
+        List<Notification> notifications = genNotification(calendar);
 
         notificationRepository.saveAll(notifications);
     }
 
     public void updateNotifications(Calendar calendar) {
         List<Notification> allByUserIdAndCalendarId = notificationRepository.findAllByUserIdAndCalendarId(calendar.getUser().getUserId(), calendar.getCalendarId());
+        List<Notification> notDeliveredNotification = allByUserIdAndCalendarId.stream().filter(ntf -> !ntf.getDelivered()).collect(Collectors.toList());
         List<String> alerts = calendar.getAlerts().stream()
                                   .map(alert -> convertLocalDateTimeToFormatString(parseStringToLocalDateTime(calendar.getStartAt()).minusMinutes(alert)))
                                   .collect(Collectors.toList());
 
-        deleteNotifications(allByUserIdAndCalendarId);
-        createNotifications(calendar);
+        deleteNotifications(notDeliveredNotification);
+
+        List<Notification> notifications = genNotification(calendar);
+
+        updateNotifications(notifications);
+    }
+
+    public void updateNotifications(List<Notification> notifications) {
+        notificationRepository.saveAll(notifications);
     }
 
     public void deleteNotifications(List<Notification> notifications) {
         notificationRepository.deleteAll(notifications);
+    }
+
+    private List<Notification> genNotification(Calendar calendar) {
+        return calendar.getAlerts().stream()
+                   .map(alert -> {
+                       LocalDateTime notifyAt = parseStringToLocalDateTime(calendar.getStartAt()).minusMinutes(alert);
+
+                       return Notification.builder()
+                                  .calendar(calendar)
+                                  .user(calendar.getUser())
+                                  .title(calendar.getTitle())
+                                  .notifyAt(convertLocalDateTimeToFormatString(notifyAt))
+                                  .delivered(false)
+                                  .read(false)
+                                  .build();
+                   })
+                   .collect(Collectors.toList());
     }
 
     public List<NotificationDto.Response> updateReadStatus(Long userId, List<Long> notificationIds) {
