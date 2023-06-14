@@ -6,7 +6,7 @@ import BoardDetail from '../BoardDetail';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ListTab = () => {
+const BoardTab = () => {
   return (
     <View style={styles.container}>
       <Tab.Navigator
@@ -37,6 +37,20 @@ const ListTab = () => {
           },
           tabBarScrollEnabled: true,
         })}>
+        <Tab.Screen
+          name={'목록'}
+          component={BoardDetail}
+          options={() => ({
+            tabBarLabel: ({focused}) => (
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{fontFamily: 'Pretendard-SemiBold', color: focused ? '#1b1b1b' : '#cccccc'}}>
+                List
+              </Text>
+            ),
+          })}
+        />
         <Tab.Screen
           name={'전체'}
           component={BoardDetail}
@@ -131,7 +145,7 @@ const ListTab = () => {
   );
 };
 
-export default ListTab;
+export default BoardTab;
 
 const styles = StyleSheet.create({
   container: {

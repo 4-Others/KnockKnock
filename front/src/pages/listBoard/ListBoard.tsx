@@ -2,8 +2,9 @@ import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import {View} from 'react-native-animatable';
 import React from 'react';
 import {variables} from '../../style/variables';
-import ListBoardPack from './listBoardItems/ListBoardPack';
-import ListTab from './listBoardItems/ListTab';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import BoardPack from './listBoardItems/BoardPack';
+import BoardTab from './listBoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
 
 const ListBoard = () => {
@@ -11,11 +12,11 @@ const ListBoard = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <LogoMark darkMode={false} />
-        <Text style={styles.drawer}>icon</Text>
+        <Icon name="menu" style={styles.drawer} />
       </View>
-      <ListTab />
+      <BoardTab />
       <View style={styles.body}>
-        <ListBoardPack />
+        <BoardPack />
       </View>
     </SafeAreaView>
   );
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-Medium',
     color: variables.text_1,
     fontSize: 18,
-    top: 15,
+    top: 18,
     right: 22,
   },
   body: {
