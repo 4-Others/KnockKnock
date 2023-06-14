@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
@@ -10,7 +10,7 @@ import BackBtn from '../components/BackBtn';
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
-  const isLogin = false;
+  const isLogin = true;
 
   const [deps, setDeps] = useState([
     {Agree: true},
@@ -32,10 +32,11 @@ const MainNavigation = () => {
   };
 
   const goBack = (navigation: any) => {
+    // signup 컴포넌트 제어
     const lastTrueIndex = deps
       .map((dep, index) => ({...dep, index}))
       .filter(dep => Object.values(dep)[0] === true);
-    console.log(lastTrueIndex);
+
     if (lastTrueIndex.length > 1) {
       const updatedDeps = [...deps];
       const lastTrueIndexValue = lastTrueIndex[lastTrueIndex.length - 1].index;
@@ -50,8 +51,8 @@ const MainNavigation = () => {
   };
 
   const [locate, setLocate] = useState<string>('Agree');
+
   useEffect(() => {
-    console.log(deps);
     const trueDeps = deps.filter(dep => Object.values(dep)[0] === true);
     const nextDeps = trueDeps[trueDeps.length - 1] || 1;
     const taskKeys = Object.keys(nextDeps);
@@ -60,37 +61,45 @@ const MainNavigation = () => {
   }, [deps]);
 
   return (
-    <NavigationContainer independent={true}>
+    
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: 'white',
+        },
+      }}
+      independent={true}>
       <Stack.Navigator initialRouteName="Login">
-        {isLogin ? (
-          <>
-            <Stack.Screen name="TabNavigator" component={TabNavigation} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
-            <Stack.Screen
-              name="SignUp"
-              options={({navigation}) => ({
-                title: '회원가입',
-                headerBackTitleVisible: false,
-                headerBackImage: () => <BackBtn goBack={() => goBack(navigation)} />,
-                headerRight: () =>
-                  locate !== 'Success' ? (
-                    <TouchableOpacity onPress={next}>
-                      <Image
-                        source={require('front/assets/image/check_btn.png')}
-                        style={{marginRight: 24, width: 24, height: 24}}
-                      />
-                    </TouchableOpacity>
-                  ) : null,
-                headerStyle: styles.headerStyle, // 추가
-                headerTitleAlign: 'left', // 왼쪽 정렬 추가
-              })}>
-              {props => <SignUp {...props} deps={deps} locate={locate} />}
-            </Stack.Screen>
-          </>
-        )}
+        <>
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigation}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
+          <Stack.Screen
+            name="SignUp"
+            options={({navigation}) => ({
+              title: '회원가입',
+              headerBackTitleVisible: false,
+              headerBackImage: () => <BackBtn goBack={() => goBack(navigation)} />,
+              headerRight: () =>
+                locate !== 'Success' ? (
+                  <TouchableOpacity onPress={next}>
+                    <Image
+                      source={require('front/assets/image/check_btn.png')}
+                      style={{marginRight: 24, width: 24, height: 24}}
+                    />
+                  </TouchableOpacity>
+                ) : null,
+              headerStyle: styles.headerStyle, // 추가
+              headerTitleAlign: 'left', // 왼쪽 정렬 추가
+            })}>
+            {props => <SignUp {...props} deps={deps} locate={locate} />}
+          </Stack.Screen>
+        </>
       </Stack.Navigator>
     </NavigationContainer>
   );

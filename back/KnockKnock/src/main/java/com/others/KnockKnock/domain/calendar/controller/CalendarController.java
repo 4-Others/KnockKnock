@@ -40,7 +40,7 @@ public class CalendarController {
 
     @GetMapping
     // @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> findBy(
+    public ResponseEntity<?> findCalendarBy(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Pattern(
             regexp = "\\d{4}-\\d{2}",

@@ -6,6 +6,8 @@ import com.others.KnockKnock.domain.calendar.entity.Calendar.Period;
 import com.others.KnockKnock.domain.calendar.mapper.CalendarMapper;
 import com.others.KnockKnock.domain.calendar.repository.CalendarRepository;
 import com.others.KnockKnock.domain.notification.service.NotificationService;
+import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.exception.BusinessLogicException;
 import com.others.KnockKnock.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +20,18 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
+    private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final CalendarMapper calendarMapper;
 
     private final NotificationService notificationService;
 
     public CalendarDto.Response createCalendar(Long userId, CalendarDto.Post requestBody) {
+        Optional<User> byEmail = userRepository.findByEmail("tester@tester.com");
+        User user = byEmail.get();
+
         Calendar createCalendar = Calendar.builder()
-                                      // .user(user)
+                                      .user(user)
                                       .title(requestBody.getTitle())
                                       .period(Period.valueOf(requestBody.getPeriod()))
                                       .content(requestBody.getContent())

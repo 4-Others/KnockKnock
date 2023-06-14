@@ -6,6 +6,7 @@ import Calendar from '../pages/calendar/Calendar';
 import ListAdd from '../pages/listAdd/ListAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
+import {Platform} from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,6 +14,7 @@ const TabNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
+        headerShown: false,
         tabBarIcon: ({focused}) => {
           let iconSource;
 
@@ -42,10 +44,15 @@ const TabNavigation = () => {
         },
         tabBarShowLabel: false,
         tabBarStyle: {
+          borderTopWidth: 0,
           paddingLeft: 47,
           paddingRight: 47,
           height: 60,
           backgroundColor: '#ffffff',
+          ...Platform.select({
+            ios: {shadowOpacity: 0},
+            android: {elevation: 0},
+          }),
         },
         tabBarItemStyle: {
           flex: 1,
