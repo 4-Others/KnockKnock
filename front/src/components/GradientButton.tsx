@@ -27,8 +27,8 @@ const GradientButton_L: React.FC<ComponentType> = ({text, onPress}) => {
     <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={onPress}>
       <LinearGradient
         style={styles.button_L}
-        start={{x: 0, y: 0}}
-        end={{x: 0.6, y: 0.6}}
+        start={{x: -0.1, y: 0}}
+        end={{x: 0.9, y: 0.5}}
         colors={['#FEA97A', '#FF5789']}>
         <Text style={styles.text}>{text}</Text>
       </LinearGradient>
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 10,
   },
   button_S: {
     justifyContent: 'center',
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     width: '100%',
-    height: 38,
+    height: 44,
     borderRadius: 6,
   },
   text: {

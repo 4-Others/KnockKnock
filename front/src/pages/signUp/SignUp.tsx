@@ -1,23 +1,26 @@
-import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
 import React from 'react';
-import {variables} from '../../style/variables';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
+import ProgressBar from '../../components/ProgressBar';
+import Agree from './screen/Agree';
+import Email from './screen/Email';
+import Password from './screen/Password';
+import Success from './screen/Success';
 
-type RootStackParamList = {
-  Home: undefined;
-  Details: {id: string};
-  SignUp: {id: number; name: string};
-};
+interface SignUpProps {
+  locate: string;
+  deps: {[key: string]: any}[];
+}
 
-type SignUpScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'SignUp'>;
-};
-
-const SignUp: React.FC<SignUpScreenProps> = ({navigation}) => {
+const SignUp: React.FC<SignUpProps> = ({locate, deps}) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>SignUp</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <ProgressBar deps={deps} />
+      <View style={styles.contents}>
+        {locate === 'Agree' && <Agree />}
+        {locate === 'Email' && <Email />}
+        {locate === 'Password' && <Password />}
+        {locate === 'Success' && <Success />}
+      </View>
     </SafeAreaView>
   );
 };
@@ -25,13 +28,15 @@ const SignUp: React.FC<SignUpScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    width: '100%',
+    height: '100%',
   },
-  text: {
-    fontFamily: 'Pretendard-Medium',
-    color: variables.main,
-    fontSize: 30,
+  contents: {
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
 });
 
