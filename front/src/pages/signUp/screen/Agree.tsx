@@ -27,9 +27,9 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
 const Agree: React.FC = () => {
   const [allAgree, setAllAgree] = React.useState(false);
   const [eachAgree, seteachAgree] = React.useState([
-    {text: '[필수] 만 14세 이상입니다.', link: 'www.m.naver.com', on: false},
-    {text: '[필수] 이용약관 동의', link: 'www.m.naver.com', on: false},
-    {text: '[필수] 개인정보 수집 및 이용 동의', link: 'www.m.naver.com', on: false},
+    {text: '[필수] 만 14세 이상입니다.', link: 'https//www.m.naver.com', on: false},
+    {text: '[필수] 이용약관 동의', link: 'https//www.m.naver.com', on: false},
+    {text: '[필수] 개인정보 수집 및 이용 동의', link: 'https//www.m.naver.com', on: false},
   ]);
 
   const handleAllAgreePress = () => {
