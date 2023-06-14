@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
   },
   container: {
     ...Platform.select({
-      ios: {marginLeft: 50},
-      android: {marginLeft: 60},
+      ios: {marginLeft: '10%'},
+      android: {marginLeft: '15%'},
     }),
     width: 272,
     height: 178,

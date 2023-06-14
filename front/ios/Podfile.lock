@@ -429,6 +429,7 @@ PODS:
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNReanimated (1.13.4):
+  - RNReanimated (1.13.4):
     - React-Core
 
   - RNScreens (3.20.0):
@@ -681,6 +682,6 @@ SPEC CHECKSUMS:
   Yoga: 065f0b74dba4832d6e328238de46eb72c5de9556
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1515420db2290150fe0f3c17395b1b5065e58da7
+PODFILE CHECKSUM: 5d87e34b91a41357909c404c302d382516bd92b7
 
 COCOAPODS: 1.12.1
