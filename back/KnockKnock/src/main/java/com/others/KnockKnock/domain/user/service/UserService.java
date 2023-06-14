@@ -53,6 +53,14 @@ public class UserService {
 
         return token;
     }
+    public void updateEmailVerificationStatus(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        // 이메일 인증 상태 업데이트 로직 수행
+        user.setEmailVerified(true);
+
+        userRepository.save(user);
+    }
 
 }

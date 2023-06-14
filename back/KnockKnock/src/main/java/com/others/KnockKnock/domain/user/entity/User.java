@@ -26,4 +26,11 @@ public class User{
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    private boolean emailVerified;
+
 }
