@@ -61,6 +61,7 @@ const MainNavigation = () => {
   }, [deps]);
 
   return (
+    
     <NavigationContainer
       theme={{
         ...DefaultTheme,
