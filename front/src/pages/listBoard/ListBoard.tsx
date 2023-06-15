@@ -1,4 +1,4 @@
-import {StyleSheet, SafeAreaView, Text} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar, Platform} from 'react-native';
 import {View} from 'react-native-animatable';
 import React from 'react';
 import {variables} from '../../style/variables';
@@ -10,6 +10,7 @@ import LogoMark from '../../../assets/image/LogoMark';
 const ListBoard = () => {
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#FFFFFF" />
       <View style={styles.header}>
         <LogoMark darkMode={false} />
         <Icon name="menu" style={styles.drawer} />
@@ -25,6 +26,10 @@ const ListBoard = () => {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
+    ...Platform.select({
+      ios: {top: 80},
+      android: {top: 60},
+    }),
   },
   header: {
     flex: 1,
@@ -47,6 +52,8 @@ const styles = StyleSheet.create({
   body: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
     borderTopWidth: 1,
     borderTopColor: '#eeeeee',
   },
