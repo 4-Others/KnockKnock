@@ -47,7 +47,7 @@ const TabNavigation = () => {
           borderTopWidth: 0,
           paddingLeft: 47,
           paddingRight: 47,
-          height: 60,
+          flex: 0.1,
           backgroundColor: '#ffffff',
           ...Platform.select({
             ios: {shadowOpacity: 0},
