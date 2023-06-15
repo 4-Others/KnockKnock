@@ -38,6 +38,7 @@ public class CalendarService {
                                       .startAt(requestBody.getStartAt())
                                       .endAt(requestBody.getEndAt())
                                       .alerts(requestBody.getAlerts())
+                                      .confirm(requestBody.getConfirm())
                                       .build();
 
         Calendar createdCalendar = calendarRepository.save(createCalendar);
@@ -57,6 +58,7 @@ public class CalendarService {
                 .startAt(requestBody.getStartAt())
                 .endAt(requestBody.getEndAt())
                 .alerts(requestBody.getAlerts())
+                .confirm(requestBody.getConfirm())
                 .build()
         );
 
@@ -100,6 +102,7 @@ public class CalendarService {
                                                 .startAt(source.getStartAt() != null ? source.getStartAt() : dest.getStartAt())
                                                 .endAt(source.getEndAt() != null ? source.getEndAt() : dest.getEndAt())
                                                 .alerts(source.getAlerts() != null ? source.getAlerts() : dest.getAlerts())
+                                                .confirm(source.getConfirm() != null ? source.getConfirm() : dest.getConfirm())
                                                 .build();
 
                            build.setCreatedAt(dest.getCreatedAt());

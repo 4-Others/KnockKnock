@@ -27,6 +27,8 @@ public class Calendar extends Auditable {
     private String startAt;
     private String endAt;
 
+    private Boolean confirm;
+
     @ElementCollection
     @CollectionTable(name = "calendar_alerts", joinColumns = @JoinColumn(name = "calendar_id"))
     @Column(name = "alerts")

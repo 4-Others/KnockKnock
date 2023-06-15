@@ -50,6 +50,9 @@ public class CalendarDto {
         private String endAt;
 
         private List<Integer> alerts;
+
+        @NotNull
+        private Boolean confirm;
     }
 
     @Getter
@@ -88,6 +91,9 @@ public class CalendarDto {
         private String endAt;
 
         private List<Integer> alerts;
+
+        @NotNull
+        private Boolean confirm;
     }
 
     @Getter
@@ -113,6 +119,7 @@ public class CalendarDto {
         private String startAt;
         private String endAt;
         private List<Integer> alerts;
+        private Boolean confirm;
         private String createdAt;
         private String modifiedAt;
     }
