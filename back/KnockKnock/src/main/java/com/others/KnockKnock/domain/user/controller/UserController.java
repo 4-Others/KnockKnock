@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,16 +26,22 @@ public class UserController {
     userService.signup(signupDto);
     return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
     }
-
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenProvider.JwtAuthenticationResponse> login(@RequestBody @Valid UserDto.Login loginDto) {
-        // 로그인 로직 구현
+    public ResponseEntity<Map<String, String[]>> login(@RequestBody @Valid UserDto.Login loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
-        // 로그인 성공 시 토큰 발급
-        String[] tokens = jwtTokenProvider.generateToken(email);
-        JwtTokenProvider.JwtAuthenticationResponse response = new JwtTokenProvider.JwtAuthenticationResponse(tokens);
-        return ResponseEntity.ok().body(response);
+        String accessToken = jwtTokenProvider.generateAccessToken(email);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(email);
+
+        if (accessToken == null || refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("tokens", new String[0]));
+        }
+
+        String[] tokens = { "accessToken: " + accessToken, "refreshToken: " + refreshToken };
+
+        Map<String, String[]> response = Collections.singletonMap("tokens", tokens);
+
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/refreshToken")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
@@ -47,5 +55,17 @@ public class UserController {
             return ResponseEntity.badRequest().body("Invalid refresh token");
         }
     }
+    @PatchMapping("/{email}/password")
+    public ResponseEntity<String> updatePassword(@PathVariable("email") String email,
+                                                 @RequestBody UserDto.PasswordUpdate passwordUpdateDto) {
+        UserDto.PasswordUpdate updatedDto = UserDto.PasswordUpdate.builder()
+                .email(email)
+                .currentPassword(passwordUpdateDto.getCurrentPassword())
+                .newPassword(passwordUpdateDto.getNewPassword())
+                .build();
 
+        userService.updatePassword(updatedDto);
+
+        return ResponseEntity.ok("비밀번호가 성공적으로 업데이트되었습니다.");
+    }
 }

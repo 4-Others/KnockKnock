@@ -18,11 +18,5 @@ public class TokenConfig {
     public long getRefreshTokenExpirationMs() {
         return refreshTokenExpirationMs;
     }
-
-//    @Value("${token.expiration.access}")
-//    private long accessTokenExpirationMs;
-//
-//    @Value("${token.expiration.refresh}")
-//    private long refreshTokenExpirationMs;
 }
 

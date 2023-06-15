@@ -2,19 +2,18 @@ package com.others.KnockKnock.domain.user.service;
 
 import com.others.KnockKnock.domain.user.dto.UserDto;
 import com.others.KnockKnock.domain.user.entity.User;
-import com.others.KnockKnock.domain.user.mapper.UserMapper;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
     public void signup(UserDto.Signup signupDto){
@@ -25,34 +24,34 @@ public class UserService {
         }
         User user = User.builder()
                 .email(signupDto.getEmail())
-                .password(signupDto.getPassword())
+                .password(passwordEncoder.encode(signupDto.getPassword()))
                 .build();
 
         userRepository.save(user);
     }
-    public String login(UserDto.Login loginDto) {
-        String email = loginDto.getEmail();
-        String password = loginDto.getPassword();
+public String login(UserDto.Login loginDto) {
+    String email = loginDto.getEmail();
+    String password = loginDto.getPassword();
 
-        // 이메일을 기준으로 사용자 찾기
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    // 이메일을 기준으로 사용자 찾기
+    Optional<User> optionalUser = userRepository.findByEmail(email);
 
-        if (optionalUser.isEmpty()) {
-            return null; // 사용자 없음
-        }
-
-        User user = optionalUser.get();
-
-        // 비밀번호 검증
-        if (!password.equals(user.getPassword())) {
-            return null; // 비밀번호 일치하지 않음
-        }
-
-        // JWT 토큰 생성
-        String token = jwtUtils.generateToken(user.getUserId());
-
-        return token;
+    if (optionalUser.isEmpty()) {
+        throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다."); // 예외 메시지 추가
     }
+
+    User user = optionalUser.get();
+
+    // 비밀번호 검증
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다."); // 예외 메시지 추가
+    }
+
+    // JWT 토큰 생성
+    String token = jwtUtils.generateToken(user.getUserId());
+
+    return token;
+}
     public void updateEmailVerificationStatus(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -62,5 +61,37 @@ public class UserService {
 
         userRepository.save(user);
     }
+    public void updatePassword(UserDto.PasswordUpdate passwordUpdateDto) {
+        String userEmail = passwordUpdateDto.getEmail();
+        String currentPassword = passwordUpdateDto.getCurrentPassword();
+        String newPassword = passwordUpdateDto.getNewPassword();
 
+        // 이메일을 기준으로 사용자 찾기
+        Optional<User> optionalUser = userRepository.findByEmail(userEmail);
+
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        User user = optionalUser.get();
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        // 새로운 비밀번호와 현재 비밀번호가 동일한 경우 예외 처리
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
+        }
+
+        // 새로운 비밀번호로 업데이트
+        User updatedUser = User.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .password(passwordEncoder.encode(newPassword))
+                .emailVerified(user.isEmailVerified())
+                .build();
+
+        userRepository.save(updatedUser);
+    }
 }
