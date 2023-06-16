@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "USERS")
@@ -26,11 +27,8 @@ public class User{
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
-
+    private boolean emailVerified;
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
-
-    private boolean emailVerified;
-
 }

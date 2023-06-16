@@ -1,35 +1,69 @@
 package com.others.KnockKnock.domain.user.controller;
 
-
 import com.others.KnockKnock.domain.user.dto.UserDto;
+import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
+import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.service.UserService;
 import com.others.KnockKnock.security.jwt.JwtTokenProvider;
 import com.others.KnockKnock.security.jwt.RefreshTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MyPasswordEncoder mypasswordEncoder;
+
+
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Validated @RequestBody UserDto.Signup signupDto) {
-    userService.signup(signupDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
+        String email = signupDto.getEmail();
+        String password = signupDto.getPassword();
+
+        String encryptedPassword = mypasswordEncoder.encode(password);
+
+        // 사용자 정보 저장
+        User user = User.builder()
+                .email(email)
+                .password(encryptedPassword)
+                .emailVerified(false)
+                .build();
+        userRepository.save(user);
+
+        return ResponseEntity.ok("이메일 인증을 해주세요.");
     }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String[]>> login(@RequestBody @Valid UserDto.Login loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
+
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        User user = userOptional.get();
+        if (!user.isEmailVerified()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"Email not verified"}));
+        }
+
+        // 패스워드 일치 여부 확인
+        if(!password.equals(user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"패스워드가 틀렸어요!"}));
+        }
+
         String accessToken = jwtTokenProvider.generateAccessToken(email);
         String refreshToken = jwtTokenProvider.generateRefreshToken(email);
 
@@ -68,4 +102,5 @@ public class UserController {
 
         return ResponseEntity.ok("비밀번호가 성공적으로 업데이트되었습니다.");
     }
+
 }
