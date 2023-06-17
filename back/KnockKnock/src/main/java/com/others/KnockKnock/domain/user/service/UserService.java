@@ -89,4 +89,14 @@ public class UserService {
 
         userRepository.save(updatedUser);
     }
+    public void deleteUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        User user = optionalUser.get();
+        userRepository.delete(user);
+    }
 }

@@ -10,8 +10,6 @@ import com.others.KnockKnock.security.jwt.RefreshTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -102,5 +100,9 @@ public class UserController {
 
         return ResponseEntity.ok("비밀번호가 성공적으로 업데이트되었습니다.");
     }
-
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
+        userService.deleteUser(email);
+        return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
+    }
 }
