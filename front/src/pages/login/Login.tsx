@@ -3,17 +3,7 @@ import React, {useState} from 'react';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
-
-export const CheckBox: React.FC = () => {
-  const [on, setOn] = useState(false);
-  return (
-    <TouchableOpacity
-      onPress={() => setOn(!on)}
-      style={on ? styles.checkState : styles.unCheckState}>
-      <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-    </TouchableOpacity>
-  );
-};
+import {CheckBox} from '../../components/CheckBox';
 
 const Login: React.FC = () => {
   const navigation = useNavigation();
@@ -43,7 +33,7 @@ const Login: React.FC = () => {
       </View>
       <View style={styles.loginMenu}>
         <View style={styles.autoLogin}>
-          <CheckBox />
+          <CheckBox func={() => {}} />
           <Text style={styles.checkBoxBtn}>자동 로그인</Text>
         </View>
         <View style={styles.textBtns}>

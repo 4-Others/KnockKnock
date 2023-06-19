@@ -1,25 +1,34 @@
-import {StyleSheet, SafeAreaView, Text} from 'react-native';
-import React from 'react';
+import {StyleSheet, View, StatusBar, Platform} from 'react-native';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
+import CalendarComponent from './Screen/CalendarComponent';
+import Data from './calendarData.json';
 
 const Calendar = () => {
+  const [events, setEvents] = useState(Data);
+  const [selected, setSelected] = useState<string>('');
+
+  if (Platform.OS === 'android') {
+    StatusBar.setBackgroundColor(variables.main);
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>응애, 나 애기 Calendar</Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <CalendarComponent
+        selected={selected}
+        setSelected={setSelected}
+        events={events}
+        setEvents={setEvents}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontFamily: 'Pretendard-Medium',
-    color: variables.main,
-    fontSize: 30,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
   },
 });
 
