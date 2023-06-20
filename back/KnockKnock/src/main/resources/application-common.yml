@@ -1,0 +1,19 @@
+jwt:
+  key: ${JWT_SECRET_KEY}
+  expirationMs: 3600000
+token:
+  expiration:
+    access: 3600000
+    refresh: 86400000
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 4othersofficial@gmail.com
+    password: evvkvksaldrjsoen
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

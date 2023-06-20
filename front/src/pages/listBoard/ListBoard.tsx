@@ -18,6 +18,7 @@ const ListBoard = () => {
         <Icon name="menu" style={styles.drawer} />
       </View>
       <BoardTab />
+      <View></View>
       <View style={styles.body}>
         <BoardPack />
       </View>

@@ -6,9 +6,10 @@ import Calendar from '../pages/calendar/Calendar';
 import ListAdd from '../pages/listAdd/ListAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
-import {Platform} from 'react-native';
+import {Platform, Dimensions} from 'react-native';
 
 const Tab = createBottomTabNavigator();
+const deviceHeight = Dimensions.get('window').height;
 
 const TabNavigation = () => {
   return (
@@ -45,13 +46,13 @@ const TabNavigation = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           borderTopWidth: 0,
-          paddingLeft: 47,
+          paddingTop: 5,
           paddingRight: 47,
-          flex: 0.1,
+          paddingLeft: 47,
           backgroundColor: '#ffffff',
           ...Platform.select({
-            ios: {shadowOpacity: 0},
-            android: {elevation: 0},
+            ios: {shadowOpacity: 0, height: deviceHeight / 8},
+            android: {elevation: 0, height: (deviceHeight - 150) / 8},
           }),
         },
         tabBarItemStyle: {

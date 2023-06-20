@@ -1,9 +1,11 @@
-import {Platform, Dimensions} from 'react-native';
+import {StyleSheet, Platform, Dimensions} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import React from 'react';
+import LinearGradient from 'react-native-linear-gradient';
 import {variables} from '../../../style/variables';
 import BoardAll from './BoardAll';
 import BoardCustom from './BoardCustom';
+import {View} from 'react-native-animatable';
 
 const deviceHeight = Dimensions.get('window').height;
 
@@ -27,26 +29,48 @@ const BoardPack = () => {
   };
 
   const sliderHeight = Platform.select({
-    ios: deviceHeight / 1.4,
+    ios: deviceHeight / 1.38,
     android: deviceHeight / 1.31,
-  });
-  const itemHeight = Platform.select({
-    ios: 210,
-    android: 210,
   });
 
   return (
-    <Carousel
-      data={boardDatas}
-      renderItem={renderItem}
-      layout={'default'}
-      sliderHeight={sliderHeight}
-      itemHeight={itemHeight}
-      vertical={true}
-      loop={true}
-      inactiveSlideOpacity={0.7}
-    />
+    <View>
+      <LinearGradient
+        style={[styles.linearGradient, {top: 0}]}
+        start={{x: 0, y: 0.1}}
+        end={{x: 0, y: 0.9}}
+        colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
+      />
+      <Carousel
+        data={boardDatas}
+        renderItem={renderItem}
+        layout={'default'}
+        sliderHeight={sliderHeight}
+        itemHeight={210}
+        vertical={true}
+        loop={true}
+        inactiveSlideOpacity={0.8}
+      />
+      <LinearGradient
+        style={[styles.linearGradient]}
+        start={{x: 0, y: 0.1}}
+        end={{x: 0, y: 0.9}}
+        colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
+      />
+    </View>
   );
 };
 
 export default BoardPack;
+
+const styles = StyleSheet.create({
+  linearGradient: {
+    position: 'absolute',
+    width: '100%',
+    zIndex: 1,
+    ...Platform.select({
+      ios: {height: '15%', bottom: 42},
+      android: {height: '18%', bottom: 25},
+    }),
+  },
+});
