@@ -26,25 +26,30 @@ const BoardPack = () => {
     return null;
   };
 
+  const cardOffset = Platform.select({
+    ios: -46,
+    android: 26,
+  });
   const sliderHeight = Platform.select({
-    ios: deviceHeight / 1.4,
-    android: deviceHeight / 1.31,
+    ios: (deviceHeight - 510) * 4,
+    android: (deviceHeight - 590) * 4,
   });
   const itemHeight = Platform.select({
-    ios: 210,
-    android: 210,
+    ios: (deviceHeight - 630) * 8,
+    android: (deviceHeight - 740) * 8,
   });
 
   return (
     <Carousel
       data={boardDatas}
       renderItem={renderItem}
-      layout={'default'}
+      layout={'stack'}
+      layoutCardOffset={cardOffset}
       sliderHeight={sliderHeight}
       itemHeight={itemHeight}
       vertical={true}
       loop={true}
-      inactiveSlideOpacity={0.7}
+      inactiveSlideOpacity={1}
     />
   );
 };

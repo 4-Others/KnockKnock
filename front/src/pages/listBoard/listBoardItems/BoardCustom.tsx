@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 interface BoardCustomProps {
   title: string;
-  number: string;
+  number: number;
   color: string;
 }
 
@@ -26,7 +26,7 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
       inputRange: [-100, -50, 0],
-      outputRange: [-50, 0, -((deviceWidth - 255) * 0.5)],
+      outputRange: [-50, 0, -((deviceWidth - 300) * 0.5)],
     });
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
@@ -58,7 +58,7 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
           style={[styles.container, {backgroundColor: color}]}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.textContainer}>
-            <Text style={styles.total}>total memo</Text>
+            <Text style={styles.total}>total list</Text>
             <Text style={styles.number}>{number}</Text>
           </View>
         </ImageBackground>
@@ -75,36 +75,38 @@ const styles = StyleSheet.create({
     height: 178,
   },
   container: {
-    marginLeft: (deviceWidth - 272) / 2,
-    width: 272,
-    height: 178,
-    backgroundColor: variables.Mater_15,
-    borderRadius: 12,
+    marginLeft: (deviceWidth - 320) / 2,
+    width: 320,
+    height: 209,
+    borderRadius: 14,
   },
-  texture: {width: 272, height: 178},
+  texture: {width: 320, height: 209},
   title: {
-    marginTop: 45,
-    marginLeft: 15,
+    marginTop: 50,
+    marginLeft: 17,
     fontFamily: variables.font_3,
-    fontSize: 32,
+    fontSize: 36,
     color: variables.text_7,
   },
   textContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginTop: 55,
-    marginLeft: 15,
+    ...Platform.select({
+      ios: {marginTop: 80},
+      android: {marginTop: 70},
+    }),
+    marginLeft: 17,
   },
   total: {
-    marginBottom: 2,
+    marginBottom: 1,
     fontFamily: variables.font_5,
-    fontSize: 10,
+    fontSize: 13,
     color: variables.text_7,
   },
   number: {
     marginLeft: 5,
     fontFamily: variables.font_1,
-    fontSize: 14,
+    fontSize: 16,
     color: variables.text_7,
   },
   swipeContainer: {
@@ -112,12 +114,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 7,
     width: (deviceWidth - 272) / 2,
-    height: 178,
+    height: 209,
     backgroundColor: '#eeeeee',
     borderWidth: 0.6,
     borderColor: variables.line_1,
-    borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
   },
   buttonIcon: {
     ...Platform.select({

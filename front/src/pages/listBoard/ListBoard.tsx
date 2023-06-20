@@ -1,4 +1,4 @@
-import {StyleSheet, SafeAreaView, StatusBar, Platform} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
 import React from 'react';
 import {variables} from '../../style/variables';
@@ -6,6 +6,8 @@ import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import BoardPack from './listBoardItems/BoardPack';
 import BoardTab from './listBoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
+
+const deviceWidth = Dimensions.get('window').width;
 
 const ListBoard = () => {
   return (
@@ -25,21 +27,18 @@ const ListBoard = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: 'center',
     ...Platform.select({
-      ios: {top: 80},
-      android: {top: 60},
+      ios: {top: (deviceWidth - 30) / 8},
+      android: {top: (deviceWidth - 180) / 8},
     }),
   },
   header: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 30,
-    paddingRight: 22,
-    paddingBottom: 20,
-    paddingLeft: 22,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
   drawer: {
     position: 'absolute',
@@ -50,10 +49,9 @@ const styles = StyleSheet.create({
     right: 22,
   },
   body: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    height: '100%',
     borderTopWidth: 1,
     borderTopColor: '#eeeeee',
   },
