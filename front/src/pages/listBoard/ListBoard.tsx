@@ -1,6 +1,6 @@
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
-import React from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import BoardPack from './listBoardItems/BoardPack';
@@ -10,6 +10,8 @@ import LogoMark from '../../../assets/image/LogoMark';
 const deviceWidth = Dimensions.get('window').width;
 
 const ListBoard = () => {
+  const [activeItem, setActiveItem] = useState('전체');
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" />
@@ -17,14 +19,16 @@ const ListBoard = () => {
         <LogoMark darkMode={false} />
         <Icon name="menu" style={styles.drawer} />
       </View>
-      <BoardTab />
+      <BoardTab activeItem={activeItem} setActiveItem={setActiveItem} />
       <View></View>
       <View style={styles.body}>
-        <BoardPack />
+        <BoardPack activeItem={activeItem} setActiveItem={setActiveItem} />
       </View>
     </SafeAreaView>
   );
 };
+
+export default ListBoard;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +50,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-Medium',
     color: variables.text_1,
     fontSize: 18,
-    top: 18,
     right: 22,
   },
   body: {
@@ -57,5 +60,3 @@ const styles = StyleSheet.create({
     borderTopColor: '#eeeeee',
   },
 });
-
-export default ListBoard;

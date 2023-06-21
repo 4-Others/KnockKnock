@@ -6,7 +6,12 @@ import BoardDetail from '../BoardDetail';
 
 const Tab = createMaterialTopTabNavigator();
 
-const BoardTab = () => {
+type BoardTabProps = {
+  activeItem: string;
+  setActiveItem: (newValue: string) => void;
+};
+
+const BoardTab = ({activeItem, setActiveItem}: BoardTabProps) => {
   return (
     <View style={styles.container}>
       <Tab.Navigator
@@ -38,21 +43,10 @@ const BoardTab = () => {
           tabBarScrollEnabled: true,
         })}>
         <Tab.Screen
-          name={'목록'}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{fontFamily: 'Pretendard-SemiBold', color: focused ? '#1b1b1b' : '#cccccc'}}>
-                List
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
           name={'전체'}
+          listeners={{
+            focus: () => setActiveItem('전체'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
@@ -67,6 +61,9 @@ const BoardTab = () => {
         />
         <Tab.Screen
           name={'공부'}
+          listeners={{
+            focus: () => setActiveItem('공부'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
@@ -81,6 +78,9 @@ const BoardTab = () => {
         />
         <Tab.Screen
           name={'운동'}
+          listeners={{
+            focus: () => setActiveItem('운동'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
@@ -95,6 +95,9 @@ const BoardTab = () => {
         />
         <Tab.Screen
           name={'루틴'}
+          listeners={{
+            focus: () => setActiveItem('루틴'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
@@ -109,6 +112,9 @@ const BoardTab = () => {
         />
         <Tab.Screen
           name={'모임'}
+          listeners={{
+            focus: () => setActiveItem('모임'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
@@ -123,6 +129,9 @@ const BoardTab = () => {
         />
         <Tab.Screen
           name={'업무'}
+          listeners={{
+            focus: () => setActiveItem('업무'),
+          }}
           component={BoardDetail}
           options={() => ({
             tabBarLabel: ({focused}) => (
