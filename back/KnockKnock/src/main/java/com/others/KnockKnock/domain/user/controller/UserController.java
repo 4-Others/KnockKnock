@@ -5,6 +5,7 @@ import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.service.UserService;
+import com.others.KnockKnock.domain.user.status.Status;
 import com.others.KnockKnock.security.jwt.JwtTokenProvider;
 import com.others.KnockKnock.security.jwt.RefreshTokenRequest;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class UserController {
                 .email(email)
                 .password(encryptedPassword)
                 .emailVerified(false)
+                .status(Status.ACTIVE)
                 .build();
         userRepository.save(user);
 
@@ -56,7 +58,9 @@ public class UserController {
         if (!user.isEmailVerified()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"Email not verified"}));
         }
-
+        if (user.getStatus() != Status.ACTIVE) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"Cannot login. User is not active."}));
+        }
         // 패스워드 일치 여부 확인
         if(!password.equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"패스워드가 틀렸어요!"}));

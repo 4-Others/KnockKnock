@@ -1,5 +1,5 @@
 jwt:
-  key: ${JWT_SECRET_KEY}
+  secret: ${JWT_SECRET_KEY}
   expirationMs: 3600000
 token:
   expiration:
@@ -15,6 +15,10 @@ spring:
       database-platform: org.hibernate.dialect.H2Dialect
       hibernate:
         ddl-auto: create
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
   mail:
     host: smtp.gmail.com
     port: 587
