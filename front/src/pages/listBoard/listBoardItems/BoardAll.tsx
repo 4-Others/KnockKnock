@@ -7,19 +7,23 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 interface BoardAllProps {
+  listBoardId: number;
   number: number;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardAll: React.FC<BoardAllProps> = ({number}) => {
+const BoardAll: React.FC<BoardAllProps> = ({listBoardId, number}) => {
   const swipeRef = useRef<Swipeable>(null);
+  useEffect(() => {
+    swipeRef.current?.close();
+  }, [listBoardId]);
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
@@ -42,6 +46,7 @@ const BoardAll: React.FC<BoardAllProps> = ({number}) => {
   return (
     <View style={styles.fullWidth}>
       <Swipeable
+        key={listBoardId}
         ref={swipeRef}
         friction={2}
         renderRightActions={renderRightActions}

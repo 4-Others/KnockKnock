@@ -1,16 +1,21 @@
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {variables} from '../../style/variables';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import BoardPack from './listBoardItems/BoardPack';
 import BoardTab from './listBoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
+import boardData from './listBoardItems/boardData.json';
 
 const deviceWidth = Dimensions.get('window').width;
 
 const ListBoard = () => {
-  const [activeItem, setActiveItem] = useState('전체');
+  const [active, setActive] = useState(boardData[0].listBoardId);
+
+  const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
+    setActive(newValue);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -19,10 +24,10 @@ const ListBoard = () => {
         <LogoMark darkMode={false} />
         <Icon name="menu" style={styles.drawer} />
       </View>
-      <BoardTab activeItem={activeItem} setActiveItem={setActiveItem} />
+      <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View></View>
       <View style={styles.body}>
-        <BoardPack activeItem={activeItem} setActiveItem={setActiveItem} />
+        <BoardPack active={active} onActiveChange={handleActiveChange} />
       </View>
     </SafeAreaView>
   );

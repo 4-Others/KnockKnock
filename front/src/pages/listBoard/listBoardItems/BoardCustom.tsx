@@ -7,12 +7,13 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 interface BoardCustomProps {
+  listBoardId: number;
   title: string;
   number: number;
   color: string;
@@ -20,8 +21,11 @@ interface BoardCustomProps {
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
+const BoardCustom: React.FC<BoardCustomProps> = ({listBoardId, title, number, color}) => {
   const swipeRef = useRef<Swipeable>(null);
+  useEffect(() => {
+    swipeRef.current?.close();
+  }, [listBoardId]);
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
@@ -48,6 +52,7 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
   return (
     <View style={styles.fullWidth}>
       <Swipeable
+        key={listBoardId}
         ref={swipeRef}
         friction={2}
         renderRightActions={renderRightActions}

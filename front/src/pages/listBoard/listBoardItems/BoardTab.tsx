@@ -1,17 +1,33 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import React from 'react';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import React, {useEffect} from 'react';
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabNavigationProp,
+} from '@react-navigation/material-top-tabs';
+import {useNavigation} from '@react-navigation/native';
+import boardData from './boardData.json';
 import {variables} from '../../../style/variables';
-import BoardDetail from '../BoardDetail';
 
 const Tab = createMaterialTopTabNavigator();
+type TabNavProp = MaterialTopTabNavigationProp<{[key: string]: undefined}>;
+
+const DisplayNone = () => null;
 
 type BoardTabProps = {
-  activeItem: string;
-  setActiveItem: (newValue: string) => void;
+  active: number;
+  onActiveChange: (newValue: number) => void;
 };
 
-const BoardTab = ({activeItem, setActiveItem}: BoardTabProps) => {
+const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
+  const navigation = useNavigation<TabNavProp>();
+
+  useEffect(() => {
+    const activeTab = boardData.find(data => data.listBoardId === active);
+    if (activeTab) {
+      navigation.navigate(activeTab.title);
+    }
+  }, [active]);
+
   return (
     <View style={styles.container}>
       <Tab.Navigator
@@ -42,108 +58,26 @@ const BoardTab = ({activeItem, setActiveItem}: BoardTabProps) => {
           },
           tabBarScrollEnabled: true,
         })}>
-        <Tab.Screen
-          name={'전체'}
-          listeners={{
-            focus: () => setActiveItem('전체'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                전체
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name={'공부'}
-          listeners={{
-            focus: () => setActiveItem('공부'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                공부
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name={'운동'}
-          listeners={{
-            focus: () => setActiveItem('운동'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                운동
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name={'루틴'}
-          listeners={{
-            focus: () => setActiveItem('루틴'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                루틴
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name={'모임'}
-          listeners={{
-            focus: () => setActiveItem('모임'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                모임
-              </Text>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name={'업무'}
-          listeners={{
-            focus: () => setActiveItem('업무'),
-          }}
-          component={BoardDetail}
-          options={() => ({
-            tabBarLabel: ({focused}) => (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                업무
-              </Text>
-            ),
-          })}
-        />
+        {boardData.map(item => (
+          <Tab.Screen
+            key={item.listBoardId.toString()}
+            name={item.title}
+            listeners={{
+              focus: () => onActiveChange(item.listBoardId),
+            }}
+            component={DisplayNone}
+            options={() => ({
+              tabBarLabel: ({focused}) => (
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
+                  {item.title}
+                </Text>
+              ),
+            })}
+          />
+        ))}
       </Tab.Navigator>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity>
