@@ -11,7 +11,7 @@ export const CheckBox: React.FC<CheckProps> = ({func}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        setOn(prevOn => !prevOn);
+        setOn(on => !on);
         func();
       }}
       style={on ? styles.checkState : styles.unCheckState}>
