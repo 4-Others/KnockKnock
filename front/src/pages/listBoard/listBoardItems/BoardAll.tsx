@@ -15,15 +15,16 @@ import Icon from 'react-native-vector-icons/AntDesign';
 interface BoardAllProps {
   listBoardId: number;
   number: number;
+  active: number;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardAll: React.FC<BoardAllProps> = ({listBoardId, number}) => {
+const BoardAll: React.FC<BoardAllProps> = ({listBoardId, number, active}) => {
   const swipeRef = useRef<Swipeable>(null);
   useEffect(() => {
     swipeRef.current?.close();
-  }, [listBoardId]);
+  }, [active]);
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({

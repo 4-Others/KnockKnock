@@ -32,6 +32,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
           key={item.listBoardId.toString()}
           listBoardId={item.listBoardId}
           number={item.number}
+          active={active}
         />
       );
     } else if (item.type === 'BoardCustom') {
@@ -47,6 +48,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
           title={item.title}
           number={item.number}
           color={colorValue}
+          active={active}
         />
       );
     }

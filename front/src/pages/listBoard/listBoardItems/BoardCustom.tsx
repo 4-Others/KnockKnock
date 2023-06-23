@@ -17,15 +17,16 @@ interface BoardCustomProps {
   title: string;
   number: number;
   color: string;
+  active: number;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardCustom: React.FC<BoardCustomProps> = ({listBoardId, title, number, color}) => {
+const BoardCustom: React.FC<BoardCustomProps> = ({listBoardId, title, number, color, active}) => {
   const swipeRef = useRef<Swipeable>(null);
   useEffect(() => {
     swipeRef.current?.close();
-  }, [listBoardId]);
+  }, [active]);
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
