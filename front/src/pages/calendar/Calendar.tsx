@@ -130,6 +130,9 @@ const Calendar: React.FC = () => {
     agendaDayNumColor: variables.text_4, // 요일 글씨 색상
     agendaTodayColor: variables.main, // 당일 글씨 색상
     agendaKnobColor: '#ffffff60', // Knob => 문고리 / 캘린더 접었다폈다 하는 아이콘 색상
+    indicatorColor: 'red',
+    selectedDayBackgroundColor: 'white',
+    selectedDayTextColor: variables.main,
   };
 
   const toggleComplete = (day: string, itemId?: number) => {
@@ -199,6 +202,12 @@ const Calendar: React.FC = () => {
         theme={theme}
         markedDates={{...markedDates, ...multiDotProps()}}
         pagingEnabled={true} // 페이지 단위로 스냅하도록 설정
+        initialNumToRender={5}
+        windowSize={3}
+        maxToRenderPerBatch={3}
+        updateCellsBatchingPeriod={20}
+        removeClippedSubviews={false}
+        onEndReachedThreshold={0.1}
       />
       <StatusBar />
     </View>

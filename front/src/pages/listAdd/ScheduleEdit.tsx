@@ -18,7 +18,7 @@ const ListAdd = () => {
   const [contentText, setContentText] = useState('');
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="일정 등록" />
+      <Header title="일정 편집" />
       <View style={styles.contentLayout}>
         <TextInput
           placeholder="일정을 입력해 주세요."
