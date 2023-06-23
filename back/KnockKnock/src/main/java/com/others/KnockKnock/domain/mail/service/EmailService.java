@@ -1,17 +1,12 @@
 package com.others.KnockKnock.domain.mail.service;
 
 import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
-import com.others.KnockKnock.domain.mail.entity.EmailConfirmToken;
-import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRedisRepository;
-import com.others.KnockKnock.domain.mail.repository.EmailConfirmTokenRepository;
+import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import io.jsonwebtoken.io.IOException;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -20,20 +15,20 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Service
 public class EmailService {
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
-    private final EmailConfirmTokenRepository emailConfirmTokenRepository;
-    private final EmailConfirmRandomKeyRedisRepository emailConfirmRandomKeyRedisRepository;
+    private final EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository;
     private final TemplateEngine templateEngine;
 
-    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmTokenRepository emailConfirmTokenRepository, EmailConfirmRandomKeyRedisRepository emailConfirmRandomKeyRedisRepository) {
+    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository) {
         this.javaMailSender = javaMailSender;
         this.userRepository = userRepository;
-        this.emailConfirmTokenRepository = emailConfirmTokenRepository;
-        this.emailConfirmRandomKeyRedisRepository = emailConfirmRandomKeyRedisRepository;
+        this.emailConfirmRandomKeyRepository = emailConfirmRandomKeyRepository;
+
 
         // Create and configure the template engine
         templateEngine = new SpringTemplateEngine();
@@ -50,9 +45,15 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(recipientEmail);
             helper.setSubject(subject);
-
+            String randomKey = generateRandomKey(7);
+            // EmailConfirmRandomKey 저장
+            EmailConfirmRandomKey confirmRandomKey = EmailConfirmRandomKey.builder()
+                    .email(recipientEmail)
+                    .randomKey(randomKey)
+                    .build();
+            emailConfirmRandomKeyRepository.save(confirmRandomKey);
             // Get email template
-            String emailTemplate = getEmailTemplate(recipientEmail, generateRandomKey(7));
+            String emailTemplate = getEmailTemplate(recipientEmail, randomKey);
             helper.setText(emailTemplate, true);
 
             javaMailSender.send(message);
@@ -82,52 +83,45 @@ public class EmailService {
         long expiration = 300L; // 5 minutes (in milliseconds)
 
         EmailConfirmRandomKey emailConfirmRandomKey = EmailConfirmRandomKey.builder()
-                .id(email)
+                .email(email)
                 .randomKey(randomKey)
                 .expiration(expiration)
                 .build();
 
-        emailConfirmRandomKeyRedisRepository.save(emailConfirmRandomKey);
+        emailConfirmRandomKeyRepository.save(emailConfirmRandomKey);
 
         return emailConfirmRandomKey;
     }
-    public void verifyEmail(String tokenOrKey) {
-        EmailConfirmToken token = emailConfirmTokenRepository.findByToken(tokenOrKey)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 토큰입니다."));
 
-        // 토큰이 만료되었는지 확인
-        if (token.isExpired()) {
-            throw new IllegalArgumentException("토큰이 만료되었습니다.");
+    public void verifyEmail(String tokenOrKey, String email, String password) {
+        // 이메일 검증 로직 수행
+        EmailConfirmRandomKey emailConfirmRandomKey = emailConfirmRandomKeyRepository.findById(email)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
+
+        String randomKey = emailConfirmRandomKey.getRandomKey();
+
+        if (!randomKey.equals(tokenOrKey)) {
+            throw new IllegalArgumentException("인증 코드가 유효하지 않습니다.");
         }
-
-        // 인증 처리 로직 수행
-        String userEmail = token.getEmail();
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setEmailVerified(true);
-        userRepository.save(user);
-
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            // 기존 사용자의 정보 업데이트
+            User user = existingUser.get();
+            user.setPassword(password);
+            user.setEmailVerified(true); // 이메일 인증 완료로 설정
+            userRepository.save(user);
+        } else {
+            // 새로운 사용자 등록
+            User user = User.builder()
+                    .email(email)
+                    .password(password)
+                    .emailVerified(true) // 이메일 인증 완료로 설정
+                    .build();
+            userRepository.save(user);
+        }
         // 토큰 삭제
-        emailConfirmTokenRepository.delete(token);
+        emailConfirmRandomKeyRepository.deleteById(email);
     }
-//    public String getEmailTemplate(String recipientEmail, String randomKey) {
-//        try {
-//            // Read the email template file
-//            ClassPathResource resource = new ClassPathResource("email_template.html");
-//            byte[] fileData = FileCopyUtils.copyToByteArray(resource.getInputStream());
-//            String template = new String(fileData);
-//
-//            // Replace placeholders with actual values
-//            template = template.replace("${recipientEmail}", recipientEmail);
-//            template = template.replace("${randomKey}", randomKey);
-//
-//            return template;
-//        } catch (IOException e) {
-//            throw new RuntimeException("Failed to read email template.", e);
-//        } catch (java.io.IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
     public String getEmailTemplate(String recipientEmail, String randomKey) {
         try {
             // Create the Thymeleaf context and set variables
