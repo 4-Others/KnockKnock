@@ -19,6 +19,17 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: always
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: MyScheduler
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            dataSource: myDataSource
+            tablePrefix: QRTZ_
+            isClustered: false
+            useProperties: false
   mail:
     host: smtp.gmail.com
     port: 587

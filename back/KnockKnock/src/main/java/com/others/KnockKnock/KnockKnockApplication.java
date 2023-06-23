@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @EnableJpaAuditing
-//@EnableScheduling
+@EnableScheduling
 @SpringBootApplication
 public class KnockKnockApplication {
 
