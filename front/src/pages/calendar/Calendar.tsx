@@ -4,23 +4,7 @@ import {StyleSheet, TouchableOpacity, View, Text, StatusBar, Image} from 'react-
 import events from './calendarData.json';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
-import {CheckBox} from '../../components/CheckBox';
 import LogoMark from '../../../assets/image/LogoMark';
-
-interface Event {
-  alerts: string;
-  calendarId: number;
-  content: string;
-  createdAt: string;
-  endAt: string;
-  modifiedAt: string;
-  period: string;
-  startAt: string;
-  tag: {
-    color: string;
-    title: string;
-  };
-}
 
 interface MarkedDate {
   selected: boolean;
@@ -34,11 +18,15 @@ interface Item {
   name: string;
   height: number;
   day: string;
+  id?: number;
+  complete?: boolean;
+  color?: string;
 }
 
 const Calendar: React.FC = () => {
   const [items, setItems] = useState<{[key: string]: Item[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
   const [selected, setSelected] = useState(() => new Date()); // 선택한 날짜 state로 저장 & 업데이트
+
   const timeToString = (time: number) => {
     const date = new Date(time);
     return date.toISOString().split('T')[0];
@@ -58,18 +46,20 @@ const Calendar: React.FC = () => {
   // 원하는 범위 만큼 아이템 리스트 랜더링
   const loadItems = (day: any) => {
     const newItems: {[key: string]: Item[]} = {...items};
-
     for (let i = -20; i < 19; i++) {
       // 선택된 날짜 기반 -20일부터 19일까지 출력
       const time = dateFormat(day.timestamp + i * 24 * 60 * 60 * 1000);
       if (!newItems[time]) {
         newItems[time] = [];
         const calendarData = events.filter(item => dateFormat(item.startAt) === time);
-        calendarData.forEach((item, i) => {
+        calendarData.forEach(item => {
           newItems[time].push({
+            id: item.calendarId,
             name: item.title,
             height: 0,
             day: dateFormat(item.startAt),
+            complete: false,
+            color: item.tag.color,
           });
         });
       }
@@ -142,17 +132,18 @@ const Calendar: React.FC = () => {
     agendaKnobColor: '#ffffff60', // Knob => 문고리 / 캘린더 접었다폈다 하는 아이콘 색상
   };
 
-  const [checkedItems, setCheckedItems] = useState<number[]>([]);
-
-  const handleToggleCheck = (index: number) => {
-    setCheckedItems(prevItems => {
-      if (prevItems.includes(index)) {
-        return prevItems.filter(item => item !== index);
-      } else {
-        return [...prevItems, index];
-      }
+  const toggleComplete = (day: string, itemId?: number) => {
+    setItems(prevItems => {
+      const updatedItems = prevItems[day].map(item => {
+        if (item.id === itemId) {
+          return {...item, complete: !item.complete};
+        }
+        return item;
+      });
+      return {...prevItems, [day]: updatedItems};
     });
   };
+
   const RenderItem = (item: Item) => {
     return (
       <TouchableOpacity style={styles.item}>
@@ -163,17 +154,17 @@ const Calendar: React.FC = () => {
           endColor={'#ffffff05'}
           offset={[0, 1]}>
           <View style={styles.content}>
-            <View style={styles.colorChip}></View>
+            <View style={[styles.colorChip, {backgroundColor: item.color}]}></View>
             <View style={styles.textBox}>
-              <Text style={[styles.title, checkedItems ? styles.check : styles.unCheck]}>
+              <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
                 {item.name}
               </Text>
               <Text style={styles.time}>{item.day}</Text>
             </View>
           </View>
           <TouchableOpacity
-            onPress={() => handleToggleCheck}
-            style={checkedItems ? styles.checkState : styles.unCheckState}>
+            style={item.complete ? styles.checkState : styles.unCheckState}
+            onPress={() => toggleComplete(item.day, item.id)}>
             <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
           </TouchableOpacity>
         </Shadow>
@@ -244,7 +235,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: variables.line_1,
     borderRadius: 10,
-    backgroundColor: variables.Mater_1,
     marginRight: 10,
   },
   textBox: {},
