@@ -7,21 +7,24 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-interface BoardCustomProps {
-  title: string;
+interface BoardAllProps {
+  boardId: number;
   number: number;
-  color: string;
+  active: number;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
+const BoardAll: React.FC<BoardAllProps> = ({boardId, number, active}) => {
   const swipeRef = useRef<Swipeable>(null);
+  useEffect(() => {
+    swipeRef.current?.close();
+  }, [active]);
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
@@ -30,10 +33,6 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
     });
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
-        <RectButton>
-          <Icon name="edit" style={styles.buttonIcon} />
-        </RectButton>
-        <View style={styles.partition} />
         <RectButton>
           <Icon name="adduser" style={styles.buttonIcon} />
         </RectButton>
@@ -48,6 +47,7 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
   return (
     <View style={styles.fullWidth}>
       <Swipeable
+        key={boardId}
         ref={swipeRef}
         friction={2}
         renderRightActions={renderRightActions}
@@ -55,8 +55,8 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
         overshootRight={false}>
         <ImageBackground
           source={require('../../../../assets/image/card_graphic.png')}
-          style={[styles.container, {backgroundColor: color}]}>
-          <Text style={styles.title}>{title}</Text>
+          style={styles.container}>
+          <Text style={styles.title}>전체</Text>
           <View style={styles.textContainer}>
             <Text style={styles.total}>total list</Text>
             <Text style={styles.number}>{number}</Text>
@@ -67,17 +67,18 @@ const BoardCustom: React.FC<BoardCustomProps> = ({title, number, color}) => {
   );
 };
 
-export default BoardCustom;
+export default BoardAll;
 
 const styles = StyleSheet.create({
   fullWidth: {
     width: deviceWidth,
-    height: 178,
+    height: 209,
   },
   container: {
     marginLeft: (deviceWidth - 320) / 2,
     width: 320,
     height: 209,
+    backgroundColor: variables.Mater_15,
     borderRadius: 14,
   },
   texture: {width: 320, height: 209},
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   swipeContainer: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 7,
+    paddingVertical: 18,
     width: (deviceWidth - 272) / 2,
     height: 209,
     backgroundColor: '#eeeeee',

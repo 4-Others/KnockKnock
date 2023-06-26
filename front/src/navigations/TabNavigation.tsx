@@ -1,9 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CustomIcon from '../components/CustomIcon';
-import ListBoard from '../pages/listBoard/ListBoard';
+import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
-import ListAdd from '../pages/listAdd/ListAdd';
+import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
 import {Platform, Dimensions} from 'react-native';
@@ -19,10 +19,10 @@ const TabNavigation = () => {
         tabBarIcon: ({focused}) => {
           let iconSource;
 
-          if (route.name === 'List Board') {
+          if (route.name === 'Schedule Board') {
             iconSource = focused
-              ? require('../../assets/image/iconOn_listBoard.png')
-              : require('../../assets/image/iconOff_listBoard.png');
+              ? require('../../assets/image/iconOn_scheduleBoard.png')
+              : require('../../assets/image/iconOff_scheduleBoard.png');
           } else if (route.name === 'Calendar') {
             iconSource = focused
               ? require('../../assets/image/iconOn_calendar.png')
@@ -59,9 +59,9 @@ const TabNavigation = () => {
           flex: 1,
         },
       })}>
-      <Tab.Screen name="List Board" component={ListBoard} />
+      <Tab.Screen name="Schedule Board" component={ScheduleBoard} />
       <Tab.Screen name="Calendar" component={Calendar} />
-      <Tab.Screen name="Add" component={ListAdd} />
+      <Tab.Screen name="Add" component={ScheduleAdd} />
       <Tab.Screen name="Search" component={Search} />
       <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3}} />
     </Tab.Navigator>

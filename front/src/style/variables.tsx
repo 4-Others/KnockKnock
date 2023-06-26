@@ -1,3 +1,5 @@
+export type VariablesKeys = keyof typeof variables;
+
 export const variables = {
   main: '#ff5789',
   // 텍스트 컬러 진한 순

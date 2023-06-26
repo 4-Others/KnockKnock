@@ -1,15 +1,22 @@
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {variables} from '../../style/variables';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import BoardPack from './listBoardItems/BoardPack';
-import BoardTab from './listBoardItems/BoardTab';
+import BoardPack from './BoardItems/BoardPack';
+import BoardTab from './BoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
+import boardData from './BoardItems/boardData.json';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const ListBoard = () => {
+const ScheduleBoard = () => {
+  const [active, setActive] = useState(boardData[0].boardId);
+
+  const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
+    setActive(newValue);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" />
@@ -17,14 +24,16 @@ const ListBoard = () => {
         <LogoMark darkMode={false} />
         <Icon name="menu" style={styles.drawer} />
       </View>
-      <BoardTab />
+      <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View></View>
       <View style={styles.body}>
-        <BoardPack />
+        <BoardPack active={active} onActiveChange={handleActiveChange} />
       </View>
     </SafeAreaView>
   );
 };
+
+export default ScheduleBoard;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +55,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-Medium',
     color: variables.text_1,
     fontSize: 18,
-    top: 18,
     right: 22,
   },
   body: {
@@ -57,5 +65,3 @@ const styles = StyleSheet.create({
     borderTopColor: '#eeeeee',
   },
 });
-
-export default ListBoard;

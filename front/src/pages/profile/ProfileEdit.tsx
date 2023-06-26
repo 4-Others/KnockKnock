@@ -2,12 +2,10 @@ import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 
-const BoardDetail = () => {
+const ProfileEdit = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>1. 아침먹고 땡,</Text>
-      <Text style={styles.text}>2. 점심먹고 땡,</Text>
-      <Text style={styles.text}>3. 창문을 열어보니 비가 오네요~</Text>
+      <Text style={styles.text}>응애, 나 애기 프로필편집</Text>
     </SafeAreaView>
   );
 };
@@ -25,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BoardDetail;
+export default ProfileEdit;

@@ -1,29 +1,56 @@
 import {StyleSheet, Platform, Dimensions} from 'react-native';
+import {View} from 'react-native-animatable';
+import React, {useRef, useEffect} from 'react';
 import Carousel from 'react-native-snap-carousel';
-import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import {variables} from '../../../style/variables';
+import {variables, VariablesKeys} from '../../../style/variables';
+import boardData from './boardData.json';
 import BoardAll from './BoardAll';
 import BoardCustom from './BoardCustom';
-import {View} from 'react-native-animatable';
 
 const deviceHeight = Dimensions.get('window').height;
 
-const boardDatas = [
-  {type: 'BoardAll', number: 65},
-  {type: 'BoardCustom', title: '공부', number: 6, color: variables.Mater_6},
-  {type: 'BoardCustom', title: '운동', number: 13, color: variables.Mater_13},
-  {type: 'BoardCustom', title: '루틴', number: 10, color: variables.Mater_3},
-  {type: 'BoardCustom', title: '모임', number: 9, color: variables.Mater_8},
-  {type: 'BoardCustom', title: '업무', number: 27, color: variables.Mater_1},
-];
+type BoardPackProps = {
+  active: number;
+  onActiveChange: (newValue: number) => void;
+};
 
-const BoardPack = () => {
+const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
+  const carouselRef = useRef<any>(null);
+
+  useEffect(() => {
+    const activeIndex = boardData.findIndex(data => data.boardId === active);
+    if (activeIndex !== -1) {
+      carouselRef.current?.snapToItem(activeIndex, false);
+    }
+  }, [active]);
+
   const renderItem = ({item}: {item: any}) => {
     if (item.type === 'BoardAll') {
-      return <BoardAll number={item.number} />;
+      return (
+        <BoardAll
+          key={item.boardId.toString()}
+          boardId={item.boardId}
+          number={item.number}
+          active={active}
+        />
+      );
     } else if (item.type === 'BoardCustom') {
-      return <BoardCustom title={item.title} number={item.number} color={item.color} />;
+      let colorValue = item.color;
+      if (colorValue.startsWith('variables.')) {
+        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+        colorValue = variables[colorKey];
+      }
+      return (
+        <BoardCustom
+          key={item.boardId.toString()}
+          boardId={item.boardId}
+          title={item.title}
+          number={item.number}
+          color={colorValue}
+          active={active}
+        />
+      );
     }
     return null;
   };
@@ -42,7 +69,8 @@ const BoardPack = () => {
         colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
       />
       <Carousel
-        data={boardDatas}
+        ref={carouselRef}
+        data={boardData}
         renderItem={renderItem}
         layout={'default'}
         sliderHeight={sliderHeight}
@@ -50,6 +78,7 @@ const BoardPack = () => {
         vertical={true}
         loop={true}
         inactiveSlideOpacity={0.8}
+        onSnapToItem={index => onActiveChange(boardData[index].boardId)}
       />
       <LinearGradient
         style={[styles.linearGradient]}
@@ -60,7 +89,6 @@ const BoardPack = () => {
     </View>
   );
 };
-
 export default BoardPack;
 
 const styles = StyleSheet.create({

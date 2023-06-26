@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import {Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
-import {Image, TouchableOpacity, StyleSheet} from 'react-native';
+import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BackBtn from '../components/BackBtn';
 
 const Stack = createStackNavigator();
@@ -98,6 +99,7 @@ const MainNavigation = () => {
             })}>
             {props => <SignUp {...props} deps={deps} locate={locate} />}
           </Stack.Screen>
+          <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
         </>
       </Stack.Navigator>
     </NavigationContainer>

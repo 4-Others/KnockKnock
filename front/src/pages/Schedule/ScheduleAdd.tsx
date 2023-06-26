@@ -30,7 +30,7 @@ const ScheduleAdd = () => {
             <Image style={styles.icon} source={require('front/assets/image/tag_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>리스트 보드</Text>
+            <Text style={styles.inputTitle}>스케줄 보드</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
