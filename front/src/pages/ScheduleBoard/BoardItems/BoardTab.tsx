@@ -22,7 +22,7 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
   const navigation = useNavigation<TabNavProp>();
 
   useEffect(() => {
-    const activeTab = boardData.find(data => data.listBoardId === active);
+    const activeTab = boardData.find(data => data.boardId === active);
     if (activeTab) {
       navigation.navigate(activeTab.title);
     }
@@ -64,10 +64,10 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
         })}>
         {boardData.map(item => (
           <Tab.Screen
-            key={item.listBoardId.toString()}
+            key={item.boardId.toString()}
             name={item.title}
             listeners={{
-              focus: () => onActiveChange(item.listBoardId),
+              focus: () => onActiveChange(item.boardId),
             }}
             component={DisplayNone}
             options={() => ({

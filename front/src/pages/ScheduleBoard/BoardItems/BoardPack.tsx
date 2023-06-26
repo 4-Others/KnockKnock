@@ -19,7 +19,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
   const carouselRef = useRef<any>(null);
 
   useEffect(() => {
-    const activeIndex = boardData.findIndex(data => data.listBoardId === active);
+    const activeIndex = boardData.findIndex(data => data.boardId === active);
     if (activeIndex !== -1) {
       carouselRef.current?.snapToItem(activeIndex, false);
     }
@@ -29,8 +29,8 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
     if (item.type === 'BoardAll') {
       return (
         <BoardAll
-          key={item.listBoardId.toString()}
-          listBoardId={item.listBoardId}
+          key={item.boardId.toString()}
+          boardId={item.boardId}
           number={item.number}
           active={active}
         />
@@ -43,8 +43,8 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
       }
       return (
         <BoardCustom
-          key={item.listBoardId.toString()}
-          listBoardId={item.listBoardId}
+          key={item.boardId.toString()}
+          boardId={item.boardId}
           title={item.title}
           number={item.number}
           color={colorValue}
@@ -78,7 +78,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
         vertical={true}
         loop={true}
         inactiveSlideOpacity={0.8}
-        onSnapToItem={index => onActiveChange(boardData[index].listBoardId)}
+        onSnapToItem={index => onActiveChange(boardData[index].boardId)}
       />
       <LinearGradient
         style={[styles.linearGradient]}

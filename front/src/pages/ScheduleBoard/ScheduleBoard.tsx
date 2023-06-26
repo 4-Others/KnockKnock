@@ -11,7 +11,7 @@ import boardData from './BoardItems/boardData.json';
 const deviceWidth = Dimensions.get('window').width;
 
 const ScheduleBoard = () => {
-  const [active, setActive] = useState(boardData[0].listBoardId);
+  const [active, setActive] = useState(boardData[0].boardId);
 
   const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
     setActive(newValue);

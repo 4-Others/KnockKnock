@@ -99,26 +99,7 @@ const MainNavigation = () => {
             })}>
             {props => <SignUp {...props} deps={deps} locate={locate} />}
           </Stack.Screen>
-          <Stack.Screen
-            name="BoardAdd"
-            component={BoardAdd}
-            options={({navigation}) => ({
-              title: '리스트 보드 추가',
-              headerBackTitleVisible: false,
-              headerBackImage: () => <BackBtn goBack={() => goBack(navigation)} />,
-              headerRight: () =>
-                locate !== 'Success' ? (
-                  <TouchableOpacity onPress={next}>
-                    <Image
-                      source={require('front/assets/image/check_btn.png')}
-                      style={{marginRight: 24, width: 24, height: 24}}
-                    />
-                  </TouchableOpacity>
-                ) : null,
-              headerStyle: styles.headerStyle, // 추가
-              headerTitleAlign: 'left', // 왼쪽 정렬 추가
-            })}
-          />
+          <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
         </>
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CustomIcon from '../components/CustomIcon';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
-import ListAdd from '../pages/listAdd/ListAdd';
+import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
 import {Platform, Dimensions} from 'react-native';
@@ -61,7 +61,7 @@ const TabNavigation = () => {
       })}>
       <Tab.Screen name="Schedule Board" component={ScheduleBoard} />
       <Tab.Screen name="Calendar" component={Calendar} />
-      <Tab.Screen name="Add" component={ListAdd} />
+      <Tab.Screen name="Add" component={ScheduleAdd} />
       <Tab.Screen name="Search" component={Search} />
       <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3}} />
     </Tab.Navigator>

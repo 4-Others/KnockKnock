@@ -13,14 +13,14 @@ import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 interface BoardAllProps {
-  listBoardId: number;
+  boardId: number;
   number: number;
   active: number;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardAll: React.FC<BoardAllProps> = ({listBoardId, number, active}) => {
+const BoardAll: React.FC<BoardAllProps> = ({boardId, number, active}) => {
   const swipeRef = useRef<Swipeable>(null);
   useEffect(() => {
     swipeRef.current?.close();
@@ -47,7 +47,7 @@ const BoardAll: React.FC<BoardAllProps> = ({listBoardId, number, active}) => {
   return (
     <View style={styles.fullWidth}>
       <Swipeable
-        key={listBoardId}
+        key={boardId}
         ref={swipeRef}
         friction={2}
         renderRightActions={renderRightActions}

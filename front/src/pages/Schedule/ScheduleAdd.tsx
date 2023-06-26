@@ -13,15 +13,15 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
-const BoardAdd = () => {
+const ScheduleAdd = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="리스트 보드 추가" />
+      <Header title="스케줄 등록" />
       <View style={styles.contentLayout}>
         <TextInput
-          placeholder="보드 이름을 입력해 주세요."
+          placeholder="스케줄을 입력해 주세요."
           style={styles.contentTitleInput}
           onChangeText={text => setContentTitle(text)}
         />
@@ -30,7 +30,7 @@ const BoardAdd = () => {
             <Image style={styles.icon} source={require('front/assets/image/tag_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>초대하기</Text>
+            <Text style={styles.inputTitle}>스케줄 보드</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
@@ -39,7 +39,7 @@ const BoardAdd = () => {
                     marginTop: 10,
                   },
                 ]}>
-                초대할 지인의 메일을 입력하세요.
+                보드를 선택하세요.
               </Text>
               <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
             </TouchableOpacity>
@@ -50,7 +50,7 @@ const BoardAdd = () => {
             <Image style={styles.icon} source={require('front/assets/image/time_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 보드 컬러</Text>
+            <Text style={styles.inputTitle}>스케줄 시작</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
@@ -59,18 +59,49 @@ const BoardAdd = () => {
                     marginTop: 10,
                   },
                 ]}>
-                원하시는 컬러를 선택하세요.
+                시작 날짜와 시간을 선택하세요.
               </Text>
               <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
             </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.contentInput}>
+          <View style={styles.iconContainer}>
+            <Image style={styles.icon} source={require('front/assets/image/alarm_icon.png')} />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputTitle}>스케줄 끝</Text>
+            <TouchableOpacity style={styles.selectContainer}>
+              <Text
+                style={[
+                  styles.placeHolder,
+                  {
+                    marginTop: 10,
+                  },
+                ]}>
+                종료 날짜와 시간을 선택하세요.
+              </Text>
+              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.contentInput}>
+          <View style={styles.iconContainer}>
+            <Image style={styles.icon} source={require('front/assets/image/edit_icon.png')} />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputTitle}>메모</Text>
+            <TextInput
+              placeholder="메모를 입력하세요"
+              style={[styles.inputTitle, {marginTop: 10}]}
+              onChangeText={text => setContentText(text)}
+            />
           </View>
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
-export default BoardAdd;
 
 const styles = StyleSheet.create({
   container: {
@@ -132,3 +163,5 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
 });
+
+export default ScheduleAdd;
