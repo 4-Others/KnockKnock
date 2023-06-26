@@ -13,15 +13,15 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
-const ListAdd = () => {
+const ScheduleEdit = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="일정 등록" />
+      <Header title="스케줄 편집" />
       <View style={styles.contentLayout}>
         <TextInput
-          placeholder="일정을 입력해 주세요."
+          placeholder="스케줄을 입력해 주세요."
           style={styles.contentTitleInput}
           onChangeText={text => setContentTitle(text)}
         />
@@ -50,7 +50,7 @@ const ListAdd = () => {
             <Image style={styles.icon} source={require('front/assets/image/time_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>일정 시작</Text>
+            <Text style={styles.inputTitle}>스케줄 시작</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
@@ -70,7 +70,7 @@ const ListAdd = () => {
             <Image style={styles.icon} source={require('front/assets/image/alarm_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>일정 끝</Text>
+            <Text style={styles.inputTitle}>스케줄 끝</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
@@ -164,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListAdd;
+export default ScheduleEdit;
