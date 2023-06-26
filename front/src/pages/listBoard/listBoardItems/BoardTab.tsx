@@ -28,6 +28,10 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
     }
   }, [active]);
 
+  const handleAddPress = () => {
+    navigation.navigate('BoardAdd');
+  };
+
   return (
     <View style={styles.container}>
       <Tab.Navigator
@@ -80,7 +84,7 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
         ))}
       </Tab.Navigator>
       <View style={styles.addButtonContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleAddPress}>
           <Text style={styles.addButton}>+</Text>
         </TouchableOpacity>
       </View>

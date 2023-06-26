@@ -2,17 +2,17 @@ import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 
-const BoardDetail = () => {
+const BoardAdd = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>1. 아침먹고 땡,</Text>
-      <Text style={styles.text}>2. 점심먹고 땡,</Text>
-      <Text style={styles.text}>3. 창문을 열어보니 비가 오네요~</Text>
+      <Text style={styles.text}>제목: 리스트 보드 추가</Text>
+      <Text style={styles.text}>- 초대하기</Text>
+      <Text style={styles.text}>- 카테고리 컬러</Text>
     </SafeAreaView>
   );
 };
 
-export default BoardDetail;
+export default BoardAdd;
 
 const styles = StyleSheet.create({
   container: {

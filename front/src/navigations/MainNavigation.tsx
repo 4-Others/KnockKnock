@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import {Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
-import {Image, TouchableOpacity, StyleSheet} from 'react-native';
+import BoardAdd from '../pages/listBoard/BoardAdd';
 import BackBtn from '../components/BackBtn';
 
 const Stack = createStackNavigator();
@@ -61,7 +62,6 @@ const MainNavigation = () => {
   }, [deps]);
 
   return (
-    
     <NavigationContainer
       theme={{
         ...DefaultTheme,
@@ -99,6 +99,26 @@ const MainNavigation = () => {
             })}>
             {props => <SignUp {...props} deps={deps} locate={locate} />}
           </Stack.Screen>
+          <Stack.Screen
+            name="BoardAdd"
+            component={BoardAdd}
+            options={({navigation}) => ({
+              title: '리스트 보드 추가',
+              headerBackTitleVisible: false,
+              headerBackImage: () => <BackBtn goBack={() => goBack(navigation)} />,
+              headerRight: () =>
+                locate !== 'Success' ? (
+                  <TouchableOpacity onPress={next}>
+                    <Image
+                      source={require('front/assets/image/check_btn.png')}
+                      style={{marginRight: 24, width: 24, height: 24}}
+                    />
+                  </TouchableOpacity>
+                ) : null,
+              headerStyle: styles.headerStyle, // 추가
+              headerTitleAlign: 'left', // 왼쪽 정렬 추가
+            })}
+          />
         </>
       </Stack.Navigator>
     </NavigationContainer>
