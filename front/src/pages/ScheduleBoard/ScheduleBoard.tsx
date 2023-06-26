@@ -3,14 +3,14 @@ import {View} from 'react-native-animatable';
 import React, {useCallback, useState} from 'react';
 import {variables} from '../../style/variables';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import BoardPack from './listBoardItems/BoardPack';
-import BoardTab from './listBoardItems/BoardTab';
+import BoardPack from './BoardItems/BoardPack';
+import BoardTab from './BoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
-import boardData from './listBoardItems/boardData.json';
+import boardData from './BoardItems/boardData.json';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const ListBoard = () => {
+const ScheduleBoard = () => {
   const [active, setActive] = useState(boardData[0].listBoardId);
 
   const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
@@ -33,7 +33,7 @@ const ListBoard = () => {
   );
 };
 
-export default ListBoard;
+export default ScheduleBoard;
 
 const styles = StyleSheet.create({
   container: {

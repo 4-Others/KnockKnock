@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
-import BoardAdd from '../pages/listBoard/BoardAdd';
+import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BackBtn from '../components/BackBtn';
 
 const Stack = createStackNavigator();
