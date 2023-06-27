@@ -24,28 +24,6 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
   );
 };
 
-interface CheckBtnProps {
-  text: string;
-  link: string;
-  on: boolean;
-  onPress: () => void;
-}
-
-const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
-  return (
-    <TouchableOpacity style={styles.essential} onPress={onPress}>
-      <Image
-        style={on ? [styles.checkImg, styles.largeCheck] : [styles.unCheckImg, styles.largeCheck]}
-        source={require('front/assets/image/check.png')}
-      />
-      <Text style={styles.unCheckText}>{text}</Text>
-      <Text style={styles.linkText} onPress={() => Linking.openURL(link)}>
-        보기
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
 const Agree: React.FC = () => {
   const [allAgree, setAllAgree] = React.useState(false);
   const [eachAgree, seteachAgree] = React.useState([

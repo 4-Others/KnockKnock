@@ -12,7 +12,6 @@ const Tab = createBottomTabNavigator();
 const deviceHeight = Dimensions.get('window').height;
 
 const TabNavigation = () => {
-  Icon.loadFont();
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -68,18 +67,5 @@ const TabNavigation = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontFamily: 'Pretendard-Medium',
-    color: variables.main,
-    fontSize: 30,
-  },
-});
 
 export default TabNavigation;
