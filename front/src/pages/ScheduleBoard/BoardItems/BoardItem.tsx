@@ -12,7 +12,7 @@ import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-interface BoardCustomProps {
+interface BoardItemProps {
   boardId: number;
   title: string;
   number: number;
@@ -22,7 +22,7 @@ interface BoardCustomProps {
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color, active}) => {
+const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
   const swipeRef = useRef<Swipeable>(null);
   useEffect(() => {
     swipeRef.current?.close();
@@ -37,10 +37,6 @@ const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color,
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
         <RectButton>
           <Icon name="edit" style={styles.buttonIcon} />
-        </RectButton>
-        <View style={styles.partition} />
-        <RectButton>
-          <Icon name="adduser" style={styles.buttonIcon} />
         </RectButton>
         <View style={styles.partition} />
         <RectButton>
@@ -73,12 +69,12 @@ const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color,
   );
 };
 
-export default BoardCustom;
+export default BoardItem;
 
 const styles = StyleSheet.create({
   fullWidth: {
     width: deviceWidth,
-    height: 178,
+    height: 209,
   },
   container: {
     marginLeft: (deviceWidth - 320) / 2,
@@ -118,7 +114,7 @@ const styles = StyleSheet.create({
   swipeContainer: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 7,
+    paddingVertical: 18,
     width: (deviceWidth - 272) / 2,
     height: 209,
     backgroundColor: '#eeeeee',
