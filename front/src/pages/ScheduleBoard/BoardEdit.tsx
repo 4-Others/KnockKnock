@@ -13,7 +13,7 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
-const BoardAdd = () => {
+const BoardEdit = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
   return (
@@ -70,7 +70,7 @@ const BoardAdd = () => {
   );
 };
 
-export default BoardAdd;
+export default BoardEdit;
 
 const styles = StyleSheet.create({
   container: {
