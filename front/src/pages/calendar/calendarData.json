@@ -1,7 +1,7 @@
 [
   {
     "calendarId": 1,
-    "title": "첫번째 테스트 일정",
+    "title": "첫번째 테스트 스케줄",
     "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-20 00:00:00",
@@ -16,7 +16,7 @@
   },
   {
     "calendarId": 2,
-    "title": "두번째 테스트 일정",
+    "title": "두번째 테스트 스케줄",
     "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-21 00:00:00",
@@ -31,7 +31,7 @@
   },
   {
     "calendarId": 3,
-    "title": "세번째 테스트 일정",
+    "title": "세번째 테스트 스케줄",
     "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-24 02:00:00",
@@ -46,7 +46,7 @@
   },
   {
     "calendarId": 4,
-    "title": "네번째 테스트 일정",
+    "title": "네번째 테스트 스케줄",
     "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-25 02:00:00",
@@ -61,7 +61,7 @@
   },
   {
     "calendarId": 5,
-    "title": "다섯번째 테스트 일정",
+    "title": "다섯번째 테스트 스케줄",
     "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-25 02:00:00",

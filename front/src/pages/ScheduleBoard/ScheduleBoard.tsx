@@ -1,28 +1,43 @@
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {variables} from '../../style/variables';
-import ListBoardPack from './listBoardItems/ListBoardPack';
-import ListTab from './listBoardItems/ListTab';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import BoardPack from './BoardItems/BoardPack';
+import BoardTab from './BoardItems/BoardTab';
 import LogoMark from '../../../assets/image/LogoMark';
+import boardData from './BoardItems/boardData.json';
 
-const ListBoard = () => {
+const deviceWidth = Dimensions.get('window').width;
+
+const ScheduleBoard = () => {
+  const [active, setActive] = useState(boardData[0].boardId);
+
+  const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
+    setActive(newValue);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#FFFFFF" />
       <View style={styles.header}>
         <LogoMark darkMode={false} />
-        <Text style={styles.drawer}>icon</Text>
+        <Icon name="menu" style={styles.drawer} />
       </View>
-      <ListTab />
+      <BoardTab active={active} onActiveChange={handleActiveChange} />
+      <View></View>
       <View style={styles.body}>
-        <ListBoardPack />
+        <BoardPack active={active} onActiveChange={handleActiveChange} />
       </View>
     </SafeAreaView>
   );
 };
 
+export default ScheduleBoard;
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: 'center',
     ...Platform.select({
       ios: {top: (deviceWidth - 30) / 8},
@@ -40,7 +55,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-Medium',
     color: variables.text_1,
     fontSize: 18,
-    top: 18,
     right: 22,
   },
   body: {
@@ -50,12 +64,4 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eeeeee',
   },
-  body: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#eeeeee',
-  },
 });
-
-export default ListBoard;
