@@ -46,7 +46,6 @@ public class UserController {
 
         return ResponseEntity.ok("이메일 인증을 해주세요.");
     }
-
     @PostMapping("/login")
     public ResponseEntity<Map<String, String[]>> login(@RequestBody @Valid UserDto.Login loginDto) {
         String email = loginDto.getEmail();
