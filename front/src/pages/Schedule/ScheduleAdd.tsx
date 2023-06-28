@@ -8,11 +8,10 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
-import {Picker} from '@react-native-community/picker';
 
 const ScheduleAdd = () => {
   const [contentTitle, setContentTitle] = useState('');
@@ -32,8 +31,6 @@ const ScheduleAdd = () => {
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.inputTitle}>스케줄 보드</Text>
-
-            <Picker />
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[

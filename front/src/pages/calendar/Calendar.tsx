@@ -1,12 +1,13 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {Agenda} from 'react-native-calendars';
-import {StyleSheet, TouchableOpacity, View, Text, StatusBar, Image} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Text, StatusBar, Image, ScrollView} from 'react-native';
 import events from './calendarData.json';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import LogoMark from '../../../assets/image/LogoMark';
+import {dateFormat} from './CalendarUtil';
 
-interface MarkedDate {
+export interface MarkedDate {
   selected: boolean;
   selectedColor: string;
   selectedTextColor: string;
@@ -14,30 +15,21 @@ interface MarkedDate {
   dots: {key: string; color: string; selectedDotColor?: string}[];
 }
 
-interface Item {
+export interface Item {
   name: string;
   height: number;
   day: string;
   id?: number;
   complete?: boolean;
   color?: string;
+  startAt?: string;
+  endAt?: string;
 }
 
 const Calendar: React.FC = () => {
   const [items, setItems] = useState<{[key: string]: Item[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
   const [selected, setSelected] = useState(() => new Date()); // 선택한 날짜 state로 저장 & 업데이트
-
-  const timeToString = (time: number) => {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
-  }; // YYYY-MM-DD
-
-  const dateFormat = (date?: string) => {
-    const currentDate = date
-      ? new Date(date).getTime() - new Date().getTimezoneOffset() * 60000
-      : new Date().getTime() - new Date().getTimezoneOffset() * 60000;
-    return timeToString(currentDate);
-  };
+  const scrollViewRef = useRef<ScrollView>(null); // ScrollView에 대한 ref 생성
 
   const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
@@ -46,7 +38,7 @@ const Calendar: React.FC = () => {
   // 원하는 범위 만큼 아이템 리스트 랜더링
   const loadItems = (day: any) => {
     const newItems: {[key: string]: Item[]} = {...items};
-    for (let i = -20; i < 19; i++) {
+    for (let i = 0; i < 19; i++) {
       // 선택된 날짜 기반 -20일부터 19일까지 출력
       const time = dateFormat(day.timestamp + i * 24 * 60 * 60 * 1000);
       if (!newItems[time]) {
@@ -60,12 +52,15 @@ const Calendar: React.FC = () => {
             day: dateFormat(item.startAt),
             complete: false,
             color: item.tag.color,
+            startAt: item.startAt.split(' ')[1].slice(0, 5),
+            endAt: item.endAt.split(' ')[1].slice(0, 5),
           });
         });
       }
     }
     setItems(newItems); // 전달받은 데이터 중 렌더링할 아이템에 필요한 요소만 새로 생성
   };
+
   // 이벤트가 있는 date 속성
   const markedDates = {
     [dateFormat(String(selected))]: {
@@ -147,31 +142,62 @@ const Calendar: React.FC = () => {
     });
   };
 
-  const RenderItem = (item: Item) => {
+  // const scrollToSelectedDate = () => {
+  //   if (scrollViewRef.current) {
+  //     const selectedDateIndex = Object.keys(items).findIndex(
+  //       date => date === dateFormat(timeToString(+selected)),
+  //     );
+  //     const yOffset = selectedDateIndex * 50; // 예시로 각 날짜의 높이를 80으로 가정
+  //     scrollViewRef.current.scrollTo({y: yOffset, animated: true});
+  //   }
+  // };
+
+  const RenderItem = (item: any) => {
+    const renderItemsData = item.items; // props로 받은 전체 일정들과 리스트 속성 중 일정들만 할당
+    const itemsKeyArray = Object.keys(renderItemsData).sort(); // 출력할 날짜들만 배열로 저장 후 오름차 순 정렬
+
     return (
-      <TouchableOpacity style={styles.item}>
-        <Shadow
-          style={styles.todo}
-          distance={8}
-          startColor={'#00000010'}
-          endColor={'#ffffff05'}
-          offset={[0, 1]}>
-          <View style={styles.content}>
-            <View style={[styles.colorChip, {backgroundColor: item.color}]}></View>
-            <View style={styles.textBox}>
-              <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-                {item.name}
-              </Text>
-              <Text style={styles.time}>{item.day}</Text>
+      <ScrollView ref={scrollViewRef} style={styles.scheduleListContainer}>
+        {itemsKeyArray.map((date, i) => {
+          const renderDateItem = renderItemsData[date];
+          return (
+            <View key={i}>
+              <Text style={styles.listDateTitle}>{date.replace(/-/g, '.')}</Text>
+              {renderDateItem.length > 0
+                ? renderDateItem.map((item: Item, i: number) => (
+                    <TouchableOpacity style={styles.item} key={i}>
+                      <Shadow
+                        style={styles.todo}
+                        distance={8}
+                        startColor={'#00000010'}
+                        endColor={'#ffffff05'}
+                        offset={[0, 1]}>
+                        <View style={styles.content}>
+                          <View style={[styles.colorChip, {backgroundColor: item.color}]}></View>
+                          <View style={styles.textBox}>
+                            <Text
+                              style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
+                              {item.name}
+                            </Text>
+                            <Text style={styles.time}>{`${item.startAt} ~ ${item.endAt}`}</Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity
+                          style={item.complete ? styles.checkState : styles.unCheckState}
+                          onPress={() => toggleComplete(item.day, item.id)}>
+                          <Image
+                            style={styles.checkIcon}
+                            source={require('front/assets/image/check.png')}
+                          />
+                        </TouchableOpacity>
+                      </Shadow>
+                    </TouchableOpacity>
+                  ))
+                : null}
             </View>
-          </View>
-          <TouchableOpacity
-            style={item.complete ? styles.checkState : styles.unCheckState}
-            onPress={() => toggleComplete(item.day, item.id)}>
-            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-          </TouchableOpacity>
-        </Shadow>
-      </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
     );
   };
 
@@ -191,9 +217,12 @@ const Calendar: React.FC = () => {
       <HeaderComponent />
       <Agenda
         style={{height: 360, borderBottomLeftRadius: 12, borderBottomRightRadius: 12}}
-        onDayPress={day => setSelected(new Date(day.dateString))}
+        onDayPress={day => {
+          setSelected(new Date(day.dateString));
+          // scrollToSelectedDate(); // 날짜 선택 시 스크롤 이동
+        }}
         items={items}
-        renderItem={item => RenderItem(item)}
+        renderList={items => RenderItem(items)}
         markingType={'multi-dot'}
         loadItemsForMonth={day => loadItems(day)}
         selected={today}
@@ -214,17 +243,12 @@ const Calendar: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
   },
-  item: {
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    marginTop: 17,
-  },
+  item: {marginBottom: 10},
   todo: {
     width: '100%',
     flexDirection: 'row',
@@ -305,6 +329,20 @@ const styles = StyleSheet.create({
   checkIcon: {
     width: 10,
     height: 6,
+  },
+  scheduleListContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingTop: 20,
+  },
+  listDateTitle: {
+    fontFamily: variables.font_3,
+    color: variables.text_5,
+    fontSize: 14,
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 
