@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 인증이 필요한 경로와 예외를 설정합니다.
         http.authorizeRequests()
-                .antMatchers("/api/v1/users/**").permitAll() // 회원가입 엔드포인트는 인증 없이 접근 가능하도록 설정
+                .antMatchers("/api/v1/**").permitAll() // 회원가입 엔드포인트는 인증 없이 접근 가능하도록 설정
                 .anyRequest().authenticated() // 다른 요청은 인증이 필요하도록 설정
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인증 예외 처리를 위한 커스텀 AuthenticationEntryPoint 설정

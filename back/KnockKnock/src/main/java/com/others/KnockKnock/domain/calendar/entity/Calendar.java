@@ -1,11 +1,15 @@
 package com.others.KnockKnock.domain.calendar.entity;
 
 import com.others.KnockKnock.audit.Auditable;
+import com.others.KnockKnock.domain.notification.interfaces.Notify;
+import com.others.KnockKnock.domain.tag.entity.Tag;
 import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -13,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Table(name = "Calendar")
-public class Calendar extends Auditable {
+public class Calendar extends Auditable implements Notify, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long calendarId;
@@ -27,12 +31,15 @@ public class Calendar extends Auditable {
     private String startAt;
     private String endAt;
 
-    private Boolean confirm;
+    private Boolean complete;
 
     @ElementCollection
     @CollectionTable(name = "calendar_alerts", joinColumns = @JoinColumn(name = "calendar_id"))
     @Column(name = "alerts")
     private List<Integer> alerts;
+
+    @OneToMany(mappedBy = "calendar", cascade = { CascadeType.REMOVE })
+    private List<Tag> tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
