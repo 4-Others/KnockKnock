@@ -13,12 +13,12 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
-const BoardAdd = () => {
+const BoardEdit = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="리스트 보드 추가" />
+      <Header title="리스트 보드 수정" />
       <View style={styles.contentLayout}>
         <TextInput
           placeholder="보드 이름을 입력해 주세요."
@@ -70,7 +70,7 @@ const BoardAdd = () => {
   );
 };
 
-export default BoardAdd;
+export default BoardEdit;
 
 const styles = StyleSheet.create({
   container: {
