@@ -8,6 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import React, {useRef, useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -28,6 +29,11 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
     swipeRef.current?.close();
   }, [active]);
 
+  const navigation = useNavigation<any>();
+  const handleEditPress = () => {
+    navigation.navigate('BoardEdit');
+  };
+
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
       inputRange: [-100, -50, 0],
@@ -35,7 +41,7 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
     });
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
-        <RectButton>
+        <RectButton onPress={handleEditPress}>
           <Icon name="edit" style={styles.buttonIcon} />
         </RectButton>
         <View style={styles.partition} />

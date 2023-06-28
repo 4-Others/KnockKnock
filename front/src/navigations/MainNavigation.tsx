@@ -6,6 +6,7 @@ import TabNavigation from './TabNavigation';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
 import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
+import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BackBtn from '../components/BackBtn';
 
 const Stack = createStackNavigator();
@@ -100,6 +101,7 @@ const MainNavigation = () => {
             {props => <SignUp {...props} deps={deps} locate={locate} />}
           </Stack.Screen>
           <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
+          <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
         </>
       </Stack.Navigator>
     </NavigationContainer>
