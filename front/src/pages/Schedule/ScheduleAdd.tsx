@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
