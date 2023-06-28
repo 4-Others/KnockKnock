@@ -11,6 +11,8 @@ import {
 import React, {useEffect, useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
+import Data from '../calendar/calendarData.json';
+
 const {width, height} = Dimensions.get('window');
 
 const ScheduleEdit = () => {
