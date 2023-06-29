@@ -2,10 +2,9 @@ import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-n
 import {View} from 'react-native-animatable';
 import React, {useCallback, useState} from 'react';
 import {variables} from '../../style/variables';
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
-import LogoMark from '../../../assets/image/LogoMark';
+import DrawHeader from '../../components/DrawHeader';
 import boardData from './BoardItems/boardData.json';
 
 const deviceWidth = Dimensions.get('window').width;
@@ -20,10 +19,7 @@ const ScheduleBoard = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" />
-      <View style={styles.header}>
-        <LogoMark darkMode={false} />
-        <Icon name="menu" style={styles.drawer} />
-      </View>
+      <DrawHeader />
       <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View></View>
       <View style={styles.body}>
