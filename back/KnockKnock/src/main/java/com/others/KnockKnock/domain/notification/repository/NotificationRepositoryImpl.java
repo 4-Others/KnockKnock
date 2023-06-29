@@ -85,7 +85,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     }
 
     private BooleanExpression calendarIdEq(Long calendarId) {
-        return calendarId != null ? notification.calendar.calendarId.eq(calendarId) : null;
+        return calendarId != null ? notification.schedule.scheduleId.eq(calendarId) : null;
     }
 
     private BooleanExpression notifyAtEq(String notifyAt) {

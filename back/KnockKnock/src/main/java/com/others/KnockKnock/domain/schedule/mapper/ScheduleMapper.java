@@ -1,7 +1,7 @@
-package com.others.KnockKnock.domain.calendar.mapper;
+package com.others.KnockKnock.domain.schedule.mapper;
 
-import com.others.KnockKnock.domain.calendar.dto.CalendarDto;
-import com.others.KnockKnock.domain.calendar.entity.Calendar;
+import com.others.KnockKnock.domain.schedule.dto.ScheduleDto;
+import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.tag.entity.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CalendarMapper {
-    CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
+public interface ScheduleMapper {
+    ScheduleMapper INSTANCE = Mappers.getMapper(ScheduleMapper.class);
 
     @Mapping(source = "tag", target = "tag")
-    CalendarDto.Response calendarToCalendarDtoResponse(Calendar calendar);
+    ScheduleDto.Response scheduleToScheduleDtoResponse(Schedule schedule);
 
     default Map<String, String> toMap(List<Tag> tag) {
         Map<String, String> tagMap = new HashMap<>();
@@ -30,5 +30,5 @@ public interface CalendarMapper {
         return tagMap;
     };
 
-    List<CalendarDto.Response> calendarListToCalendarDtoResponseList(List<Calendar> calendarList);
+    List<ScheduleDto.Response> scheduleListToScheduleDtoResponseList(List<Schedule> scheduleList);
 }

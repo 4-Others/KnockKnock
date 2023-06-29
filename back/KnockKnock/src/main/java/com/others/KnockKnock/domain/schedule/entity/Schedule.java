@@ -1,7 +1,6 @@
-package com.others.KnockKnock.domain.calendar.entity;
+package com.others.KnockKnock.domain.schedule.entity;
 
 import com.others.KnockKnock.audit.Auditable;
-import com.others.KnockKnock.domain.notification.interfaces.Notify;
 import com.others.KnockKnock.domain.tag.entity.Tag;
 import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
@@ -9,18 +8,17 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "Calendar")
-public class Calendar extends Auditable implements Notify, Serializable {
+@Table(name = "SCHEDULE")
+public class Schedule extends Auditable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long calendarId;
+    private Long scheduleId;
 
     private String title;
     private String content;
@@ -34,11 +32,11 @@ public class Calendar extends Auditable implements Notify, Serializable {
     private Boolean complete;
 
     @ElementCollection
-    @CollectionTable(name = "calendar_alerts", joinColumns = @JoinColumn(name = "calendar_id"))
-    @Column(name = "alerts")
+    @CollectionTable(name = "SCHEDULE_ALERTS", joinColumns = @JoinColumn(name = "SCHEDULE_ID"))
+    @Column(name = "ALERTS")
     private List<Integer> alerts;
 
-    @OneToMany(mappedBy = "calendar", cascade = { CascadeType.REMOVE })
+    @OneToMany(mappedBy = "schedule", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
     private List<Tag> tag;
 
     @ManyToOne(fetch = FetchType.LAZY)

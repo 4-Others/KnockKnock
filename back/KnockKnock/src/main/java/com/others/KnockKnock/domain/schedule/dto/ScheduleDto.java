@@ -1,7 +1,5 @@
-package com.others.KnockKnock.domain.calendar.dto;
+package com.others.KnockKnock.domain.schedule.dto;
 
-import com.others.KnockKnock.domain.calendar.entity.Calendar.Period;
-import com.others.KnockKnock.domain.tag.dto.TagDto;
 import com.others.KnockKnock.global.annotations.ValidEnum;
 import lombok.*;
 import org.springframework.lang.Nullable;
@@ -15,7 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CalendarDto {
+import static com.others.KnockKnock.domain.schedule.entity.Schedule.*;
+
+public class ScheduleDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
@@ -102,7 +102,7 @@ public class CalendarDto {
     @NoArgsConstructor
     @Builder
     public static class Response implements Serializable {
-        private Long calendarId;
+        private Long scheduleId;
         private String title;
         private String content;
         private Period period;

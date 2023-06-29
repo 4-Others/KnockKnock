@@ -1,7 +1,7 @@
 package com.others.KnockKnock.domain.notification.entity;
 
 import com.others.KnockKnock.audit.Auditable;
-import com.others.KnockKnock.domain.calendar.entity.Calendar;
+import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -29,9 +29,9 @@ public class Notification extends Auditable {
     private Boolean read;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CALENDAR_ID")
+    @JoinColumn(name = "SCHEDULE_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Calendar calendar;
+    private Schedule schedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")

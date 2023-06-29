@@ -1,7 +1,7 @@
-package com.others.KnockKnock.domain.calendar.controller;
+package com.others.KnockKnock.domain.schedule.controller;
 
-import com.others.KnockKnock.domain.calendar.dto.CalendarDto;
-import com.others.KnockKnock.domain.calendar.service.CalendarService;
+import com.others.KnockKnock.domain.schedule.dto.ScheduleDto;
+import com.others.KnockKnock.domain.schedule.service.ScheduleService;
 import com.others.KnockKnock.response.ApiResponse;
 import com.others.KnockKnock.utils.UriUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,30 +17,30 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/calendar")
+@RequestMapping("/api/v1/schedule")
 @Validated
-public class CalendarController {
-    private final String DEFAULT_URI = "/api/v1/calendar";
-    private final CalendarService calendarService;
+public class ScheduleController {
+    private final String DEFAULT_URI = "/api/v1/schedule";
+    private final ScheduleService scheduleService;
 
     @PostMapping
     // @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createCalendar(
+    public ResponseEntity<?> createSchedule(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @Valid @RequestBody CalendarDto.Post requestBody
+        @Valid @RequestBody ScheduleDto.Post requestBody
     ) {
         Long userId = 1L;
 
-        CalendarDto.Response response = calendarService.createCalendar(userId, requestBody);
+        ScheduleDto.Response response = scheduleService.createSchedule(userId, requestBody);
 
-        URI uri = UriUtil.createUri(DEFAULT_URI, response.getCalendarId());
+        URI uri = UriUtil.createUri(DEFAULT_URI, response.getScheduleId());
 
         return ResponseEntity.created(uri).body(ApiResponse.created("data", response));
     }
 
     @GetMapping
     // @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> findCalendarBy(
+    public ResponseEntity<?> findScheduleBy(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Pattern(
             regexp = "\\d{4}-\\d{2}",
@@ -50,33 +50,33 @@ public class CalendarController {
     ) {
         Long userId = 1L;
 
-        List<CalendarDto.Response> responses = calendarService.findByUserIdAndStartAtLike(userId, startAt);
+        List<ScheduleDto.Response> responses = scheduleService.findByUserIdAndStartAtLike(userId, startAt);
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
 
-    @PatchMapping("/{calendarId}")
+    @PatchMapping("/{schedule-id}")
     // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateCalendar(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @Positive @PathVariable("calendarId") Long calendarId,
-        @Valid @RequestBody CalendarDto.Patch requestBody
+        @Positive @PathVariable("schedule-id") Long scheduleId,
+        @Valid @RequestBody ScheduleDto.Patch requestBody
     ) {
         Long userId = 1L;
 
-        CalendarDto.Response response = calendarService.updateCalendar(userId, calendarId, requestBody);
+        ScheduleDto.Response response = scheduleService.updateSchedule(userId, scheduleId, requestBody);
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", response));
     }
 
-    @DeleteMapping("{calendar-id}")
+    @DeleteMapping("{schedule-id}")
     public ResponseEntity<?> deleteCalendar(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @Positive @PathVariable("calendar-id") Long calendarId
+        @Positive @PathVariable("schedule-id") Long scheduleId
     ) {
         Long userId = 1L;
 
-        calendarService.deleteCalendar(userId, calendarId);
+        scheduleService.deleteSchedule(userId, scheduleId);
 
         return ResponseEntity.noContent().build();
     }

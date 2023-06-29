@@ -43,8 +43,7 @@ public class NotificationController {
 
         List<NotificationDto.Response> responses = notificationService.updateReadStatus(userId, requestBody.getNotificationIds());
 
-        return ResponseEntity.ok()
-                   .body(ApiResponse.ok("data", responses));
+        return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
 
     @DeleteMapping("/{notification-id}")

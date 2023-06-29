@@ -1,10 +1,9 @@
-package com.others.KnockKnock.domain.calendar.service;
+package com.others.KnockKnock.domain.schedule.service;
 
-import com.others.KnockKnock.domain.calendar.dto.CalendarDto;
-import com.others.KnockKnock.domain.calendar.entity.Calendar;
-import com.others.KnockKnock.domain.calendar.entity.Calendar.Period;
-import com.others.KnockKnock.domain.calendar.mapper.CalendarMapper;
-import com.others.KnockKnock.domain.calendar.repository.CalendarRepository;
+import com.others.KnockKnock.domain.schedule.dto.ScheduleDto;
+import com.others.KnockKnock.domain.schedule.entity.Schedule;
+import com.others.KnockKnock.domain.schedule.mapper.ScheduleMapper;
+import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
 import com.others.KnockKnock.domain.notification.service.NotificationService;
 import com.others.KnockKnock.domain.tag.service.TagService;
 import com.others.KnockKnock.domain.user.entity.User;
@@ -17,21 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.others.KnockKnock.domain.schedule.entity.Schedule.*;
+
 @Service
 @RequiredArgsConstructor
-public class CalendarService {
+public class ScheduleService {
     private final UserRepository userRepository;
-    private final CalendarRepository calendarRepository;
-    private final CalendarMapper calendarMapper;
+    private final ScheduleRepository scheduleRepository;
+    private final ScheduleMapper scheduleMapper;
 
     private final NotificationService notificationService;
     private final TagService tagService;
 
-    public CalendarDto.Response createCalendar(Long userId, CalendarDto.Post requestBody) {
+    public ScheduleDto.Response createSchedule(Long userId, ScheduleDto.Post requestBody) {
         Optional<User> byEmail = userRepository.findByEmail("tester@tester.com");
         User user = byEmail.get();
 
-        Calendar createCalendar = Calendar.builder()
+        Schedule createSchedule = builder()
                                       .user(user)
                                       .title(requestBody.getTitle())
                                       .period(Period.valueOf(requestBody.getPeriod()))
@@ -43,17 +44,17 @@ public class CalendarService {
                                       .tag(new ArrayList<>())
                                       .build();
 
-        Calendar createdCalendar = calendarRepository.save(createCalendar);
+        Schedule createdSchedule = scheduleRepository.save(createSchedule);
 
-        tagService.createTag(createdCalendar, requestBody.getTag());
-        notificationService.createNotifications(createdCalendar);
+        tagService.createTag(createdSchedule, requestBody.getTag());
+        notificationService.createNotifications(createdSchedule);
 
-        return calendarMapper.calendarToCalendarDtoResponse(createdCalendar);
+        return scheduleMapper.scheduleToScheduleDtoResponse(createdSchedule);
     }
 
-    public CalendarDto.Response updateCalendar(Long userId, Long calendarId, CalendarDto.Patch requestBody) {
-        Calendar byCalendarIdAndUserId = findByCalendarIdAndUserId(userId, calendarId);
-        Calendar createCalendar = Calendar.builder()
+    public ScheduleDto.Response updateSchedule(Long userId, Long calendarId, ScheduleDto.Patch requestBody) {
+        Schedule byScheduleIdAndUserId = findByScheduleIdAndUserId(userId, calendarId);
+        Schedule createSchedule = builder()
                                       .title(requestBody.getTitle())
                                       .period(Period.valueOf(requestBody.getPeriod()))
                                       .content(requestBody.getContent())
@@ -64,42 +65,42 @@ public class CalendarService {
                                       .tag(new ArrayList<>())
                                       .build();
 
-        Calendar mergedCalendar = mergeCalendarInfo(byCalendarIdAndUserId, createCalendar);
-        Calendar updatedCalendar = calendarRepository.save(mergedCalendar);
+        Schedule mergedSchedule = mergeScheduleInfo(byScheduleIdAndUserId, createSchedule);
+        Schedule updatedSchedule = scheduleRepository.save(mergedSchedule);
 
-        tagService.updateTag(updatedCalendar, requestBody.getTag());
-        notificationService.updateNotifications(updatedCalendar);
+        tagService.updateTag(updatedSchedule, requestBody.getTag());
+        notificationService.updateNotifications(updatedSchedule);
 
-        return calendarMapper.calendarToCalendarDtoResponse(updatedCalendar);
+        return scheduleMapper.scheduleToScheduleDtoResponse(updatedSchedule);
     }
 
-    public void deleteCalendar(Long userId, Long calendarId) {
-        Calendar byCalendarIdAndUserId = findByCalendarIdAndUserId(userId, calendarId);
+    public void deleteSchedule(Long userId, Long calendarId) {
+        Schedule byScheduleIdAndUserId = findByScheduleIdAndUserId(userId, calendarId);
 
-        calendarRepository.delete(byCalendarIdAndUserId);
+        scheduleRepository.delete(byScheduleIdAndUserId);
     }
 
-    public List<CalendarDto.Response> findByUserIdAndStartAtLike(Long userId, String startAt) {
-        List<Calendar> byUserIdAndDate = calendarRepository.findByUserIdAndStartAtLike(userId, startAt);
+    public List<ScheduleDto.Response> findByUserIdAndStartAtLike(Long userId, String startAt) {
+        List<Schedule> byUserIdAndDate = scheduleRepository.findByUserIdAndStartAtLike(userId, startAt);
 
-        return calendarMapper.calendarListToCalendarDtoResponseList(byUserIdAndDate);
+        return scheduleMapper.scheduleListToScheduleDtoResponseList(byUserIdAndDate);
     }
 
     @Transactional(readOnly = true)
-    public Calendar findByCalendarIdAndUserId(Long userId, Long calendarId) {
-        Optional<Calendar> byCalendarId = calendarRepository.findByCalendarIdAndUserId(userId, calendarId);
+    public Schedule findByScheduleIdAndUserId(Long userId, Long calendarId) {
+        Optional<Schedule> byCalendarId = scheduleRepository.findByScheduleIdAndUserId(userId, calendarId);
 
         return byCalendarId.orElseThrow(() -> new BusinessLogicException(ExceptionCode.NOT_FOUND));
     }
 
-    public Calendar mergeCalendarInfo(Calendar destination, Calendar source) {
+    public Schedule mergeScheduleInfo(Schedule destination, Schedule source) {
         if (destination == null || source == null) {
             return null;
         }
 
         return Optional.of(destination)
                    .map(dest -> {
-                           Calendar build = dest.toBuilder()
+                           Schedule build = dest.toBuilder()
                                                 .title(source.getTitle() != null ? source.getTitle() : dest.getTitle())
                                                 .period(source.getPeriod() != null ? source.getPeriod() : dest.getPeriod())
                                                 .content(source.getContent() != null ? source.getContent() : dest.getContent())
