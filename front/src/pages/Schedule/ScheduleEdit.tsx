@@ -8,10 +8,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import Data from '../calendar/calendarData.json';
 
 const {width, height} = Dimensions.get('window');
 
@@ -72,7 +71,7 @@ const ScheduleEdit = () => {
             <Image style={styles.icon} source={require('front/assets/image/alarm_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 끝</Text>
+            <Text style={styles.inputTitle}>스케줄 종료</Text>
             <TouchableOpacity style={styles.selectContainer}>
               <Text
                 style={[
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
   contentTitleInput: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     paddingBottom: 16,
@@ -146,12 +145,12 @@ const styles = StyleSheet.create({
   inputTitle: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
   },
   placeHolder: {
     fontFamily: variables.font_3,
     color: variables.text_6,
-    fontSize: 16,
+    fontSize: 14,
   },
   arrowIcon: {
     width: 16,

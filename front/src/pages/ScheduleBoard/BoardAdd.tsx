@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   contentTitleInput: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     paddingBottom: 16,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   inputTitle: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
   },
   placeHolder: {
     fontFamily: variables.font_3,

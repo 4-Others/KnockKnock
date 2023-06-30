@@ -67,4 +67,6 @@ export const variables = {
       {offsetX: -0.5, offsetY: -0.5, blurRadius: 1, spreadRadius: 1, color: 'rgba(0, 0, 0, 0.1)'},
     ],
   },
+  // 배경 컬러
+  back_1: '#f5f5f5',
 };

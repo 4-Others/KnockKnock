@@ -1,11 +1,18 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, StatusBar, Image, ScrollView} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
+import {useNavigation, StackActions} from '@react-navigation/native';
 
 const ScheduleItem = ({item, onPress}: any) => {
+  const navigation = useNavigation();
+
+  const goToScheduleEdit = () => {
+    navigation.dispatch(StackActions.push('ScheduleEdit', {locate: undefined}));
+  };
+
   return (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
       <Shadow
         style={styles.todo}
         distance={8}
