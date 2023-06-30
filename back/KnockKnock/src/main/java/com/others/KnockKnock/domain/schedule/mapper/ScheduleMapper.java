@@ -19,7 +19,7 @@ public interface ScheduleMapper {
     @Mapping(source = "tag", target = "tag")
     ScheduleDto.Response scheduleToScheduleDtoResponse(Schedule schedule);
 
-    default Map<String, String> toMap(List<Tag> tag) {
+    default Map<String, String> tagToMap(List<Tag> tag) {
         Map<String, String> tagMap = new HashMap<>();
 
         for (Tag t : tag) {
@@ -28,7 +28,7 @@ public interface ScheduleMapper {
         }
 
         return tagMap;
-    };
+    }
 
     List<ScheduleDto.Response> scheduleListToScheduleDtoResponseList(List<Schedule> scheduleList);
 }

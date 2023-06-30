@@ -13,4 +13,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s WHERE s.user.userId = :userId AND s.startAt LIKE CONCAT(:date, '%')")
     List<Schedule> findByUserIdAndStartAtLike(Long userId, String date);
+
+    @Query("SELECT s FROM Schedule s where s.user.userId = :userId")
+    List<Schedule> findAllByUserId(Long userId);
+
+    @Query("SELECT s FROM Schedule s join s.tag t where s.user.userId = :userId and t.name = :tagName")
+    List<Schedule> findAllByUserIdAndTagName(Long userId, String tagName);
 }

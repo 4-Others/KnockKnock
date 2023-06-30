@@ -115,4 +115,13 @@ public class ScheduleDto {
         private String createdAt;
         private String modifiedAt;
     }
+
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor
+    @Builder
+    public static class TagGroup implements Serializable {
+        private String tag;
+        private Long schedules;
+    }
 }

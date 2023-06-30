@@ -40,7 +40,19 @@ public class ScheduleController {
 
     @GetMapping
     // @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> findScheduleBy(
+    public ResponseEntity<?> findAllSchedule(
+        // @AuthenticationPrincipal UserPrincipal userPrincipal,
+    ) {
+        Long userId = 1L;
+
+        List<ScheduleDto.TagGroup> responses = scheduleService.findAllSchedule(userId);
+
+        return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
+    }
+
+    @GetMapping("/calendar")
+    // @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> findCalendar(
         // @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Pattern(
             regexp = "\\d{4}-\\d{2}",
@@ -50,7 +62,20 @@ public class ScheduleController {
     ) {
         Long userId = 1L;
 
-        List<ScheduleDto.Response> responses = scheduleService.findByUserIdAndStartAtLike(userId, startAt);
+        List<ScheduleDto.Response> responses = scheduleService.findCalendar(userId, startAt);
+
+        return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
+    }
+
+    @GetMapping("/tag")
+    // @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> findTag(
+        // @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @RequestParam String tagName
+    ) {
+        Long userId = 1L;
+
+        List<ScheduleDto.Response> responses = scheduleService.findTag(userId, tagName);
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }

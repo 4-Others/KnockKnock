@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.others.KnockKnock.domain.schedule.entity.Schedule.*;
 
@@ -80,7 +82,51 @@ public class ScheduleService {
         scheduleRepository.delete(byScheduleIdAndUserId);
     }
 
-    public List<ScheduleDto.Response> findByUserIdAndStartAtLike(Long userId, String startAt) {
+    public List<ScheduleDto.TagGroup> findAllSchedule(Long userId) {
+        List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);
+
+        return Stream.concat(
+                Stream.of(
+                    ScheduleDto.TagGroup.builder()
+                        .tag("All")
+                        .schedules((long) schedules.size())
+                        .build()
+                ),
+                schedules.stream()
+                    .map(s -> s.getTag().get(0).getName())
+                    .distinct()
+                    .map(t -> ScheduleDto.TagGroup.builder()
+                                  .tag(t)
+                                  .schedules(
+                                      schedules.stream()
+                                          .filter(s -> s.getTag().get(0).getName().equals(t))
+                                          .count()
+                                  )
+                                  .build()
+                    )
+            )
+               .collect(Collectors.toList());
+    }
+
+    public List<ScheduleDto.Response> findTag(Long userId, String tagName) {
+        List<Schedule> schedules;
+
+        if (tagName.equalsIgnoreCase("All")) {
+            schedules = scheduleRepository.findAllByUserId(userId);
+        } else {
+            // return scheduleMapper.scheduleListToScheduleDtoResponseList(
+            //     schedules.stream()
+            //         .filter(s -> s.getTag().get(0).getName().equalsIgnoreCase(tagName))
+            //         .collect(Collectors.toList())
+            // );
+
+            schedules = scheduleRepository.findAllByUserIdAndTagName(userId, tagName);
+        }
+
+        return scheduleMapper.scheduleListToScheduleDtoResponseList(schedules);
+    }
+
+    public List<ScheduleDto.Response> findCalendar(Long userId, String startAt) {
         List<Schedule> byUserIdAndDate = scheduleRepository.findByUserIdAndStartAtLike(userId, startAt);
 
         return scheduleMapper.scheduleListToScheduleDtoResponseList(byUserIdAndDate);
