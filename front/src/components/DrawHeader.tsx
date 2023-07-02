@@ -1,14 +1,24 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import LogoMark from '../../assets/image/LogoMark';
 import {variables} from '../style/variables';
+import {useNavigation, StackActions} from '@react-navigation/native';
 
 const DrawHeader = () => {
+  const navigation = useNavigation();
+
+  const goToHome = () => {
+    navigation.dispatch(StackActions.push('TabNavigator', {locate: undefined}));
+  };
   return (
     <View style={styles.header}>
-      <LogoMark darkMode={false} />
-      <Icon name="menu" style={styles.drawer} />
+      <TouchableOpacity style={{justifyContent: 'center'}} onPress={goToHome}>
+        <LogoMark darkMode={false} />
+      </TouchableOpacity>
+      <TouchableOpacity style={{justifyContent: 'center'}}>
+        <Icon name="menu" style={styles.drawer} />
+      </TouchableOpacity>
     </View>
   );
 };

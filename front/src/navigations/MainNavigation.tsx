@@ -8,6 +8,7 @@ import SignUp from '../pages/signUp/SignUp';
 import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BackBtn from '../components/BackBtn';
+import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 
 const Stack = createStackNavigator();
 
@@ -102,6 +103,11 @@ const MainNavigation = () => {
           </Stack.Screen>
           <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
           <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
+          <Stack.Screen
+            name="ScheduleEdit"
+            component={ScheduleEdit}
+            options={{headerShown: false}}
+          />
         </>
       </Stack.Navigator>
     </NavigationContainer>
