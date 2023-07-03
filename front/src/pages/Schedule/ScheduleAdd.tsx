@@ -1,99 +1,42 @@
-import {
-  StyleSheet,
-  SafeAreaView,
-  Text,
-  TextInput,
-  Dimensions,
-  View,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, Text, TextInput, Dimensions, View, Image} from 'react-native';
 import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
+import {SelectBoard, SelectEndTime, SelectStartTime} from '../../components/SelectOption';
+
 const {width, height} = Dimensions.get('window');
 
 const ScheduleAdd = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
+  const [selectedBoard, setselectedBoard] = useState('');
+  const [selectedStartTime, setselectedStartTime] = useState('');
+  const [selectedEndTime, setselectedEndTime] = useState('');
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={scheduleOptionStyles.container}>
       <Header title="스케줄 등록" />
-      <View style={styles.contentLayout}>
+      <View style={scheduleOptionStyles.contentLayout}>
         <TextInput
           placeholder="스케줄을 입력해 주세요."
-          style={styles.contentTitleInput}
+          style={scheduleOptionStyles.contentTitleInput}
           onChangeText={text => setContentTitle(text)}
         />
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/tag_icon.png')} />
+        <SelectBoard setState={setContentTitle} />
+        <SelectStartTime setState={setselectedStartTime} />
+        <SelectEndTime setState={setselectedEndTime} />
+        <View style={scheduleOptionStyles.contentInput}>
+          <View style={scheduleOptionStyles.iconContainer}>
+            <Image
+              style={scheduleOptionStyles.icon}
+              source={require('front/assets/image/edit_icon.png')}
+            />
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 보드</Text>
-            <TouchableOpacity style={styles.selectContainer}>
-              <Text
-                style={[
-                  styles.placeHolder,
-                  {
-                    marginTop: 10,
-                  },
-                ]}>
-                보드를 선택하세요.
-              </Text>
-              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/time_icon.png')} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 시작</Text>
-            <TouchableOpacity style={styles.selectContainer}>
-              <Text
-                style={[
-                  styles.placeHolder,
-                  {
-                    marginTop: 10,
-                  },
-                ]}>
-                시작 날짜와 시간을 선택하세요.
-              </Text>
-              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/alarm_icon.png')} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 종료</Text>
-            <TouchableOpacity style={styles.selectContainer}>
-              <Text
-                style={[
-                  styles.placeHolder,
-                  {
-                    marginTop: 10,
-                  },
-                ]}>
-                종료 날짜와 시간을 선택하세요.
-              </Text>
-              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/edit_icon.png')} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>메모</Text>
+          <View style={scheduleOptionStyles.inputContainer}>
+            <Text style={scheduleOptionStyles.inputTitle}>메모</Text>
             <TextInput
               placeholder="메모를 입력하세요"
-              style={[styles.inputTitle, {marginTop: 10}]}
+              style={[scheduleOptionStyles.inputTitle, {marginTop: 10}]}
               onChangeText={text => setContentText(text)}
             />
           </View>
@@ -103,7 +46,7 @@ const ScheduleAdd = () => {
   );
 };
 
-const styles = StyleSheet.create({
+export const scheduleOptionStyles = StyleSheet.create({
   container: {
     width: width,
     height: height,
@@ -145,22 +88,6 @@ const styles = StyleSheet.create({
     fontFamily: variables.font_3,
     color: variables.text_2,
     fontSize: 14,
-  },
-  placeHolder: {
-    fontFamily: variables.font_3,
-    color: variables.text_6,
-    fontSize: 14,
-  },
-  arrowIcon: {
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    transform: [{scaleX: -1}],
-  },
-  selectContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
 });
 
