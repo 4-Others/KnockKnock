@@ -1,5 +1,6 @@
 package com.others.KnockKnock.domain.user.controller;
 
+import com.others.KnockKnock.domain.user.dto.BaseResponse;
 import com.others.KnockKnock.domain.user.dto.UserDto;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
@@ -40,7 +41,7 @@ public class UserController {
                 .email(email)
                 .password(encryptedPassword)
                 .emailVerified(false)
-                .status(Status.ACTIVE)
+                .status(Status.INACTIVE)
                 .build();
         userRepository.save(user);
 
@@ -109,4 +110,17 @@ public class UserController {
         userService.deleteUser(email);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
     }
+    @ResponseBody
+    @GetMapping("/kakao")
+    public BaseResponse<String> kakaoCallback(@RequestParam String code){
+        String response = "성공적으로 카카오 로그인 API 코드를 불러왔습니다.";
+        System.out.println(code);
+        return  new BaseResponse<String>(response);
+    }
+//    @ResponseBody
+//    @GetMapping("/kakao")
+//    public ResponseEntity<String> kakaoCallback(@RequestParam String code){
+//        System.out.println(code);
+//        return ResponseEntity.ok("성공적으로 카카오 로그인 API 코드를 불러왔습니다.");
+//    }
 }

@@ -4,6 +4,7 @@ import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
 import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
+import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -109,6 +110,7 @@ public class EmailService {
             User user = existingUser.get();
             user.setPassword(password);
             user.setEmailVerified(true); // 이메일 인증 완료로 설정
+            user.setStatus(Status.ACTIVE);
             userRepository.save(user);
         } else {
             // 새로운 사용자 등록

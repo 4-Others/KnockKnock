@@ -10,13 +10,7 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-//    private final long accessTokenExpirationMs;
-//    private final long refreshTokenExpirationMs;
-//
-//    public JwtTokenProvider(TokenConfig tokenConfig) {
-//        this.accessTokenExpirationMs = tokenConfig.getAccessTokenExpirationMs();
-//        this.refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
-//    }
+
     private final TokenConfig tokenConfig;
 
     public JwtTokenProvider(TokenConfig tokenConfig) {
@@ -35,31 +29,6 @@ public class JwtTokenProvider {
      * @param email 사용자 식별자
      * @return 생성된 JWT 토큰
      */
-//    public String[] generateTokens(String email) {
-//        Date now = new Date();
-//        TokenConfig tokenConfig = new TokenConfig();
-//        long accessTokenExpirationMs = tokenConfig.getAccessTokenExpirationMs();
-//        long refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
-//        Date accessTokenExpiration = new Date(now.getTime() + accessTokenExpirationMs);
-//        Date refreshTokenExpiration = new Date(now.getTime() + refreshTokenExpirationMs);
-//
-//        // Access Token 생성
-//        String accessToken = Jwts.builder()
-//                .setSubject(email)
-//                .setIssuedAt(now)
-//                .setExpiration(accessTokenExpiration)
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//
-//        String refreshToken = Jwts.builder()
-//                .setSubject(email + "-refresh")
-//                .setIssuedAt(now)
-//                .setExpiration(refreshTokenExpiration)
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//
-//        return new String[]{"accessToken : " + accessToken, "refreshToken : " + refreshToken};
-//    }
     public String generateAccessToken(String email) {
         Date now = new Date();
         TokenConfig tokenConfig = new TokenConfig();

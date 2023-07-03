@@ -6,6 +6,23 @@ token:
     access: 3600000
     refresh: 86400000
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: fdfae2918a363efc5fad0a501f3dcd55
+            redirect-uri: "http://localhots:8080/login/oauth2/code/kakao"
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code
+            scope: profile_image, account_email
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: id
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
