@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
@@ -9,11 +9,13 @@ import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BackBtn from '../components/BackBtn';
 import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
+import BottomSheet from '../components/BottomSheet';
 
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
   const isLogin = true;
+  const [isOpen, setIsOpen] = useState(false);
 
   const [deps, setDeps] = useState([
     {Agree: true},
@@ -110,6 +112,8 @@ const MainNavigation = () => {
           />
         </>
       </Stack.Navigator>
+      <Text onPress={() => setIsOpen(open => !open)}>눌러</Text>
+      <BottomSheet modalVisible={isOpen} setModalVisible={setIsOpen}></BottomSheet>
     </NavigationContainer>
   );
 };
