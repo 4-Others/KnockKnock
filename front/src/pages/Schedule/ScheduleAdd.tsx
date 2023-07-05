@@ -4,10 +4,12 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {SelectBoard, SelectEndTime, SelectStartTime} from '../../components/SelectOption';
 import BottomSheet from '../../components/BottomSheet';
+import BoardData from '../ScheduleBoard/BoardItems/boardData.json';
 
 const {width, height} = Dimensions.get('window');
 
 const ScheduleAdd = () => {
+  const boardList = BoardData.map(obj => obj.title);
   const [isOpen, setIsOpen] = useState(false);
 
   const [contentTitle, setContentTitle] = useState('');
@@ -49,7 +51,7 @@ const ScheduleAdd = () => {
           </View>
         </View>
       </View>
-      <BottomSheet modalVisible={isOpen} setModalVisible={setIsOpen} />
+      <BottomSheet modalVisible={isOpen} setModalVisible={setIsOpen} boardList={boardList} />
     </SafeAreaView>
   );
 };

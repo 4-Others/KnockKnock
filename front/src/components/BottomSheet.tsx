@@ -79,8 +79,8 @@ const BottomSheet: React.FC<BottomSheetProps> = props => {
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {boardList.map(e => (
-            <TouchableOpacity style={styles.itemSelectMenu}>
+          {boardList.map((e, i) => (
+            <TouchableOpacity style={styles.itemSelectMenu} key={i}>
               <Text style={styles.menuText}>{e}</Text>
             </TouchableOpacity>
           ))}
