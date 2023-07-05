@@ -9,13 +9,11 @@ import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BackBtn from '../components/BackBtn';
 import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
-import BottomSheet from '../components/BottomSheet';
 
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
   const isLogin = true;
-  const [isOpen, setIsOpen] = useState(false);
 
   const [deps, setDeps] = useState([
     {Agree: true},
@@ -75,7 +73,11 @@ const MainNavigation = () => {
         },
       }}
       independent={true}>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          gestureEnabled: false, // 스와이프 제스처 비활성화
+        }}>
         <>
           <Stack.Screen
             name="TabNavigator"
@@ -112,8 +114,6 @@ const MainNavigation = () => {
           />
         </>
       </Stack.Navigator>
-      <Text onPress={() => setIsOpen(open => !open)}>눌러</Text>
-      <BottomSheet modalVisible={isOpen} setModalVisible={setIsOpen}></BottomSheet>
     </NavigationContainer>
   );
 };
