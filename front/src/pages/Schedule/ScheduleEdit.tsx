@@ -3,13 +3,22 @@ import React, {useState} from 'react';
 import Header from '../../components/Header';
 import {SelectBoard, SelectEndTime, SelectStartTime} from '../../components/SelectOption';
 import {scheduleOptionStyles} from './ScheduleAdd';
+import BottomSheet from '../../components/BottomSheet';
+import BoardData from '../ScheduleBoard/BoardItems/boardData.json';
 
 const ScheduleEdit = () => {
+  const boardList = BoardData.map(obj => obj.title);
+  const [isOpen, setIsOpen] = useState(false);
+
   const [contentTitle, setContentTitle] = useState('');
   const [contentText, setContentText] = useState('');
   const [selectedBoard, setselectedBoard] = useState('');
   const [selectedStartTime, setselectedStartTime] = useState('');
   const [selectedEndTime, setselectedEndTime] = useState('');
+
+  const toggleIsOpen = () => {
+    setIsOpen(prevState => !prevState);
+  };
 
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>
@@ -20,9 +29,9 @@ const ScheduleEdit = () => {
           style={scheduleOptionStyles.contentTitleInput}
           onChangeText={text => setContentTitle(text)}
         />
-        <SelectBoard setState={setContentTitle} />
-        <SelectStartTime setState={setselectedStartTime} />
-        <SelectEndTime setState={setselectedEndTime} />
+        <SelectBoard setState={setContentTitle} toggleIsOpen={toggleIsOpen} />
+        <SelectStartTime setState={setselectedStartTime} toggleIsOpen={toggleIsOpen} />
+        <SelectEndTime setState={setselectedEndTime} toggleIsOpen={toggleIsOpen} />
         <View style={scheduleOptionStyles.contentInput}>
           <View style={scheduleOptionStyles.iconContainer}>
             <Image
@@ -40,6 +49,7 @@ const ScheduleEdit = () => {
           </View>
         </View>
       </View>
+      <BottomSheet modalVisible={isOpen} setModalVisible={setIsOpen} boardList={boardList} />
     </SafeAreaView>
   );
 };

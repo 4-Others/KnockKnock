@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import {variables} from '../style/variables';
 
-type ChildState = string; // 자식 컴포넌트의 상태 타입
-
 export interface inputProps {
-  setState: React.Dispatch<React.SetStateAction<ChildState>>;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  toggleIsOpen: () => void;
 }
 
-export const SelectBoard = ({setState}: inputProps) => {
+export const SelectBoard = ({setState, toggleIsOpen}: inputProps) => {
   const [board, setBoard] = useState('');
   const handleStateChange = () => {
     setState(board);
@@ -21,7 +20,7 @@ export const SelectBoard = ({setState}: inputProps) => {
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 보드</Text>
-        <TouchableOpacity style={styles.selectContainer}>
+        <TouchableOpacity style={styles.selectContainer} onPress={toggleIsOpen}>
           <Text
             style={[
               styles.placeHolder,
@@ -38,7 +37,7 @@ export const SelectBoard = ({setState}: inputProps) => {
   );
 };
 
-export const SelectStartTime = ({setState}: inputProps) => {
+export const SelectStartTime = ({setState, toggleIsOpen}: inputProps) => {
   const [board, setBoard] = useState('');
   const handleStateChange = () => {
     setState(board);
@@ -51,7 +50,7 @@ export const SelectStartTime = ({setState}: inputProps) => {
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 시작</Text>
-        <TouchableOpacity style={styles.selectContainer}>
+        <TouchableOpacity style={styles.selectContainer} onPress={toggleIsOpen}>
           <Text
             style={[
               styles.placeHolder,
@@ -68,7 +67,7 @@ export const SelectStartTime = ({setState}: inputProps) => {
   );
 };
 
-export const SelectEndTime = ({setState}: inputProps) => {
+export const SelectEndTime = ({setState, toggleIsOpen}: inputProps) => {
   const [time, setSime] = useState('');
   const handleStateChange = () => {
     setState(time);
@@ -81,7 +80,7 @@ export const SelectEndTime = ({setState}: inputProps) => {
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 종료</Text>
-        <TouchableOpacity style={styles.selectContainer}>
+        <TouchableOpacity style={styles.selectContainer} onPress={toggleIsOpen}>
           <Text
             style={[
               styles.placeHolder,
