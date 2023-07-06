@@ -3,7 +3,9 @@ package com.others.KnockKnock.domain.mail.service;
 import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
 import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
+import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,13 @@ public class EmailService {
     private final UserRepository userRepository;
     private final EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository;
     private final TemplateEngine templateEngine;
+    private final MyPasswordEncoder myPasswordEncoder;
 
-    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository) {
+    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository, MyPasswordEncoder myPasswordEncoder) {
         this.javaMailSender = javaMailSender;
         this.userRepository = userRepository;
         this.emailConfirmRandomKeyRepository = emailConfirmRandomKeyRepository;
+        this.myPasswordEncoder = myPasswordEncoder;
 
 
         // Create and configure the template engine
@@ -107,14 +111,15 @@ public class EmailService {
         if (existingUser.isPresent()) {
             // 기존 사용자의 정보 업데이트
             User user = existingUser.get();
-            user.setPassword(password);
+            user.setPassword(myPasswordEncoder.encode(password));
             user.setEmailVerified(true); // 이메일 인증 완료로 설정
+            user.setStatus(Status.ACTIVE);
             userRepository.save(user);
         } else {
             // 새로운 사용자 등록
             User user = User.builder()
                     .email(email)
-                    .password(password)
+                    .password(myPasswordEncoder.encode(password))
                     .emailVerified(true) // 이메일 인증 완료로 설정
                     .build();
             userRepository.save(user);
