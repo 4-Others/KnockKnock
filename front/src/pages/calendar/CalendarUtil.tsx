@@ -35,6 +35,8 @@ export const loadItems = (day: any, setItems: any, items: any, data: any) => {
           color: item.tag.color,
           startAt: item.startAt.split(' ')[1].slice(0, 5),
           endAt: item.endAt.split(' ')[1].slice(0, 5),
+          board: item.tag.name,
+          content: item.content,
         });
       });
     }

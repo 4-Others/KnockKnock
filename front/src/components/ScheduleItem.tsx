@@ -8,7 +8,7 @@ const ScheduleItem = ({item, onPress}: any) => {
   const navigation = useNavigation();
 
   const goToScheduleEdit = () => {
-    navigation.dispatch(StackActions.push('ScheduleEdit', {locate: undefined}));
+    navigation.dispatch(StackActions.push('ScheduleEdit', {locate: item}));
   };
 
   return (
@@ -21,7 +21,7 @@ const ScheduleItem = ({item, onPress}: any) => {
         offset={[0, 1]}>
         <View style={styles.content}>
           <View style={[styles.colorChip, {backgroundColor: item.color}]}></View>
-          <View style={styles.textBox}>
+          <View>
             <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
               {item.name}
             </Text>
@@ -63,7 +63,6 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
   },
-  textBox: {},
   title: {
     fontSize: 12,
     fontFamily: variables.font_4,
