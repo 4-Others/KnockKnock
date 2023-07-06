@@ -1,4 +1,4 @@
-package com.others.KnockKnock.security.oauth;
+package com.others.KnockKnock.security.oauth.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,57 +8,54 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-
+import java.util.List;
 
 import com.google.gson.JsonObject;
-import com.nimbusds.oauth2.sdk.auth.Secret;
-import io.micrometer.core.instrument.config.validate.Validated;
-import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import com.others.KnockKnock.security.oauth.SocialLoginType;
+import com.others.KnockKnock.security.oauth.SocialOauth;
+import com.others.KnockKnock.security.oauth.google.GoogleOauth;
+import com.others.KnockKnock.security.oauth.kakao.KakaoOauth;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
+@RequiredArgsConstructor
 public class OAuthService {
-//    public String getKakaoAccessToken(String code){
-//        HttpHeaders headers = new org.springframework.http.HttpHeaders();
-//        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-//
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("grant_type", "authorization_code");
-//        params.add("client_id", "fdfae2918a363efc5fad0a501f3dcd55");
-//        params.add("redirect_uri", "http://localhost:8080/login/oauth2/code/kakao");
-//        params.add("code", code);
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        HttpEntity<MultiValueMap<String ,String>> kakaoTokenReq = new HttpEntity<>(params, headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                "https://kauth.kakao.com/oauth/token",
-//                HttpMethod.POST,
-//                kakaoTokenReq,
-//                String.class
-//        );
-//
-//        String tokenJson = response.getBody();
-//        JSONObject jsonObject = new JSONObject(tokenJson);
-//        String accessToken = jsonObject.getString("access_token");
-//
-//        return accessToken;
-//    }
-    public String getAccessToken (String authorize_code) {
+    private final List<SocialOauth> socialOauthList;
+    private final GoogleOauth googleOauth;
+    //private final KakaoOauth kakaoOauth;
+    private final HttpServletResponse response;
+    /*
+    * getOauthRedirectURL()
+    * 구글 로그인 요청을 했을때 구글 웹페이지에서 사용자의 브라우저 세션에 구글
+    * 계정이 로그인되어있는가 및 구글 로그인을 할 수 있는 페이지로 이동되어야 됩니다.
+    */
+    public void request(SocialLoginType socialLoginType) {
+        String redirectURL;
+        switch (socialLoginType) {
+            case GOOGLE: {
+                redirectURL = googleOauth.getOauthRedirectURL();
+            } break;
+//            case KAKAO: {
+//                redirectURL = kakaoOauth.getOauthRedirectURL();
+//            } break;
+            default: {
+                throw new IllegalArgumentException("알 수 없는 소셜 로그인 형식입니다.");
+            }
+        }
+        try {
+            response.sendRedirect(redirectURL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public String getKakaoAccessToken (String authorize_code) {
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
-
         try {
             URL url = new URL(reqURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -110,7 +107,7 @@ public class OAuthService {
 
         return access_Token;
     }
-    public HashMap<String, Object> getUserInfo (String access_Token) {
+    public HashMap<String, Object> getKakaoUserInfo (String access_Token) {
 
         //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
         HashMap<String, Object> userInfo = new HashMap<>();
@@ -154,5 +151,16 @@ public class OAuthService {
         }
 
         return userInfo;
+    }
+    public String requestAccessToken(SocialLoginType socialLoginType, String code) {
+        SocialOauth socialOauth = this.findSocialOauthByType(socialLoginType);
+        return socialOauth.requestAccessToken(code);
+    }
+
+    private SocialOauth findSocialOauthByType(SocialLoginType socialLoginType) {
+        return socialOauthList.stream()
+                .filter(x -> x.type() == socialLoginType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("알 수 없는 SocialLoginType 입니다."));
     }
 }

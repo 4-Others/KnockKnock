@@ -5,11 +5,25 @@ token:
   expiration:
     access: 3600000
     refresh: 86400000
+sns:
+  google:
+    url: "https://accounts.google.com/o/oauth2/v2/auth"
+    client:
+      id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
+      secret: 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
+    callback:
+      url: "http://localhost:8080/auth/google/callback"
+    token:
+      url: "https://oauth2.googleapis.com/token"
 spring:
   security:
     oauth2:
       client:
         registration:
+          google:
+            client-id: ${sns.google.client-id}
+            client-secret: ${sns.google.client-secret}
+            scope: profile,email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             redirect-uri: "http://localhots:8080/login/oauth2/code/kakao"

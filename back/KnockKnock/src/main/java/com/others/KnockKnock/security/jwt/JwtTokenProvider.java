@@ -1,9 +1,8 @@
 package com.others.KnockKnock.security.jwt;
 
-import com.others.KnockKnock.security.jwt.TokenConfig;
+import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
@@ -12,9 +11,10 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final TokenConfig tokenConfig;
-
-    public JwtTokenProvider(TokenConfig tokenConfig) {
+    private final UserRepository userRepository;
+    public JwtTokenProvider(TokenConfig tokenConfig, UserRepository userRepository) {
         this.tokenConfig = tokenConfig;
+        this.userRepository = userRepository;
     }
 
     @Value("${jwt.secret}")
@@ -70,6 +70,14 @@ public class JwtTokenProvider {
 
         return Long.parseLong(claims.getSubject());
     }
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
 
     /**
      * 주어진 JWT 토큰의 유효성을 검사합니다.
@@ -111,7 +119,6 @@ public class JwtTokenProvider {
             String subject = claims.getSubject();
             if (subject.endsWith("-refresh")) {
                 String email = subject.substring(0, subject.length() - "-refresh".length());
-//
 //                // Token 재발급
 //                String[] tokens = generateToken(email);
                 // Access Token 재발급
