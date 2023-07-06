@@ -78,9 +78,9 @@ export const SelectEndTime = ({state, toggleIsOpen}: inputProps) => {
 
 const ScheduleEditor: React.FC<any> = ({itemData}) => {
   const startAt =
-    `${itemData.day} ${itemData.startAt}`.length > 0 ? `${itemData.day} ${itemData.startAt}` : '';
+    `${itemData.day} ${itemData.startAt}`.length > 1 ? `${itemData.day} ${itemData.startAt}` : '';
   const endAt =
-    `${itemData.day} ${itemData.endAt}`.length > 0 ? `${itemData.day} ${itemData.endAt}` : '';
+    `${itemData.day} ${itemData.endAt}`.length > 1 ? `${itemData.day} ${itemData.endAt}` : '';
 
   const [isOpen, setIsOpen] = useState(false);
   const [contentTitle, setContentTitle] = useState(itemData.name || '');
