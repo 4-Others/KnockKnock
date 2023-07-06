@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {Image, TouchableOpacity, StyleSheet, TouchableOpacityProps} from 'react-native';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigation from './TabNavigation';
@@ -7,10 +7,27 @@ import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
 import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
-import BackBtn from '../components/BackBtn';
 import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 
 const Stack = createStackNavigator();
+interface BackBtnProps {
+  goBack: () => void;
+}
+
+export const BackBtn: React.FC<BackBtnProps & TouchableOpacityProps> = ({goBack, ...props}) => {
+  const handlePress = () => {
+    goBack();
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} {...props}>
+      <Image
+        source={require('front/assets/image/back-btn.png')}
+        style={{marginLeft: 24, width: 24, height: 24}}
+      />
+    </TouchableOpacity>
+  );
+};
 
 const MainNavigation = () => {
   const isLogin = true;
