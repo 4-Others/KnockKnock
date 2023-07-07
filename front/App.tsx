@@ -1,12 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import MainNavigation from './src/navigations/MainNavigation';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import {StackSign} from './src/navigations/StackNavigator';
+import TabNavigator from './src/navigations/TabNavigator';
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const checkLogin = (loginState: boolean) => {
+    setIsLoggedIn(loginState);
+  };
+
   return (
-    <View style={styles.container}>
-      <MainNavigation />
-    </View>
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: 'white',
+        },
+      }}
+      independent={true}>
+      <View style={styles.container}>
+        {isLoggedIn ? <TabNavigator /> : <StackSign onLogin={checkLogin} />}
+      </View>
+    </NavigationContainer>
   );
 };
 

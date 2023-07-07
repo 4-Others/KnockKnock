@@ -5,7 +5,11 @@ import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
 import {CheckBox} from '../../components/CheckBox';
 
-const Login: React.FC = () => {
+interface onLoginProps {
+  onLogin: (loginState: boolean) => void;
+}
+
+const Login: React.FC<onLoginProps> = ({onLogin}) => {
   const navigation = useNavigation();
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
@@ -14,8 +18,8 @@ const Login: React.FC = () => {
     navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
   };
 
-  const linkToMain = () => {
-    navigation.dispatch(StackActions.push('TabNavigator', {locate: undefined}));
+  const handleLogin = () => {
+    onLogin(true);
   };
 
   return (
@@ -47,7 +51,7 @@ const Login: React.FC = () => {
         </View>
       </View>
 
-      <GradientButton_L text="로그인" onPress={linkToMain} />
+      <GradientButton_L text="로그인" onPress={handleLogin} />
     </View>
   );
 };
