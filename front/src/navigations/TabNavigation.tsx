@@ -1,14 +1,15 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CustomIcon from '../components/CustomIcon';
-import ListBoard from '../pages/listBoard/ListBoard';
+import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
-import ListAdd from '../pages/listAdd/ListAdd';
+import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
-import {Platform} from 'react-native';
+import {Platform, Dimensions} from 'react-native';
 
 const Tab = createBottomTabNavigator();
+const deviceHeight = Dimensions.get('window').height;
 
 const TabNavigation = () => {
   return (
@@ -18,10 +19,10 @@ const TabNavigation = () => {
         tabBarIcon: ({focused}) => {
           let iconSource;
 
-          if (route.name === 'List Board') {
+          if (route.name === 'Schedule Board') {
             iconSource = focused
-              ? require('../../assets/image/iconOn_listBoard.png')
-              : require('../../assets/image/iconOff_listBoard.png');
+              ? require('../../assets/image/iconOn_scheduleBoard.png')
+              : require('../../assets/image/iconOff_scheduleBoard.png');
           } else if (route.name === 'Calendar') {
             iconSource = focused
               ? require('../../assets/image/iconOn_calendar.png')
@@ -45,22 +46,22 @@ const TabNavigation = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           borderTopWidth: 0,
-          paddingLeft: 47,
+          paddingTop: 5,
           paddingRight: 47,
-          height: 60,
+          paddingLeft: 47,
           backgroundColor: '#ffffff',
           ...Platform.select({
-            ios: {shadowOpacity: 0},
-            android: {elevation: 0},
+            ios: {shadowOpacity: 0, height: deviceHeight / 8},
+            android: {elevation: 0, height: (deviceHeight - 150) / 8},
           }),
         },
         tabBarItemStyle: {
           flex: 1,
         },
       })}>
-      <Tab.Screen name="List Board" component={ListBoard} />
+      <Tab.Screen name="Schedule Board" component={ScheduleBoard} />
       <Tab.Screen name="Calendar" component={Calendar} />
-      <Tab.Screen name="Add" component={ListAdd} />
+      <Tab.Screen name="Add" component={ScheduleAdd} />
       <Tab.Screen name="Search" component={Search} />
       <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3}} />
     </Tab.Navigator>

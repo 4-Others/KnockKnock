@@ -1,6 +1,7 @@
 package com.others.KnockKnock.security.jwt;
 
-import com.others.KnockKnock.security.jwt.TokenConfig;
+import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,13 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
+
+    private final TokenConfig tokenConfig;
+    private final UserRepository userRepository;
+    public JwtTokenProvider(TokenConfig tokenConfig, UserRepository userRepository) {
+        this.tokenConfig = tokenConfig;
+        this.userRepository = userRepository;
+    }
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -21,50 +29,31 @@ public class JwtTokenProvider {
      * @param email 사용자 식별자
      * @return 생성된 JWT 토큰
      */
-//    public String generateToken(String email) {
-//        Date now = new Date();
-//        Date expiryDate = new Date(now.getTime() + expirationMs);
-//
-//        return Jwts.builder()
-//                .setSubject(email)
-//                .setIssuedAt(now)
-//                .setExpiration(expiryDate)
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//    }
-    public String[] generateToken(String email) {
+    public String generateAccessToken(String email) {
         Date now = new Date();
         TokenConfig tokenConfig = new TokenConfig();
         long accessTokenExpirationMs = tokenConfig.getAccessTokenExpirationMs();
-        long refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
         Date accessTokenExpiration = new Date(now.getTime() + accessTokenExpirationMs);
-        Date refreshTokenExpiration = new Date(now.getTime() + refreshTokenExpirationMs);
 
-        // Access Token 생성
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiration)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+    }
+    public String generateRefreshToken(String email) {
+        Date now = new Date();
+        TokenConfig tokenConfig = new TokenConfig();
+        long refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
+        Date refreshTokenExpiration = new Date(now.getTime() + refreshTokenExpirationMs);
 
-        // Refresh Token 생성
-//        String refreshToken = Jwts.builder()
-//                .setSubject(email)
-//                .setIssuedAt(now)
-//                .setExpiration(refreshTokenExpiration)
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-        String refreshToken = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email + "-refresh")
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiration)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
-
-        // Token 응답 생성
-        //JwtTokenProvider.JwtAuthenticationResponse response = new JwtTokenProvider.JwtAuthenticationResponse(accessToken, refreshToken);
-        return new String[]{"accessToken : " + accessToken, "refreshToken : " + refreshToken};
     }
 
     /**
@@ -80,6 +69,14 @@ public class JwtTokenProvider {
                 .getBody();
 
         return Long.parseLong(claims.getSubject());
+    }
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 
     /**
@@ -106,36 +103,66 @@ public class JwtTokenProvider {
         return false;
     }
 
-//    public static class JwtAuthenticationResponse {
-//        private String accessToken;
-//
-//        public JwtAuthenticationResponse(String accessToken) {
-//            this.accessToken = accessToken;
-//        }
-//
-//        public String getAccessToken() {
-//            return accessToken;
-//        }
-//
-//        public void setAccessToken(String accessToken) {
-//            this.accessToken = accessToken;
-//        }
-//    }
-public static class JwtAuthenticationResponse {
-    private String[] tokens;
+    /**
+     * Refresh Token을 재발급합니다.
+     *
+     * @param refreshToken 이전 Refresh Token
+     * @return 새로운 Access Token과 Refresh Token을 포함한 JwtAuthenticationResponse
+     */
+    public JwtAuthenticationResponse refreshTokens(String refreshToken) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(refreshToken)
+                    .getBody();
 
-    public JwtAuthenticationResponse(String[] tokens) {
-        this.tokens = tokens;
+            String subject = claims.getSubject();
+            if (subject.endsWith("-refresh")) {
+                String email = subject.substring(0, subject.length() - "-refresh".length());
+//                // Token 재발급
+//                String[] tokens = generateToken(email);
+                // Access Token 재발급
+                String newAccessToken = generateAccessToken(email);
+                // Refresh Token 재발급
+                String newRefreshToken = generateRefreshToken(email);
+                // 새로운 토큰들을 포함한 응답 객체 생성
+                String[] tokens = { "accessToken: " + newAccessToken, "refreshToken: " + newRefreshToken };
+                // 새로운 토큰들을 포함한 응답 객체 생성
+                JwtAuthenticationResponse response = new JwtAuthenticationResponse(tokens);
+                return response;
+            }
+        } catch (SignatureException ex) {
+            System.out.println("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            System.out.println("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            System.out.println("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            System.out.println("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            System.out.println("JWT claims string is empty");
+        }
+
+        // 재발급 실패 시 null 반환
+        return null;
     }
 
-    public String[] getTokens() {
-        return tokens;
-    }
 
-    public void setTokens(String[] tokens) {
-        this.tokens = tokens;
+    public static class JwtAuthenticationResponse {
+        private String[] tokens;
+
+        public JwtAuthenticationResponse(String[] tokens) {
+            this.tokens = tokens;
+        }
+
+        public String[] getTokens() {
+            return tokens;
+        }
+
+        public void setTokens(String[] tokens) {
+            this.tokens = tokens;
+        }
     }
-}
 
     public static class Tokens {
         private String accessToken;
@@ -154,6 +181,7 @@ public static class JwtAuthenticationResponse {
             return refreshToken;
         }
     }
+
 }
 
 

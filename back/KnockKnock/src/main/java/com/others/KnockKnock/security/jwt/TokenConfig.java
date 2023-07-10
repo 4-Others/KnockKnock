@@ -2,15 +2,14 @@ package com.others.KnockKnock.security.jwt;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class TokenConfig {
 
-    @Value("${token.expiration.access}")
-    private long accessTokenExpirationMs;
+    private long accessTokenExpirationMs=3600000;
 
-    @Value("${token.expiration.refresh}")
-    private long refreshTokenExpirationMs;
+    private long refreshTokenExpirationMs=86400000;
 
     public long getAccessTokenExpirationMs() {
         return accessTokenExpirationMs;
@@ -20,3 +19,4 @@ public class TokenConfig {
         return refreshTokenExpirationMs;
     }
 }
+

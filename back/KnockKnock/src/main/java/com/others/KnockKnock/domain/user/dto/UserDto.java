@@ -53,5 +53,24 @@ public class UserDto {
         private String email;
         private String password;
     }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class PasswordUpdate {
+        @NotBlank
+        @NotNull
+        private String email;
 
+        @NotNull
+        @NotBlank
+        @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",
+                message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
+        private String currentPassword;
+
+        @NotNull
+        @NotBlank
+        @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",
+                message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
+        private String newPassword;
+    }
 }

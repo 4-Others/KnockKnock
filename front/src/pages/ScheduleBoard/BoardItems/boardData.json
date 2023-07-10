@@ -1,0 +1,38 @@
+[
+  {"boardId": 1, "type": "BoardAll", "title": "전체", "number": 65, "color": "variables.Mater_15"},
+  {
+    "boardId": 2,
+    "type": "BoardCustom",
+    "title": "공부",
+    "number": 6,
+    "color": "variables.Mater_6"
+  },
+  {
+    "boardId": 3,
+    "type": "BoardCustom",
+    "title": "운동",
+    "number": 13,
+    "color": "variables.Mater_13"
+  },
+  {
+    "boardId": 4,
+    "type": "BoardCustom",
+    "title": "루틴",
+    "number": 10,
+    "color": "variables.Mater_2"
+  },
+  {
+    "boardId": 5,
+    "type": "BoardCustom",
+    "title": "모임",
+    "number": 9,
+    "color": "variables.Mater_8"
+  },
+  {
+    "boardId": 6,
+    "type": "BoardCustom",
+    "title": "업무",
+    "number": 27,
+    "color": "variables.Mater_1"
+  }
+]
