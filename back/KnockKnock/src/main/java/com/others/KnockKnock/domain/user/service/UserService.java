@@ -41,7 +41,7 @@ public class UserService {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
         // 이메일을 기준으로 사용자 찾기
-        Optional<User> optionalUser = userRepository.findByEmail(userEmail);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다."); // 예외 메시지 추가
@@ -58,16 +58,10 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다."); // 예외 메시지 추가
         }
+        // JWT 토큰 생성
+        String token = jwtUtils.generateToken(user.getUserId());
 
-        // 새로운 비밀번호로 업데이트
-        User updatedUser = User.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .password(passwordEncoder.encode(newPassword))
-                .emailVerified(user.isEmailVerified())
-                .build();
-
-        userRepository.save(updatedUser);
+        return token;
     }
     public void updatePassword(UserDto.PasswordUpdate passwordUpdateDto) {
         String userEmail = passwordUpdateDto.getEmail();
