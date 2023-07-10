@@ -2,16 +2,12 @@ package com.others.KnockKnock.domain.mail.controller;
 
 import com.others.KnockKnock.domain.mail.dto.VerifyDto;
 import com.others.KnockKnock.domain.mail.service.EmailService;
-import com.others.KnockKnock.domain.user.dto.UserDto;
-import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.mail.MessagingException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/emails")
