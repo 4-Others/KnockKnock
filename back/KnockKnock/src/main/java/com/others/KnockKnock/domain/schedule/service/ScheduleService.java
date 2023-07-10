@@ -114,12 +114,6 @@ public class ScheduleService {
         if (tagName.equalsIgnoreCase("All")) {
             schedules = scheduleRepository.findAllByUserId(userId);
         } else {
-            // return scheduleMapper.scheduleListToScheduleDtoResponseList(
-            //     schedules.stream()
-            //         .filter(s -> s.getTag().get(0).getName().equalsIgnoreCase(tagName))
-            //         .collect(Collectors.toList())
-            // );
-
             schedules = scheduleRepository.findAllByUserIdAndTagName(userId, tagName);
         }
 
