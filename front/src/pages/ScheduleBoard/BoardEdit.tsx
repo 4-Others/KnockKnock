@@ -8,14 +8,14 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
 const BoardEdit = () => {
   const [contentTitle, setContentTitle] = useState('');
-  const [contentText, setContentText] = useState('');
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="리스트 보드 수정" />

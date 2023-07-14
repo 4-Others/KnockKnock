@@ -9,6 +9,8 @@ import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
+import Profile from '../pages/profile/Profile';
+import ProfileEdit from '../pages/profile/ProfileEdit';
 import BackBtn from '../components/BackBtn';
 
 interface onLoginProps {
@@ -103,6 +105,8 @@ const StackSchedule = () => {
       <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
+      <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}} />
+      <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };
@@ -116,10 +120,10 @@ const StackCalendar = () => {
   );
 };
 
+export {StackSign, StackSchedule, StackCalendar};
+
 const styles = StyleSheet.create({
   headerStyle: {
     height: 80,
   },
 });
-
-export {StackSign, StackSchedule, StackCalendar};

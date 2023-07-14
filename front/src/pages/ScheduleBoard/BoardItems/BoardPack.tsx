@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 1,
     ...Platform.select({
-      ios: {height: '15%', bottom: 42},
-      android: {height: '18%', bottom: 25},
+      ios: {height: '10%', bottom: 98},
+      android: {height: '12%', bottom: 94},
     }),
   },
 });

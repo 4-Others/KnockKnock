@@ -69,4 +69,5 @@ export const variables = {
   },
   // 배경 컬러
   back_1: '#f5f5f5',
+  back_2: '#ffffff',
 };
