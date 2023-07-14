@@ -15,6 +15,8 @@ export interface ItemProps {
   color?: string;
   startAt?: string;
   endAt?: string;
+  board?: string;
+  content?: string;
 }
 
 export interface ItemsData {

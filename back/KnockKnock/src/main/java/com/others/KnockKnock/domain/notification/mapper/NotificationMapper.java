@@ -13,8 +13,6 @@ import java.util.List;
 public interface NotificationMapper {
     NotificationMapper INSTANCE = Mappers.getMapper(NotificationMapper.class);
 
-    Notification notificationDtoPostToNotification(NotificationDto.Post requestBody);
-
     NotificationDto.Response notificationToNotificationDtoResponse(Notification notification);
 
     List<NotificationDto.Response> notificationListToNotificationDtoResponseList(List<Notification> notificationList);

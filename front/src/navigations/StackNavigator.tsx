@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {Image, TouchableOpacity, StyleSheet, TouchableOpacityProps} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../pages/login/Login';
 import SignUp from '../pages/signUp/SignUp';
@@ -11,11 +11,29 @@ import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
-import BackBtn from '../components/BackBtn';
 
 interface onLoginProps {
   onLogin: (loginState: boolean) => void;
 }
+
+interface BackBtnProps {
+  goBack: () => void;
+}
+
+const BackBtn: React.FC<BackBtnProps & TouchableOpacityProps> = ({goBack, ...props}) => {
+  const handlePress = () => {
+    goBack();
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} {...props}>
+      <Image
+        source={require('front/assets/image/back-btn.png')}
+        style={{marginLeft: 24, width: 24, height: 24}}
+      />
+    </TouchableOpacity>
+  );
+};
 
 const Stack = createStackNavigator();
 

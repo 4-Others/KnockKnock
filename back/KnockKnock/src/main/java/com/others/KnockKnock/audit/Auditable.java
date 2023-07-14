@@ -1,5 +1,6 @@
 package com.others.KnockKnock.audit;
 
+import com.others.KnockKnock.utils.DateUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable {
     @CreatedDate
-    @Column(name = "createdAt", updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private String createdAt;
 
     @LastModifiedDate
@@ -24,14 +24,13 @@ public abstract class Auditable {
     private String modifiedAt;
 
     @PrePersist
-    public void onPrePersist(){
-        // this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")).toOffsetDateTime().toString(); // : KST
-        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    public void onPrePersist() {
+        this.createdAt = DateUtil.convertLocalDateTimeToFormatString(LocalDateTime.now());
         this.modifiedAt = this.createdAt;
     }
 
     @PreUpdate
-    public void onPreUpdate(){
-        this.modifiedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    public void onPreUpdate() {
+        this.modifiedAt = DateUtil.convertLocalDateTimeToFormatString(LocalDateTime.now());
     }
 }

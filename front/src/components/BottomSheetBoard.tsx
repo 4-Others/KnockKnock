@@ -1,6 +1,5 @@
 import React, {useEffect, useRef} from 'react';
 import {
-  ScrollView,
   View,
   StyleSheet,
   Text,
@@ -12,23 +11,31 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {variables} from '../style/variables';
+import {VariablesKeys} from '../style/variables';
 
 type BottomSheetProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  boardList: string[];
+  BoardData: {
+    boardId: number;
+    type: string;
+    title: string;
+    number: number;
+    color: string;
+  }[];
+  setBoardState: React.Dispatch<React.SetStateAction<string>>;
+  setStartTime: React.Dispatch<React.SetStateAction<string>>;
+  setEndTime: React.Dispatch<React.SetStateAction<string>>;
 };
-
+//? modalBottomSheet 레이아웃
 const BottomSheet: React.FC<BottomSheetProps> = props => {
-  const {modalVisible, setModalVisible, boardList} = props;
-  console.log(boardList, 'BottomSheet');
+  const {modalVisible, setModalVisible, BoardData, setBoardState, setStartTime, setEndTime} = props;
   const screenHeight = Dimensions.get('screen').height;
   const panY = useRef(new Animated.Value(screenHeight)).current;
   const translateY = panY.interpolate({
     inputRange: [-1, 0, 1],
     outputRange: [0, 0, 1],
   });
-
   const resetBottomSheet = Animated.timing(panY, {
     toValue: 0,
     duration: 300,
@@ -79,11 +86,27 @@ const BottomSheet: React.FC<BottomSheetProps> = props => {
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {boardList.map((e, i) => (
-            <TouchableOpacity style={styles.itemSelectMenu} key={i}>
-              <Text style={styles.menuText}>{e}</Text>
-            </TouchableOpacity>
-          ))}
+          {BoardData
+            ? BoardData.map(data => {
+                let colorValue: any = data.color;
+                if (colorValue.startsWith('variables.')) {
+                  let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+                  colorValue = variables[colorKey];
+                }
+                return (
+                  <TouchableOpacity
+                    style={styles.itemSelectMenu}
+                    key={data.boardId}
+                    onPress={() => {
+                      setModalVisible(false);
+                      setBoardState(data.title);
+                    }}>
+                    <View style={[styles.colorChip, {backgroundColor: colorValue}]}></View>
+                    <Text style={styles.menuText}>{data.title}</Text>
+                  </TouchableOpacity>
+                );
+              })
+            : null}
         </Animated.View>
       </View>
     </Modal>
@@ -100,24 +123,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSheetContainer: {
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   itemSelectMenu: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
-    borderWidth: 1,
+    // borderWidth: 1,
     paddingLeft: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   menuText: {
     fontFamily: variables.font_3,
     fontSize: 16,
     color: variables.text_3,
+  },
+  colorChip: {
+    width: 12,
+    height: 12,
+    borderWidth: 1,
+    borderColor: variables.line_1,
+    borderRadius: 10,
+    marginRight: 10,
   },
 });
 
