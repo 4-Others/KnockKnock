@@ -8,14 +8,13 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 const {width, height} = Dimensions.get('window');
 
 const BoardAdd = () => {
   const [contentTitle, setContentTitle] = useState('');
-  const [contentText, setContentText] = useState('');
   return (
     <SafeAreaView style={styles.container}>
       <Header title="리스트 보드 추가" />
@@ -27,7 +26,7 @@ const BoardAdd = () => {
         />
         <View style={styles.contentInput}>
           <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/tag_icon.png')} />
+            <Image style={styles.icon} source={require('front/assets/image/invite_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.inputTitle}>초대하기</Text>
@@ -47,7 +46,7 @@ const BoardAdd = () => {
         </View>
         <View style={styles.contentInput}>
           <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/time_icon.png')} />
+            <Image style={styles.icon} source={require('front/assets/image/color_icon.png')} />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.inputTitle}>스케줄 보드 컬러</Text>
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
   contentTitleInput: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     paddingBottom: 16,
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
   inputTitle: {
     fontFamily: variables.font_3,
     color: variables.text_2,
-    fontSize: 16,
+    fontSize: 14,
   },
   placeHolder: {
     fontFamily: variables.font_3,

@@ -9,9 +9,10 @@ import Success from './screen/Success';
 interface SignUpProps {
   locate: string;
   deps: {[key: string]: any}[];
+  onLogin: (loginState: boolean) => void;
 }
 
-const SignUp: React.FC<SignUpProps> = ({locate, deps}) => {
+const SignUp: React.FC<SignUpProps> = ({locate, deps, onLogin}) => {
   return (
     <SafeAreaView style={styles.container}>
       <ProgressBar deps={deps} />
@@ -19,7 +20,7 @@ const SignUp: React.FC<SignUpProps> = ({locate, deps}) => {
         {locate === 'Agree' && <Agree />}
         {locate === 'Email' && <Email />}
         {locate === 'Password' && <Password />}
-        {locate === 'Success' && <Success />}
+        {locate === 'Success' && <Success onLogin={onLogin} />}
       </View>
     </SafeAreaView>
   );
