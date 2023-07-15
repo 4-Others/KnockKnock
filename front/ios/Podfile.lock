@@ -493,6 +493,8 @@ PODS:
     - React-perflogger (= 0.72.2)
   - RNCMaskedView (0.1.11):
     - React
+  - RNDateTimePicker (7.3.0):
+    - React-Core
   - RNGestureHandler (2.12.0):
     - React-Core
   - RNReanimated (3.3.0):
@@ -603,6 +605,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -714,6 +717,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -782,6 +787,7 @@ SPEC CHECKSUMS:
   React-utils: ec05233cf7ee1d7014d41aaa17ec65ceeba8948d
   ReactCommon: 77382645a088a81de55c24bde19c5a2805d891c3
   RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
+  RNDateTimePicker: f66ab28c15bdb6b6734e29977ecadd6dea3151ce
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
