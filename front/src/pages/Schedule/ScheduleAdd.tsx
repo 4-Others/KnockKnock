@@ -2,7 +2,7 @@ import {StyleSheet, SafeAreaView, Dimensions} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import ScheduleEditor from '../../components/ScheduleSelectOption';
+import {ScheduleOption} from '../../components/ScheduleSelectOption';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,7 +19,7 @@ const ScheduleAdd = () => {
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>
       <Header title="스케줄 등록" />
-      <ScheduleEditor itemData={itemData} />
+      <ScheduleOption itemData={itemData} />
     </SafeAreaView>
   );
 };

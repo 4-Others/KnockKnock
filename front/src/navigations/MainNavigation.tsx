@@ -14,7 +14,7 @@ interface BackBtnProps {
   goBack: () => void;
 }
 
-export const BackBtn: React.FC<BackBtnProps & TouchableOpacityProps> = ({goBack, ...props}) => {
+const BackBtn: React.FC<BackBtnProps & TouchableOpacityProps> = ({goBack, ...props}) => {
   const handlePress = () => {
     goBack();
   };

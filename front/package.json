@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^7.3.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/drawer": "^6.6.3",
@@ -31,6 +32,7 @@
     "react-native-gesture-handler": "^2.12.0",
     "react-native-gradle-plugin": "^0.71.19",
     "react-native-linear-gradient": "^2.6.2",
+    "react-native-modal-datetime-picker": "^17.0.0",
     "react-native-pager-view": "^6.2.0",
     "react-native-progress": "^5.0.0",
     "react-native-reanimated": "^2.17.0",
