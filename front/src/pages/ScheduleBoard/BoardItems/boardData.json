@@ -1,5 +1,5 @@
 [
-  {"boardId": 1, "type": "BoardAll", "title": "전체", "number": 65},
+  {"boardId": 1, "type": "BoardAll", "title": "전체", "number": 65, "color": "variables.Mater_15"},
   {
     "boardId": 2,
     "type": "BoardCustom",

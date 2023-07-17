@@ -7,12 +7,13 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
-import React, {useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-interface BoardCustomProps {
+interface BoardItemProps {
   boardId: number;
   title: string;
   number: number;
@@ -22,25 +23,38 @@ interface BoardCustomProps {
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color, active}) => {
+const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
+  const [allowNavigation, setAllowNavigation] = useState(false);
   const swipeRef = useRef<Swipeable>(null);
+
   useEffect(() => {
     swipeRef.current?.close();
   }, [active]);
 
+  const navigation = useNavigation<any>();
+  const handleEditPress = () => {
+    if (allowNavigation) {
+      navigation.navigate('BoardEdit');
+    }
+  };
+
+  const handleSwipeableRightOpen = () => {
+    setAllowNavigation(true);
+  };
+
+  const handleSwipeableRightClose = () => {
+    setAllowNavigation(false);
+  };
+
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
-      inputRange: [-100, -50, 0],
-      outputRange: [-50, 0, -((deviceWidth - 300) * 0.5)],
+      inputRange: [-50, -10, 0],
+      outputRange: [-50, 0, -((deviceWidth - 310) * 0.5)],
     });
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
-        <RectButton>
+        <RectButton onPress={() => handleEditPress()}>
           <Icon name="edit" style={styles.buttonIcon} />
-        </RectButton>
-        <View style={styles.partition} />
-        <RectButton>
-          <Icon name="adduser" style={styles.buttonIcon} />
         </RectButton>
         <View style={styles.partition} />
         <RectButton>
@@ -56,9 +70,11 @@ const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color,
         key={boardId}
         ref={swipeRef}
         friction={2}
+        rightThreshold={10}
+        overshootRight={false}
         renderRightActions={renderRightActions}
-        rightThreshold={15}
-        overshootRight={false}>
+        onSwipeableRightOpen={handleSwipeableRightOpen}
+        onSwipeableClose={handleSwipeableRightClose}>
         <ImageBackground
           source={require('../../../../assets/image/card_graphic.png')}
           style={[styles.container, {backgroundColor: color}]}>
@@ -73,12 +89,12 @@ const BoardCustom: React.FC<BoardCustomProps> = ({boardId, title, number, color,
   );
 };
 
-export default BoardCustom;
+export default BoardItem;
 
 const styles = StyleSheet.create({
   fullWidth: {
     width: deviceWidth,
-    height: 178,
+    height: 209,
   },
   container: {
     marginLeft: (deviceWidth - 320) / 2,
@@ -116,10 +132,9 @@ const styles = StyleSheet.create({
     color: variables.text_7,
   },
   swipeContainer: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 7,
-    width: (deviceWidth - 272) / 2,
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    width: (deviceWidth - 282) / 2,
     height: 209,
     backgroundColor: '#eeeeee',
     borderWidth: 0.6,
@@ -128,17 +143,18 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 14,
   },
   buttonIcon: {
-    ...Platform.select({
-      ios: {marginLeft: (deviceWidth - 300) / 8},
-      android: {marginLeft: (deviceWidth - 330) / 8},
-    }),
+    paddingVertical: 40,
     color: variables.text_5,
     fontSize: (deviceWidth - 220) / 7,
+    ...Platform.select({
+      ios: {paddingHorizontal: (deviceWidth - 130) / 8},
+      android: {paddingHorizontal: (deviceWidth - 300) / 8},
+    }),
   },
   partition: {
     ...Platform.select({
-      ios: {marginLeft: (deviceWidth - 320) / 8},
-      android: {marginLeft: (deviceWidth - 330) / 8},
+      ios: {marginRight: (deviceWidth - 280) / 8},
+      android: {marginRight: (deviceWidth - 270) / 8},
     }),
     width: (deviceWidth - 260) / 8,
     height: 1.2,
