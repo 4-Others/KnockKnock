@@ -1,6 +1,7 @@
 HELP.md
 .gradle
 build/
+!libs/**
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -35,7 +36,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# Exception for build/libs directory
-build/libs/
-!**/build/libs/**/*.jar
