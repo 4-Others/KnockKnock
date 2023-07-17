@@ -5,11 +5,18 @@ import {useNavigation} from '@react-navigation/native';
 
 interface HeaderProps {
   title: string;
+  type?: string;
   nextNavigation?: () => void;
 }
 
-const Header = ({title, nextNavigation}: HeaderProps) => {
+const Header = ({title, type, nextNavigation}: HeaderProps) => {
   const navigation = useNavigation();
+
+  const prevBtnIconHandller = () => {
+    if (type === 'search') return require('front/assets/image/search_icon.png');
+    if (type === 'edit') return require('front/assets/image/edit_icon.png');
+    return require('front/assets/image/check_btn.png');
+  };
 
   return (
     <View style={styles.container}>
@@ -23,10 +30,7 @@ const Header = ({title, nextNavigation}: HeaderProps) => {
         <Text style={styles.title}>{title}</Text>
       </View>
       <TouchableOpacity onPress={nextNavigation}>
-        <Image
-          source={require('front/assets/image/check_btn.png')}
-          style={[styles.icon, {marginRight: 24}]}
-        />
+        <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
       </TouchableOpacity>
     </View>
   );
