@@ -43,8 +43,6 @@ target 'front' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'SocketRocket', '0.6.1'
-
   target 'frontTests' do
     inherit! :complete
     # Pods for testing

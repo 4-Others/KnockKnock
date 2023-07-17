@@ -101,7 +101,7 @@ const ProfileEdit = () => {
               <Text style={styles.inputTitle}>알림설정</Text>
               <View style={styles.inputContainer}>
                 <TextInput
-                  placeholder="푸시 알림 끄기"
+                  placeholder="푸시 알림 OFF"
                   style={styles.inputContent}
                   onChangeText={text => setContentTitle(text)}
                 />

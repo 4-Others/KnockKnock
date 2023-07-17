@@ -6,7 +6,6 @@ import {
   Dimensions,
   StyleSheet,
   Platform,
-  TouchableOpacity,
 } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -22,7 +21,7 @@ interface BoardItemProps {
   active: number;
 }
 
-const Width = Dimensions.get('window').width;
+const deviceWidth = Dimensions.get('window').width;
 
 const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
   const [allowNavigation, setAllowNavigation] = useState(false);
@@ -47,16 +46,11 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
     setAllowNavigation(false);
   };
 
-  const handleBoardPress = () => {
-    navigation.navigate('BoardDetail');
-  };
-
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
       inputRange: [-50, -10, 0],
-      outputRange: [-50, 0, -((Width - 310) * 0.5)],
+      outputRange: [-50, 0, -((deviceWidth - 310) * 0.5)],
     });
-
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
         <RectButton onPress={() => handleEditPress()}>
@@ -81,17 +75,15 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
         renderRightActions={renderRightActions}
         onSwipeableRightOpen={handleSwipeableRightOpen}
         onSwipeableClose={handleSwipeableRightClose}>
-        <TouchableOpacity onPress={handleBoardPress}>
-          <ImageBackground
-            source={require('../../../../assets/image/card_graphic.png')}
-            style={[styles.container, {backgroundColor: color}]}>
-            <Text style={styles.title}>{title}</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.total}>total list</Text>
-              <Text style={styles.number}>{number}</Text>
-            </View>
-          </ImageBackground>
-        </TouchableOpacity>
+        <ImageBackground
+          source={require('../../../../assets/image/card_graphic.png')}
+          style={[styles.container, {backgroundColor: color}]}>
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.total}>total list</Text>
+            <Text style={styles.number}>{number}</Text>
+          </View>
+        </ImageBackground>
       </Swipeable>
     </View>
   );
@@ -101,11 +93,11 @@ export default BoardItem;
 
 const styles = StyleSheet.create({
   fullWidth: {
-    width: Width,
+    width: deviceWidth,
     height: 209,
   },
   container: {
-    marginLeft: (Width - 320) / 2,
+    marginLeft: (deviceWidth - 320) / 2,
     width: 320,
     height: 209,
     borderRadius: 14,
@@ -142,7 +134,7 @@ const styles = StyleSheet.create({
   swipeContainer: {
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    width: (Width - 282) / 2,
+    width: (deviceWidth - 282) / 2,
     height: 209,
     backgroundColor: '#eeeeee',
     borderWidth: 0.6,
@@ -153,18 +145,18 @@ const styles = StyleSheet.create({
   buttonIcon: {
     paddingVertical: 40,
     color: variables.text_5,
-    fontSize: (Width - 220) / 7,
+    fontSize: (deviceWidth - 220) / 7,
     ...Platform.select({
-      ios: {paddingHorizontal: (Width - 130) / 8},
-      android: {paddingHorizontal: (Width - 300) / 8},
+      ios: {paddingHorizontal: (deviceWidth - 130) / 8},
+      android: {paddingHorizontal: (deviceWidth - 300) / 8},
     }),
   },
   partition: {
     ...Platform.select({
-      ios: {marginRight: (Width - 280) / 8},
-      android: {marginRight: (Width - 270) / 8},
+      ios: {marginRight: (deviceWidth - 280) / 8},
+      android: {marginRight: (deviceWidth - 270) / 8},
     }),
-    width: (Width - 260) / 8,
+    width: (deviceWidth - 260) / 8,
     height: 1.2,
     backgroundColor: variables.text_6,
   },

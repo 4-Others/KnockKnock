@@ -2,6 +2,7 @@ import * as React from 'react';
 import {SafeAreaView, View, Text, StyleSheet, Image} from 'react-native';
 import {variables} from '../../../style/variables';
 import {GradientButton_L} from '../../../components/GradientButton';
+import {useNavigation, StackActions} from '@react-navigation/native';
 
 interface onLoginProps {
   onLogin: (loginState: boolean) => void;
