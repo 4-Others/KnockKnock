@@ -113,10 +113,10 @@ const styles = StyleSheet.create({
     }),
   },
   addButton: {
+    zIndex: 10,
     bottom: 3,
     fontFamily: 'Pretendard-Light',
     color: variables.icon_3,
     fontSize: 30,
-    zIndex: 2,
   },
 });

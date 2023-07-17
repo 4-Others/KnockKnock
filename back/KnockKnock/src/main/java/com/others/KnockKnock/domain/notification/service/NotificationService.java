@@ -1,25 +1,23 @@
 package com.others.KnockKnock.domain.notification.service;
 
-import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.notification.dto.NotificationDto;
 import com.others.KnockKnock.domain.notification.entity.Notification;
 import com.others.KnockKnock.domain.notification.mapper.NotificationMapper;
 import com.others.KnockKnock.domain.notification.repository.NotificationRepository;
+import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import com.others.KnockKnock.utils.DateUtil;
+import com.others.KnockKnock.exception.BusinessLogicException;
+import com.others.KnockKnock.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.others.KnockKnock.utils.DateUtil.convertLocalDateTimeToFormatString;
-import static com.others.KnockKnock.utils.DateUtil.parseStringToLocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,119 +26,56 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
-    public void createNotifications(Schedule schedule) {
-        List<Notification> notifications = genNotification(schedule);
+    public NotificationDto.Response createNotification(Notification notification, Long userId) {
+        verifyExistNotification(notification.getPeriod());
 
-        notificationRepository.saveAll(notifications);
+        //Optional<User> byUserId = userRepository.findByUserId(1L);
+        //User user = byUserId.get();
+
+        Notification createdNotification = notificationRepository.save(
+            Notification.builder()
+                .title(notification.getTitle())
+                .period(notification.getPeriod())
+                .delivered(false)
+                .read(false)
+                //.user(user)
+                .build()
+        );
+
+        return notificationMapper.notificationToNotificationDtoResponse(createdNotification);
     }
 
-    public void updateNotifications(Schedule schedule) {
-        List<Notification> allByUserIdAndCalendarId = notificationRepository.findAllByUserIdAndCalendarId(schedule.getUser().getUserId(), schedule.getScheduleId());
-        List<Notification> notDeliveredNotification = allByUserIdAndCalendarId.stream().filter(ntf -> !ntf.getDelivered()).collect(Collectors.toList());
-        List<String> alerts = schedule.getAlerts().stream()
-                                  .map(alert -> convertLocalDateTimeToFormatString(parseStringToLocalDateTime(schedule.getStartAt()).minusMinutes(alert)))
-                                  .collect(Collectors.toList());
-
-        deleteNotifications(notDeliveredNotification);
-
-        List<Notification> notifications = genNotification(schedule);
-
-        updateNotifications(notifications);
+    public Flux<ServerSentEvent<List<NotificationDto.Response>>> getNotification(Long userId) {
+        return Flux.interval(Duration.ofSeconds(1))
+            .publishOn(Schedulers.boundedElastic())
+            .map(sequence -> ServerSentEvent.<List<NotificationDto.Response>>builder()
+                                 .id(String.valueOf(sequence))
+                                 .event("user-event-notification")
+                                 .data(findAllNotificationByUserIdAndNotDelivered(userId))
+                                 .build()
+            );
     }
 
-    public void updateNotifications(List<Notification> notifications) {
-        notificationRepository.saveAll(notifications);
+    private List<Notification> findAllNotificationByUserId(Long userId) {
+        return notificationRepository.findAllNotificationByUserId(userId);
     }
 
-    public void deleteNotifications(List<Notification> notifications) {
-        notificationRepository.deleteAll(notifications);
-    }
+    public List<NotificationDto.Response> findAllNotificationByUserIdAndNotDelivered(Long userId) {
+        List<Notification> allNotificationByUserIdAndNotDelivered = notificationRepository.findAllNotificationByUserIdAndNotDelivered(userId);
 
-    private List<Notification> genNotification(Schedule schedule) {
-        return schedule.getAlerts().stream()
-                   .map(alert -> {
-                       LocalDateTime notifyAt = parseStringToLocalDateTime(schedule.getStartAt()).minusMinutes(alert);
-
-                       return Notification.builder()
-                                  .schedule(schedule)
-                                  .user(schedule.getUser())
-                                  .title(schedule.getTitle())
-                                  .notifyAt(convertLocalDateTimeToFormatString(notifyAt))
-                                  .delivered(false)
-                                  .read(false)
-                                  .build();
-                   })
-                   .collect(Collectors.toList());
-    }
-
-    public List<NotificationDto.Response> updateReadStatus(Long userId, List<Long> notificationIds) {
-        List<Notification> allNotificationByUserIdAndNotificationIds = notificationRepository.findAllByUserIdAndNotificationIds(userId, notificationIds);
-
-        allNotificationByUserIdAndNotificationIds.forEach(ntf -> ntf.setRead(true));
-
-        List<Notification> updatedNotifications = notificationRepository.saveAll(allNotificationByUserIdAndNotificationIds);
-
-        return notificationMapper.notificationListToNotificationDtoResponseList(updatedNotifications);
-    }
-
-    public Flux<ServerSentEvent<List<NotificationDto.Response>>> genStreamEvent(Long userId) {
-        Flux<ServerSentEvent<List<NotificationDto.Response>>> initialResult =
-            Flux.defer(() -> Flux.just(streamEventDeliveredButNotRead(userId)));
-
-        // * 정규: 정시마다 스트림 이벤트 방출
-        // LocalDateTime now = LocalDateTime.now();
-        // LocalDateTime nextHour = now.withMinute(0).withSecond(0).plusHours(1);
-        // Duration delay = Duration.between(now, nextHour);
-        // Flux<ServerSentEvent<List<NotificationDto.Response>>> recurringResults =
-        //     Flux.interval(Duration.between(now, nextHour), Duration.ofHours(1))
-        //         .map(sequence -> createPushNotificationEvent(userId, sequence));
-
-        // * 정규: 1분마다 스트림 이벤트 방출
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextMin = now.withSecond(0).plusSeconds(60);
-
-        Flux<ServerSentEvent<List<NotificationDto.Response>>> recurringResults =
-            Flux.interval(Duration.between(now, nextMin), Duration.ofSeconds(60))
-                .map(sequence -> streamEventNotDelivered(userId, sequence, DateUtil.convertLocalDateTimeToFormatString(LocalDateTime.now().withSecond(0))));
-
-        return Flux.concat(initialResult, recurringResults)
-                   .publishOn(Schedulers.boundedElastic());
-    }
-
-    private ServerSentEvent<List<NotificationDto.Response>> streamEventDeliveredButNotRead(Long userId) {
-        return ServerSentEvent.<List<NotificationDto.Response>>builder()
-                   .id("NOT-READ")
-                   .event("user-event-notification")
-                   .data(findAllByUserIdAndDeliveredButNotRead(userId))
-                   .build();
-    }
-
-    private ServerSentEvent<List<NotificationDto.Response>> streamEventNotDelivered(Long userId, Object sequence, String notifyAt) {
-        return ServerSentEvent.<List<NotificationDto.Response>>builder()
-                   .id(String.valueOf(sequence))
-                   .event("user-event-notification")
-                   .data(findAllByUserIdAndNotDelivered(userId, notifyAt))
-                   .build();
-    }
-
-    private List<NotificationDto.Response> findAllByUserId(Long userId) {
-        List<Notification> allNotificationByUserId = notificationRepository.findAllByUserId(userId);
-
-        return notificationMapper.notificationListToNotificationDtoResponseList(allNotificationByUserId);
-    }
-
-    private List<NotificationDto.Response> findAllByUserIdAndDeliveredButNotRead(Long userId) {
-        List<Notification> allNotificationByUserId = notificationRepository.findAllByUserIdAndDeliveredButNotRead(userId);
-
-        return notificationMapper.notificationListToNotificationDtoResponseList(allNotificationByUserId);
-    }
-
-    public List<NotificationDto.Response> findAllByUserIdAndNotDelivered(Long userId, String notifyAt) {
-        List<Notification> allNotificationByUserIdAndNotDelivered = notificationRepository.findAllByUserIdAndNotDelivered(userId, notifyAt);
         allNotificationByUserIdAndNotDelivered.forEach(ntf -> ntf.setDelivered(true));
 
         notificationRepository.saveAll(allNotificationByUserIdAndNotDelivered);
 
         return notificationMapper.notificationListToNotificationDtoResponseList(allNotificationByUserIdAndNotDelivered);
+    }
+
+    @Transactional(readOnly = true)
+    public void verifyExistNotification(String period) {
+        Optional<Notification> notificationByUserId = notificationRepository.findByPeriod(period);
+
+        notificationByUserId.ifPresent((e) -> {
+            throw new BusinessLogicException(ExceptionCode.ALREADY_EXISTS_INFORMATION);
+        });
     }
 }

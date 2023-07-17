@@ -1,35 +1,43 @@
 package com.others.KnockKnock.domain.notification.dto;
 
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 
 public class NotificationDto {
     @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @NoArgsConstructor
-    @Builder
-    public static class Patch implements Serializable {
-        @NotNull
-        @NotEmpty
-        private List<Long> notificationIds;
+    public static class Post implements Serializable {
+        private final String title;
+        private final String period;
+
+        @Builder
+        public Post(String title, String period) {
+            this.title = title;
+            this.period = period;
+        }
     }
 
     @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @NoArgsConstructor
-    @Builder
     public static class Response implements Serializable {
-        private Long notificationId;
-        private String title;
-        private String notifyAt;
-        private Boolean delivered;
-        private Boolean read;
-        private String createdAt;
-        private String modifiedAt;
+        private final Long notificationId;
+        private final String title;
+        private final String period;
+        private final Boolean delivered;
+        private final Boolean read;
+        private final String createdAt;
+        private final String modifiedAt;
+
+        @Builder
+        public Response(Long notificationId, String title, String period, Boolean delivered, Boolean read, String createdAt, String modifiedAt) {
+            this.notificationId = notificationId;
+            this.title = title;
+            this.period = period;
+            this.delivered = delivered;
+            this.read = read;
+            this.createdAt = createdAt;
+            this.modifiedAt = modifiedAt;
+        }
     }
 }

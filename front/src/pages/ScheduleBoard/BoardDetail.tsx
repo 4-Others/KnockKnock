@@ -1,28 +1,13 @@
-import {StyleSheet, SafeAreaView, Dimensions, View} from 'react-native';
+import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import Header from '../../components/Header';
-
-const {width, height} = Dimensions.get('window');
-
-type navigationProp = StackNavigationProp<RootStackParamList, 'BoardEdit'>;
-
-type RootStackParamList = {
-  BoardEdit: undefined;
-};
+import {variables} from '../../style/variables';
 
 const BoardDetail = () => {
-  const navigation = useNavigation<navigationProp>();
-
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="리스트 보드"
-        type="edit"
-        nextNavigation={() => navigation.navigate('BoardEdit')}
-      />
-      <View style={styles.contentLayout}></View>
+      <Text style={styles.text}>1. 아침먹고 땡,</Text>
+      <Text style={styles.text}>2. 점심먹고 땡,</Text>
+      <Text style={styles.text}>3. 창문을 열어보니 비가 오네요~</Text>
     </SafeAreaView>
   );
 };
@@ -31,12 +16,13 @@ export default BoardDetail;
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  contentLayout: {
-    marginRight: 24,
-    marginLeft: 24,
-    marginTop: 24,
+  text: {
+    fontFamily: 'Pretendard-Medium',
+    color: variables.main,
+    fontSize: 30,
   },
 });
