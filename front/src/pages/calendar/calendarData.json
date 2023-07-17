@@ -2,80 +2,75 @@
   {
     "calendarId": 1,
     "title": "첫번째 테스트 스케줄",
-    "content": "테스트 텍스트입니다.",
+    "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-20 00:00:00",
     "endAt": "2023-06-20 23:59:59",
     "alerts": [],
     "createdAt": "2023-06-14 16:49:38",
     "modifiedAt": "2023-06-14 16:52:13",
-    "complete": false,
     "tag": {
-      "name": "ALL",
+      "title": "ALL",
       "color": "skyblue"
     }
   },
   {
     "calendarId": 2,
     "title": "두번째 테스트 스케줄",
-    "content": "테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다.",
+    "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-21 00:00:00",
     "endAt": "2023-06-21 23:59:59",
     "alerts": [],
     "createdAt": "2023-06-14 16:49:38",
     "modifiedAt": "2023-06-14 16:52:13",
-    "complete": false,
     "tag": {
-      "name": "운동",
+      "title": "운동",
       "color": "pink"
     }
   },
   {
     "calendarId": 3,
     "title": "세번째 테스트 스케줄",
-    "content": "테스트 텍스트입니다. 테스트 텍스트입니다.",
+    "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-24 02:00:00",
     "endAt": "2023-06-24 23:59:59",
     "alerts": [],
     "createdAt": "2023-06-14 16:49:38",
     "modifiedAt": "2023-06-14 16:52:13",
-    "complete": false,
     "tag": {
-      "name": "공부",
+      "title": "공부",
       "color": "yellow"
     }
   },
   {
     "calendarId": 4,
     "title": "네번째 테스트 스케줄",
-    "content": "테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다.",
-    "period": "ALL_DAY",
-    "startAt": "2023-06-25 02:00:00",
-    "endAt": "2023-06-25 20:59:59",
-    "alerts": [],
-    "createdAt": "2023-06-14 16:49:38",
-    "modifiedAt": "2023-06-14 16:52:13",
-    "complete": false,
-    "tag": {
-      "name": "헬스",
-      "color": "green"
-    }
-  },
-  {
-    "calendarId": 5,
-    "title": "다섯번째 테스트 스케줄",
-    "content": "테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다. 테스트 텍스트입니다.",
+    "content": "",
     "period": "ALL_DAY",
     "startAt": "2023-06-25 02:00:00",
     "endAt": "2023-06-25 23:59:59",
     "alerts": [],
     "createdAt": "2023-06-14 16:49:38",
     "modifiedAt": "2023-06-14 16:52:13",
-    "complete": false,
     "tag": {
-      "name": "헬스",
+      "title": "헬스",
+      "color": "green"
+    }
+  },
+  {
+    "calendarId": 5,
+    "title": "다섯번째 테스트 스케줄",
+    "content": "",
+    "period": "ALL_DAY",
+    "startAt": "2023-06-25 02:00:00",
+    "endAt": "2023-06-25 23:59:59",
+    "alerts": [],
+    "createdAt": "2023-06-14 16:49:38",
+    "modifiedAt": "2023-06-14 16:52:13",
+    "tag": {
+      "title": "헬스",
       "color": "orange"
     }
   }

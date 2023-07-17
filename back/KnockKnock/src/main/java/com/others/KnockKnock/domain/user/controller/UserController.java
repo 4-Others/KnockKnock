@@ -1,6 +1,5 @@
 package com.others.KnockKnock.domain.user.controller;
 
-import com.others.KnockKnock.domain.user.dto.BaseResponse;
 import com.others.KnockKnock.domain.user.dto.UserDto;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
@@ -12,7 +11,6 @@ import com.others.KnockKnock.security.jwt.RefreshTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -42,7 +40,7 @@ public class UserController {
                 .email(email)
                 .password(encryptedPassword)
                 .emailVerified(false)
-                .status(Status.INACTIVE)
+                .status(Status.ACTIVE)
                 .build();
         userRepository.save(user);
 
@@ -52,8 +50,9 @@ public class UserController {
     public ResponseEntity<Map<String, String[]>> login(@RequestBody @Valid UserDto.Login loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
+
         Optional<User> userOptional = userRepository.findByEmail(email);
-        //String encodedPassword = mypasswordEncoder.encode(password);
+
         User user = userOptional.get();
         if (!user.isEmailVerified()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"Email not verified"}));
@@ -62,13 +61,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"Cannot login. User is not active."}));
         }
         // 패스워드 일치 여부 확인
-        if (!mypasswordEncoder.matches(password,user.getPassword())) {
-            //throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다.");
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"패스워드가 틀렸어요!"}));
+        if(!password.equals(user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"패스워드가 틀렸어요!"}));
         }
-        userService.updateUserLastLoggedIn(user);
+
         String accessToken = jwtTokenProvider.generateAccessToken(email);
         String refreshToken = jwtTokenProvider.generateRefreshToken(email);
+
         if (accessToken == null || refreshToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("tokens", new String[0]));
         }
@@ -79,7 +78,6 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/refreshToken")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
@@ -92,7 +90,6 @@ public class UserController {
             return ResponseEntity.badRequest().body("Invalid refresh token");
         }
     }
-    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{email}/password")
     public ResponseEntity<String> updatePassword(@PathVariable("email") String email,
                                                  @RequestBody UserDto.PasswordUpdate passwordUpdateDto) {
@@ -106,17 +103,9 @@ public class UserController {
 
         return ResponseEntity.ok("비밀번호가 성공적으로 업데이트되었습니다.");
     }
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
         userService.deleteUser(email);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
-    }
-    @ResponseBody
-    @GetMapping("/kakao")
-    public BaseResponse<String> kakaoCallback(@RequestParam String code){
-        String response = "성공적으로 카카오 로그인 API 코드를 불러왔습니다.";
-        System.out.println(code);
-        return  new BaseResponse<String>(response);
     }
 }

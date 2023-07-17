@@ -3,11 +3,10 @@ package com.others.KnockKnock.domain.notification.repository.custom;
 import com.others.KnockKnock.domain.notification.entity.Notification;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NotificationRepositoryCustom {
-    List<Notification> findAllByUserId(Long userId);
-    List<Notification> findAllByUserIdAndCalendarId(Long userId, Long calendarId);
-    List<Notification> findAllByUserIdAndNotificationIds(Long userId, List<Long> notificationIds);
-    List<Notification> findAllByUserIdAndDeliveredButNotRead(Long userId);
-    List<Notification> findAllByUserIdAndNotDelivered(Long userId, String notifyAt);
+    Optional<Notification> findByPeriod(String period);
+    List<Notification> findAllNotificationByUserId(Long userId);
+    List<Notification> findAllNotificationByUserIdAndNotDelivered(Long userId);
 }

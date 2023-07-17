@@ -5,7 +5,8 @@ import Carousel from 'react-native-snap-carousel';
 import LinearGradient from 'react-native-linear-gradient';
 import {variables, VariablesKeys} from '../../../style/variables';
 import boardData from './boardData.json';
-import BoardItem from './BoardItem';
+import BoardAll from './BoardAll';
+import BoardCustom from './BoardCustom';
 
 const deviceHeight = Dimensions.get('window').height;
 
@@ -25,21 +26,33 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
   }, [active]);
 
   const renderItem = ({item}: {item: any}) => {
-    let colorValue = item.color;
-    if (colorValue.startsWith('variables.')) {
-      let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
-      colorValue = variables[colorKey];
+    if (item.type === 'BoardAll') {
+      return (
+        <BoardAll
+          key={item.boardId.toString()}
+          boardId={item.boardId}
+          number={item.number}
+          active={active}
+        />
+      );
+    } else if (item.type === 'BoardCustom') {
+      let colorValue = item.color;
+      if (colorValue.startsWith('variables.')) {
+        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+        colorValue = variables[colorKey];
+      }
+      return (
+        <BoardCustom
+          key={item.boardId.toString()}
+          boardId={item.boardId}
+          title={item.title}
+          number={item.number}
+          color={colorValue}
+          active={active}
+        />
+      );
     }
-    return (
-      <BoardItem
-        key={item.boardId.toString()}
-        boardId={item.boardId}
-        title={item.title}
-        number={item.number}
-        color={colorValue}
-        active={active}
-      />
-    );
+    return null;
   };
 
   const sliderHeight = Platform.select({
@@ -84,8 +97,8 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 1,
     ...Platform.select({
-      ios: {height: '10%', bottom: 98},
-      android: {height: '12%', bottom: 94},
+      ios: {height: '15%', bottom: 42},
+      android: {height: '18%', bottom: 25},
     }),
   },
 });

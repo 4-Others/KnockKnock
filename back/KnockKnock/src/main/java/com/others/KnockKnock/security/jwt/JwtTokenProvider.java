@@ -1,20 +1,26 @@
 package com.others.KnockKnock.security.jwt;
 
-import com.others.KnockKnock.domain.user.entity.User;
-import com.others.KnockKnock.domain.user.repository.UserRepository;
+import com.others.KnockKnock.security.jwt.TokenConfig;
 import io.jsonwebtoken.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-
+//    private final long accessTokenExpirationMs;
+//    private final long refreshTokenExpirationMs;
+//
+//    public JwtTokenProvider(TokenConfig tokenConfig) {
+//        this.accessTokenExpirationMs = tokenConfig.getAccessTokenExpirationMs();
+//        this.refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
+//    }
     private final TokenConfig tokenConfig;
-    private final UserRepository userRepository;
-    public JwtTokenProvider(TokenConfig tokenConfig, UserRepository userRepository) {
+
+    public JwtTokenProvider(TokenConfig tokenConfig) {
         this.tokenConfig = tokenConfig;
-        this.userRepository = userRepository;
     }
 
     @Value("${jwt.secret}")
@@ -29,6 +35,31 @@ public class JwtTokenProvider {
      * @param email 사용자 식별자
      * @return 생성된 JWT 토큰
      */
+//    public String[] generateTokens(String email) {
+//        Date now = new Date();
+//        TokenConfig tokenConfig = new TokenConfig();
+//        long accessTokenExpirationMs = tokenConfig.getAccessTokenExpirationMs();
+//        long refreshTokenExpirationMs = tokenConfig.getRefreshTokenExpirationMs();
+//        Date accessTokenExpiration = new Date(now.getTime() + accessTokenExpirationMs);
+//        Date refreshTokenExpiration = new Date(now.getTime() + refreshTokenExpirationMs);
+//
+//        // Access Token 생성
+//        String accessToken = Jwts.builder()
+//                .setSubject(email)
+//                .setIssuedAt(now)
+//                .setExpiration(accessTokenExpiration)
+//                .signWith(SignatureAlgorithm.HS512, secretKey)
+//                .compact();
+//
+//        String refreshToken = Jwts.builder()
+//                .setSubject(email + "-refresh")
+//                .setIssuedAt(now)
+//                .setExpiration(refreshTokenExpiration)
+//                .signWith(SignatureAlgorithm.HS512, secretKey)
+//                .compact();
+//
+//        return new String[]{"accessToken : " + accessToken, "refreshToken : " + refreshToken};
+//    }
     public String generateAccessToken(String email) {
         Date now = new Date();
         TokenConfig tokenConfig = new TokenConfig();
@@ -69,14 +100,6 @@ public class JwtTokenProvider {
                 .getBody();
 
         return Long.parseLong(claims.getSubject());
-    }
-    public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
     }
 
     /**
@@ -119,6 +142,7 @@ public class JwtTokenProvider {
             String subject = claims.getSubject();
             if (subject.endsWith("-refresh")) {
                 String email = subject.substring(0, subject.length() - "-refresh".length());
+//
 //                // Token 재발급
 //                String[] tokens = generateToken(email);
                 // Access Token 재발급
