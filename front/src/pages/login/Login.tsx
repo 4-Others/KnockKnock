@@ -3,12 +3,12 @@ import React, {useState} from 'react';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
+import {CheckBox} from '../../components/CheckBox';
 
 const Login: React.FC = () => {
   const navigation = useNavigation();
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
-  const [on, setOn] = useState(false);
 
   const handleSignUp = () => {
     navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
@@ -33,13 +33,7 @@ const Login: React.FC = () => {
       </View>
       <View style={styles.loginMenu}>
         <View style={styles.autoLogin}>
-          <TouchableOpacity
-            onPress={() => {
-              setOn(on => !on);
-            }}
-            style={on ? styles.checkState : styles.unCheckState}>
-            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-          </TouchableOpacity>
+          <CheckBox func={() => {}} />
           <Text style={styles.checkBoxBtn}>자동 로그인</Text>
         </View>
         <View style={styles.textBtns}>

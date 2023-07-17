@@ -1,31 +1,25 @@
-import {StyleSheet, SafeAreaView, Dimensions} from 'react-native';
+import {StyleSheet, SafeAreaView, Text} from 'react-native';
 import React from 'react';
-import Header from '../../components/Header';
-import {SearchOption} from '../../components/ScheduleSelectOption';
-
-const {width, height} = Dimensions.get('window');
+import {variables} from '../../style/variables';
 
 const Search = () => {
-  const itemData = {
-    name: '',
-    board: '',
-    content: '',
-    day: '',
-    startAt: '',
-    endAt: '',
-  };
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="검색" type="search" />
-      <SearchOption itemData={itemData} />
+      <Text style={styles.text}>응애, 나 애기 Search</Text>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontFamily: 'Pretendard-Medium',
+    color: variables.main,
+    fontSize: 30,
   },
 });
 

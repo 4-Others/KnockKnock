@@ -10,8 +10,6 @@ const ProfileEdit = () => {
   );
 };
 
-export default ProfileEdit;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -24,3 +22,5 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
 });
+
+export default ProfileEdit;
