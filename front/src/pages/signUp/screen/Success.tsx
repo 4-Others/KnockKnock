@@ -4,10 +4,13 @@ import {variables} from '../../../style/variables';
 import {GradientButton_L} from '../../../components/GradientButton';
 import {useNavigation, StackActions} from '@react-navigation/native';
 
-const Success: React.FC = () => {
-  const navigation = useNavigation();
-  const linkTo = () => {
-    navigation.dispatch(StackActions.push('TabNavigator', {locate: undefined}));
+interface onLoginProps {
+  onLogin: (loginState: boolean) => void;
+}
+
+const Success: React.FC<onLoginProps> = ({onLogin}) => {
+  const handleLogin = () => {
+    onLogin(true);
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -20,7 +23,7 @@ const Success: React.FC = () => {
         <Text style={styles.text}>정상적으로 완료됐습니다!</Text>
         <Text style={styles.subText}>KnockKnock의 다양한 서비스를 만나보세요.</Text>
       </View>
-      <GradientButton_L text="로그인" onPress={linkTo} />
+      <GradientButton_L text="로그인" onPress={handleLogin} />
     </SafeAreaView>
   );
 };

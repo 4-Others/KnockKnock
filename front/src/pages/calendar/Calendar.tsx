@@ -7,7 +7,7 @@ import {loadItems} from './CalendarUtil';
 import {theme, markedDates} from './style.calendar';
 import {MarkedDate, ItemsData} from './style';
 import ScheduleItem from '../../components/ScheduleItem';
-import DrawHeader from '../../components/DrawHeader';
+import ProfileHeader from '../../components/ProfileHeader';
 import LinearGradient from 'react-native-linear-gradient';
 
 const {width, height} = Dimensions.get('window');
@@ -91,7 +91,7 @@ const Calendar: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <DrawHeader />
+      <ProfileHeader />
       <Agenda
         style={styles.calendar}
         onDayPress={day => {

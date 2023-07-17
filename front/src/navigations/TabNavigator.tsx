@@ -1,17 +1,16 @@
 import React from 'react';
+import {Platform, Dimensions} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import CustomIcon from '../components/CustomIcon';
-import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
-import Calendar from '../pages/calendar/Calendar';
+import {StackSchedule, StackCalendar} from './StackNavigator';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import Search from '../pages/search/Search';
 import Notifications from '../pages/notifications/Notifications';
-import {Platform, Dimensions} from 'react-native';
+import CustomIcon from '../components/CustomIcon';
 
 const Tab = createBottomTabNavigator();
 const deviceHeight = Dimensions.get('window').height;
 
-const TabNavigation = () => {
+const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -23,7 +22,7 @@ const TabNavigation = () => {
             iconSource = focused
               ? require('../../assets/image/iconOn_scheduleBoard.png')
               : require('../../assets/image/iconOff_scheduleBoard.png');
-          } else if (route.name === 'Calendar') {
+          } else if (route.name === 'Schedule Calendar') {
             iconSource = focused
               ? require('../../assets/image/iconOn_calendar.png')
               : require('../../assets/image/iconOff_calendar.png');
@@ -59,8 +58,8 @@ const TabNavigation = () => {
           flex: 1,
         },
       })}>
-      <Tab.Screen name="Schedule Board" component={ScheduleBoard} />
-      <Tab.Screen name="Calendar" component={Calendar} />
+      <Tab.Screen name="Schedule Board" component={StackSchedule} />
+      <Tab.Screen name="Schedule Calendar" component={StackCalendar} />
       <Tab.Screen name="Add" component={ScheduleAdd} />
       <Tab.Screen name="Search" component={Search} />
       <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3}} />
@@ -68,4 +67,4 @@ const TabNavigation = () => {
   );
 };
 
-export default TabNavigation;
+export default TabNavigator;
