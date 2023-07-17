@@ -1,0 +1,14 @@
+# 베이스 이미지 설정
+FROM ubuntu:latest
+
+# 변수 설정(빌드파일의 경로)
+ARG JAR_FILE=build/libs/*.jar
+
+# 애플리케이션 파일 복사
+COPY ${JAR_FILE} app.jar
+
+# x86_64 아키텍처용 OpenJDK 설치
+RUN apt-get update && apt-get install -y openjdk-11-jdk
+
+#jar파일 실행
+ENTRYPOINT ["java", "-jar", "/app.jar"]
