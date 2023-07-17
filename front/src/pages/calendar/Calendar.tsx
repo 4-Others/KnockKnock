@@ -130,8 +130,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     ...Platform.select({
-      ios: {top: (width - 30) / 8},
-      android: {top: (width - 180) / 8},
+      ios: {top: (width - 67) / 8},
+      android: {top: (width - 150) / 8},
     }),
     height: height,
   },

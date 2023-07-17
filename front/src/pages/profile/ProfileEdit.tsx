@@ -14,6 +14,7 @@ import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
+import ImageUploader from '../../components/ImageUploader';
 
 const {width, height} = Dimensions.get('window');
 
@@ -26,18 +27,13 @@ const ProfileEdit = () => {
       <View style={styles.contentLayout}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.contentContainer}>
-            <View style={styles.imageFrame}>
-              <Image
-                style={styles.profileImage}
-                source={require('front/assets/image/DefaultIMG.png')}
-              />
-            </View>
+            <ImageUploader />
             <View style={styles.listContainer}>
               <Text style={styles.inputTitle}>닉네임</Text>
-              <View style={styles.inputContainer}>
+              <View style={styles.inputSingleContainer}>
                 <TextInput
                   placeholder="변경할 닉네임을 입력해주세요."
-                  style={styles.inputContent}
+                  style={styles.input}
                   onChangeText={text => setContentTitle(text)}
                 />
                 <TouchableOpacity>
@@ -48,63 +44,55 @@ const ProfileEdit = () => {
             <View style={styles.listContainer}>
               <Text style={styles.inputTitle}>비밀번호 변경</Text>
               <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="기존 비밀번호"
-                  style={styles.inputContent}
-                  onChangeText={text => setContentTitle(text)}
-                />
-                <TouchableOpacity>
-                  <Icon name="eye-outline" style={styles.icon} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="변경할 비밀번호"
-                  style={styles.inputContent}
-                  onChangeText={text => setContentTitle(text)}
-                />
-                <TouchableOpacity>
-                  <Icon name="eye-outline" style={styles.icon} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="변경할 비밀번호 확인"
-                  style={styles.inputContent}
-                  onChangeText={text => setContentTitle(text)}
-                />
-                <TouchableOpacity>
-                  <Icon name="eye-outline" style={styles.icon} />
-                </TouchableOpacity>
+                <View style={styles.inputItem}>
+                  <TextInput
+                    placeholder="기존 비밀번호"
+                    style={styles.input}
+                    onChangeText={text => setContentTitle(text)}
+                  />
+                  <TouchableOpacity>
+                    <Icon name="eye-outline" style={styles.icon} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.inputItem}>
+                  <TextInput
+                    placeholder="변경할 비밀번호"
+                    style={styles.input}
+                    onChangeText={text => setContentTitle(text)}
+                  />
+                  <TouchableOpacity>
+                    <Icon name="eye-outline" style={styles.icon} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.inputItemLast}>
+                  <TextInput
+                    placeholder="변경할 비밀번호 확인"
+                    style={styles.input}
+                    onChangeText={text => setContentTitle(text)}
+                  />
+                  <TouchableOpacity>
+                    <Icon name="eye-outline" style={styles.icon} />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
             <View style={styles.listContainer}>
               <Text style={styles.inputTitle}>생년월일</Text>
               <View style={styles.inputContainer}>
-                <TouchableOpacity>
-                  <TextInput
-                    placeholder="임의"
-                    style={styles.inputContent}
-                    onChangeText={text => setContentTitle(text)}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="생일공개"
-                  style={styles.inputContent}
-                  onChangeText={text => setContentTitle(text)}
-                />
+                <View style={styles.inputItem}>
+                  <TouchableOpacity>
+                    <TextInput placeholder="임의" style={styles.input} editable={false} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.inputItemLast}>
+                  <TextInput placeholder="생일공개" style={styles.input} editable={false} />
+                </View>
               </View>
             </View>
             <View style={styles.listContainer}>
               <Text style={styles.inputTitle}>알림설정</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="푸시 알림 OFF"
-                  style={styles.inputContent}
-                  onChangeText={text => setContentTitle(text)}
-                />
+              <View style={styles.inputSingleContainer}>
+                <TextInput placeholder="푸시 알림 OFF" style={styles.input} editable={false} />
               </View>
             </View>
           </View>
@@ -138,31 +126,35 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     width: '100%',
   },
-  imageFrame: {
-    width: 86,
-    height: 86,
-    borderRadius: 43,
-    borderWidth: 0.6,
-    borderColor: variables.line_1,
-  },
-  profileImage: {
-    width: 86,
-    height: 86,
-    borderRadius: 43,
-  },
   listContainer: {
     marginTop: 24,
     width: '100%',
   },
   inputContainer: {
-    flex: 1,
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1.2,
+    borderColor: variables.line_1,
+  },
+  inputItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 15,
-    paddingRight: 15,
-    paddingBottom: 15,
-    paddingLeft: 20,
+    width: '100%',
+    borderBottomWidth: 1.2,
+    borderColor: variables.line_1,
+  },
+  inputItemLast: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  inputSingleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
     borderRadius: 8,
     borderWidth: 1.2,
     borderColor: variables.line_1,
@@ -174,14 +166,16 @@ const styles = StyleSheet.create({
     color: variables.text_4,
     fontSize: 16,
   },
-  inputContent: {
-    paddingTop: 0,
-    paddingBottom: 0,
+  input: {
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 20,
     fontFamily: variables.font_3,
     color: variables.text_2,
     fontSize: 17,
   },
   icon: {
+    marginRight: 15,
     color: variables.text_6,
     fontSize: 22,
   },
