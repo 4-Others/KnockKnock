@@ -9,6 +9,7 @@ import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
+import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
 
@@ -134,6 +135,7 @@ const StackCalendar = () => {
     <Stack.Navigator>
       <Stack.Screen name="Calendar" component={Calendar} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };
