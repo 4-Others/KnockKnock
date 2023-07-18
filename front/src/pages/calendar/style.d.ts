@@ -17,8 +17,18 @@ export interface ItemProps {
   endAt?: string;
   board?: string;
   content?: string;
+  period?: string;
+  alerts?: string[];
 }
 
 export interface ItemsData {
   [key: string]: ItemProps[];
+}
+
+export interface DayData {
+  dateString: string;
+  day: number;
+  month: number;
+  timestamp: number;
+  year: number;
 }

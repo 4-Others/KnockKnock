@@ -11,18 +11,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {variables} from '../style/variables';
-import {VariablesKeys} from '../style/variables';
 
 type BottomSheetProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  BoardData: {
-    boardId: number;
-    type: string;
-    title: string;
-    number: number;
-    color: string;
-  }[];
   setScheduleData: React.Dispatch<
     React.SetStateAction<{
       id: number;
@@ -33,27 +25,27 @@ type BottomSheetProps = {
       board: string;
       content: string;
       day: string;
+      period: string;
+      alerts: [];
     }>
   >;
 };
 
 //? modalBottomSheet 레이아웃
-const BottomSheet: React.FC<BottomSheetProps> = props => {
-  const {modalVisible, setModalVisible, BoardData, setScheduleData} = props;
+const BottomSheetSelectPeriod: React.FC<BottomSheetProps> = props => {
+  const {modalVisible, setModalVisible, setScheduleData} = props;
 
-  const handleBoardSelect = (value: string) => {
-    setScheduleData(prevData => ({
-      ...prevData,
-      board: value,
-    }));
-  };
+  const periodData = ['삼십 분 전', '한 시간 전', '두 시간 전'];
 
   const screenHeight = Dimensions.get('screen').height;
+
   const panY = useRef(new Animated.Value(screenHeight)).current;
+
   const translateY = panY.interpolate({
     inputRange: [-1, 0, 1],
     outputRange: [0, 0, 1],
   });
+
   const resetBottomSheet = Animated.timing(panY, {
     toValue: 0,
     duration: 300,
@@ -65,6 +57,13 @@ const BottomSheet: React.FC<BottomSheetProps> = props => {
     duration: 300,
     useNativeDriver: true,
   });
+
+  const handleAlSelect = (value: string) => {
+    setScheduleData(prevData => ({
+      ...prevData,
+      board: value,
+    }));
+  };
 
   const panResponders = useRef(
     PanResponder.create({
@@ -104,22 +103,10 @@ const BottomSheet: React.FC<BottomSheetProps> = props => {
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {BoardData.map(data => {
-            let colorValue: any = data.color;
-            if (colorValue.startsWith('variables.')) {
-              let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
-              colorValue = variables[colorKey];
-            }
+          {periodData.map((data, index) => {
             return (
-              <TouchableOpacity
-                style={styles.itemSelectMenu}
-                key={data.boardId}
-                onPress={() => {
-                  setModalVisible(false);
-                  handleBoardSelect(data.title);
-                }}>
-                <View style={[styles.colorChip, {backgroundColor: colorValue}]}></View>
-                <Text style={styles.menuText}>{data.title}</Text>
+              <TouchableOpacity style={styles.itemSelectMenu} key={index}>
+                <Text>{data}</Text>
               </TouchableOpacity>
             );
           })}
@@ -128,6 +115,8 @@ const BottomSheet: React.FC<BottomSheetProps> = props => {
     </Modal>
   );
 };
+
+export default BottomSheetSelectPeriod;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -167,5 +156,3 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 });
-
-export default BottomSheet;
