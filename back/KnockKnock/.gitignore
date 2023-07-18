@@ -35,7 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# build/libs/ 제외 처리
-/build/libs/*
-!/build/libs/README.md
