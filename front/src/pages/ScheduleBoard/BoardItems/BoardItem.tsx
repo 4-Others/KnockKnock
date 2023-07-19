@@ -6,6 +6,7 @@ import {
   Dimensions,
   StyleSheet,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -36,6 +37,10 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
     if (allowNavigation) {
       navigation.navigate('BoardEdit');
     }
+  };
+
+  const handleBoardPress = () => {
+    navigation.navigate('BoardDetail');
   };
 
   const handleSwipeableRightOpen = () => {
@@ -75,15 +80,17 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
         renderRightActions={renderRightActions}
         onSwipeableRightOpen={handleSwipeableRightOpen}
         onSwipeableClose={handleSwipeableRightClose}>
-        <ImageBackground
-          source={require('../../../../assets/image/card_graphic.png')}
-          style={[styles.container, {backgroundColor: color}]}>
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.textContainer}>
-            <Text style={styles.total}>total list</Text>
-            <Text style={styles.number}>{number}</Text>
-          </View>
-        </ImageBackground>
+        <TouchableOpacity onPress={handleBoardPress}>
+          <ImageBackground
+            source={require('../../../../assets/image/card_graphic.png')}
+            style={[styles.container, {backgroundColor: color}]}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.total}>total list</Text>
+              <Text style={styles.number}>{number}</Text>
+            </View>
+          </ImageBackground>
+        </TouchableOpacity>
       </Swipeable>
     </View>
   );
