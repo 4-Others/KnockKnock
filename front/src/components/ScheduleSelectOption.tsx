@@ -1,22 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Image, Text, TouchableOpacity, TextInput} from 'react-native';
 import {variables} from '../style/variables';
-import BottomSheet from './BottomSheet';
+import BottomSheetSelectBoard from './BottomSheetSelectBoard';
+import BottomSheetSelectPeriod from './BottomSheetSelectPeriod';
 import {scheduleOptionStyles} from '../pages/Schedule/ScheduleAdd';
-import Data from '../pages/ScheduleBoard/BoardItems/boardData.json';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export interface inputProps {
   state: string;
   event: () => void;
 }
 
-export const SelectBoard = ({state, event}: inputProps) => {
+const SelectBoard = ({state, event}: inputProps) => {
   return (
     <View style={styles.contentInput}>
-      <View style={styles.iconContainer}>
-        <Image style={styles.icon} source={require('front/assets/image/tag_icon.png')} />
-      </View>
+      <Icon name="pricetag-outline" style={styles.icon} />
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 보드</Text>
         <TouchableOpacity style={styles.selectContainer} onPress={event}>
@@ -33,12 +32,30 @@ export const SelectBoard = ({state, event}: inputProps) => {
   );
 };
 
-export const SelectStartTime = ({state, event}: inputProps) => {
+const SelectPeriod = ({state, event}: inputProps) => {
+  return (
+    <View style={styles.contentInput}>
+      <Icon name="alarm-outline" style={styles.icon} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>알림</Text>
+        <TouchableOpacity style={styles.selectContainer} onPress={event}>
+          <TextInput
+            value={state}
+            placeholder="알림받을 시간을 선택하세요."
+            style={styles.contentText}
+            editable={false}
+          />
+          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const SelectStartTime = ({state, event}: inputProps) => {
   return (
     <View key={state} style={styles.contentInput}>
-      <View style={styles.iconContainer}>
-        <Image style={styles.icon} source={require('front/assets/image/time_icon.png')} />
-      </View>
+      <Icon name="time-outline" style={styles.icon} />
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 시작</Text>
         <TouchableOpacity style={styles.selectContainer} onPress={event}>
@@ -55,12 +72,10 @@ export const SelectStartTime = ({state, event}: inputProps) => {
   );
 };
 
-export const SelectEndTime = ({state, event}: inputProps) => {
+const SelectEndTime = ({state, event}: inputProps) => {
   return (
     <View key={state} style={styles.contentInput}>
-      <View style={styles.iconContainer}>
-        <Image style={styles.icon} source={require('front/assets/image/alarm_icon.png')} />
-      </View>
+      <Icon name="timer-outline" style={styles.icon} />
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>스케줄 종료</Text>
         <TouchableOpacity style={styles.selectContainer} onPress={event}>
@@ -87,8 +102,11 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
     board: itemData.board || '',
     content: itemData.content || '',
     day: itemData.day || '',
+    period: itemData.period || '',
+    alerts: itemData.alerts || [],
   });
-  const [isOpen, setIsOpen] = useState(false);
+  const [boardIsOpen, setBoardIsOpen] = useState(false);
+  const [periodIsOpen, setPeriodIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [timeType, setTimeType] = useState('');
   const onCancel = () => {
@@ -122,10 +140,6 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
     }
   };
 
-  const toggleIsOpen = () => {
-    setIsOpen(prevState => !prevState);
-  };
-
   const toggleIsOpenStartAt = () => {
     setVisible(prevState => !prevState);
     setTimeType('start');
@@ -155,7 +169,14 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
         style={scheduleOptionStyles.contentTitleInput}
         onChangeText={text => setScheduleData(prevData => ({...prevData, contentTitle: text}))}
       />
-      <SelectBoard state={scheduleData.board} event={toggleIsOpen} />
+      <SelectBoard
+        state={scheduleData.board}
+        event={() => setBoardIsOpen(prevState => !prevState)}
+      />
+      <SelectPeriod
+        state={scheduleData.period}
+        event={() => setPeriodIsOpen(prevState => !prevState)}
+      />
       <SelectStartTime
         state={`${scheduleData.day} ${scheduleData.startAt}`}
         event={toggleIsOpenStartAt}
@@ -165,12 +186,7 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
         event={toggleIsOpenEndAt}
       />
       <View style={scheduleOptionStyles.contentInput}>
-        <View style={scheduleOptionStyles.iconContainer}>
-          <Image
-            style={scheduleOptionStyles.icon}
-            source={require('front/assets/image/edit_icon.png')}
-          />
-        </View>
+        <Icon name="create-outline" style={styles.icon} />
         <View style={scheduleOptionStyles.inputContainer}>
           <Text style={scheduleOptionStyles.inputTitle}>메모</Text>
           <TextInput
@@ -181,10 +197,14 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
           />
         </View>
       </View>
-      <BottomSheet
-        modalVisible={isOpen}
-        setModalVisible={setIsOpen}
-        BoardData={Data}
+      <BottomSheetSelectBoard
+        modalVisible={boardIsOpen}
+        setModalVisible={setBoardIsOpen}
+        setScheduleData={setScheduleData}
+      />
+      <BottomSheetSelectPeriod
+        modalVisible={periodIsOpen}
+        setModalVisible={setPeriodIsOpen}
         setScheduleData={setScheduleData}
       />
       <DateTimePickerModal
@@ -208,6 +228,8 @@ export const SearchOption: React.FC<any> = ({itemData}) => {
     board: itemData.board || '',
     content: itemData.content || '',
     day: itemData.day || '',
+    period: itemData.period || '', // period 속성 추가
+    alerts: itemData.alerts || [],
   });
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -284,10 +306,9 @@ export const SearchOption: React.FC<any> = ({itemData}) => {
         state={`${scheduleData.day} ${scheduleData.endAt}`}
         event={toggleIsOpenEndAt}
       />
-      <BottomSheet
+      <BottomSheetSelectBoard
         modalVisible={isOpen}
         setModalVisible={setIsOpen}
-        BoardData={Data}
         setScheduleData={setScheduleData}
       />
       <DateTimePickerModal
@@ -302,19 +323,12 @@ export const SearchOption: React.FC<any> = ({itemData}) => {
 };
 
 const styles = StyleSheet.create({
-  icon: {
-    width: 24,
-    height: 24,
-  },
   contentInput: {
     width: '100%',
     marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-  },
-  iconContainer: {
-    marginRight: 30,
   },
   inputContainer: {
     flex: 1,
@@ -355,5 +369,10 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     height: 44,
     borderRadius: 60,
+  },
+  icon: {
+    fontSize: 24,
+    marginRight: 30,
+    color: variables.main,
   },
 });
