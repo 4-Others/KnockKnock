@@ -5,12 +5,13 @@ import {
   TextInput,
   Dimensions,
   View,
-  Image,
   ScrollView,
   TouchableOpacity,
   Platform,
 } from 'react-native';
 import React, {useState} from 'react';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {Switch} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
@@ -19,7 +20,48 @@ import ImageUploader from '../../components/ImageUploader';
 const {width, height} = Dimensions.get('window');
 
 const ProfileEdit = () => {
-  const [contentTitle, setContentTitle] = useState('');
+  const [username, setUsername] = useState('');
+  const [formContent, setFormContent] = useState('');
+  const [encryption, setEncryption] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [openBD, setOpenBD] = useState(false);
+  const [pushAlarm, setPushAlarm] = useState(true);
+
+  const handleReset = () => {
+    setUsername('');
+  };
+
+  const handleVisible = () => {
+    setEncryption(!encryption);
+  };
+
+  const handleDateConfirm = (date: Date) => {
+    const dateString = new Date(date);
+    const year = dateString.getFullYear();
+    const month = String(dateString.getMonth() + 1).padStart(2, '0');
+    const day = String(dateString.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    setSelectedDate(formattedDate);
+    setVisible(false);
+  };
+
+  const handleDateCancel = () => {
+    setVisible(false);
+  };
+
+  const showDatePicker = () => {
+    setVisible(true);
+  };
+
+  const handleOpenBD = () => {
+    setOpenBD(!openBD);
+  };
+
+  const handlePushAlarm = () => {
+    setPushAlarm(!pushAlarm);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,10 +75,13 @@ const ProfileEdit = () => {
               <View style={styles.inputSingleContainer}>
                 <TextInput
                   placeholder="변경할 닉네임을 입력해주세요."
+                  placeholderTextColor={variables.text_5}
                   style={styles.input}
-                  onChangeText={text => setContentTitle(text)}
+                  onChangeText={text => setUsername(text)}
+                  value={username}
+                  autoCapitalize="none"
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleReset}>
                   <Icon name="close-circle-outline" style={styles.icon} />
                 </TouchableOpacity>
               </View>
@@ -47,31 +92,49 @@ const ProfileEdit = () => {
                 <View style={styles.inputItem}>
                   <TextInput
                     placeholder="기존 비밀번호"
+                    placeholderTextColor={variables.text_5}
+                    secureTextEntry={encryption}
                     style={styles.input}
-                    onChangeText={text => setContentTitle(text)}
+                    onChangeText={text => setFormContent(text)}
                   />
-                  <TouchableOpacity>
-                    <Icon name="eye-outline" style={styles.icon} />
+                  <TouchableOpacity onPress={handleVisible}>
+                    {encryption ? (
+                      <Icon name="eye-off-outline" style={styles.icon} />
+                    ) : (
+                      <Icon name="eye-outline" style={styles.icon} />
+                    )}
                   </TouchableOpacity>
                 </View>
                 <View style={styles.inputItem}>
                   <TextInput
                     placeholder="변경할 비밀번호"
+                    placeholderTextColor={variables.text_5}
+                    secureTextEntry={encryption}
                     style={styles.input}
-                    onChangeText={text => setContentTitle(text)}
+                    onChangeText={text => setFormContent(text)}
                   />
-                  <TouchableOpacity>
-                    <Icon name="eye-outline" style={styles.icon} />
+                  <TouchableOpacity onPress={handleVisible}>
+                    {encryption ? (
+                      <Icon name="eye-off-outline" style={styles.icon} />
+                    ) : (
+                      <Icon name="eye-outline" style={styles.icon} />
+                    )}
                   </TouchableOpacity>
                 </View>
                 <View style={styles.inputItemLast}>
                   <TextInput
                     placeholder="변경할 비밀번호 확인"
+                    placeholderTextColor={variables.text_5}
+                    secureTextEntry={encryption}
                     style={styles.input}
-                    onChangeText={text => setContentTitle(text)}
+                    onChangeText={text => setFormContent(text)}
                   />
-                  <TouchableOpacity>
-                    <Icon name="eye-outline" style={styles.icon} />
+                  <TouchableOpacity onPress={handleVisible}>
+                    {encryption ? (
+                      <Icon name="eye-off-outline" style={styles.icon} />
+                    ) : (
+                      <Icon name="eye-outline" style={styles.icon} />
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -80,24 +143,59 @@ const ProfileEdit = () => {
               <Text style={styles.inputTitle}>생년월일</Text>
               <View style={styles.inputContainer}>
                 <View style={styles.inputItem}>
-                  <TouchableOpacity>
-                    <TextInput placeholder="임의" style={styles.input} editable={false} />
+                  <TouchableOpacity onPress={showDatePicker} style={styles.datePicker}>
+                    <TextInput
+                      placeholder="임의"
+                      placeholderTextColor={variables.text_5}
+                      style={styles.input}
+                      editable={false}
+                      value={selectedDate}
+                    />
+                    <Icon name="calendar-range" style={styles.icon} />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.inputItemLast}>
-                  <TextInput placeholder="생일공개" style={styles.input} editable={false} />
+                  <TextInput
+                    placeholder="생일공개"
+                    placeholderTextColor={openBD ? variables.text_2 : variables.text_5}
+                    style={styles.input}
+                    editable={false}
+                  />
+                  <Switch
+                    value={openBD}
+                    onValueChange={handleOpenBD}
+                    color={variables.main}
+                    style={styles.toggle}
+                  />
                 </View>
               </View>
             </View>
             <View style={styles.listContainer}>
               <Text style={styles.inputTitle}>알림설정</Text>
               <View style={styles.inputSingleContainer}>
-                <TextInput placeholder="푸시 알림 OFF" style={styles.input} editable={false} />
+                <TextInput
+                  placeholder={pushAlarm ? '푸시 알림 ON' : '푸시 알림 OFF'}
+                  placeholderTextColor={pushAlarm ? variables.text_2 : variables.text_5}
+                  style={styles.input}
+                  editable={false}
+                />
+                <Switch
+                  value={pushAlarm}
+                  onValueChange={handlePushAlarm}
+                  color={variables.main}
+                  style={styles.toggle}
+                />
               </View>
             </View>
           </View>
         </ScrollView>
       </View>
+      <DateTimePickerModal
+        isVisible={visible}
+        mode="date"
+        onConfirm={handleDateConfirm}
+        onCancel={handleDateCancel}
+      />
     </SafeAreaView>
   );
 };
@@ -170,6 +268,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 20,
+    width: 260,
     fontFamily: variables.font_3,
     color: variables.text_2,
     fontSize: 17,
@@ -178,5 +277,17 @@ const styles = StyleSheet.create({
     marginRight: 15,
     color: variables.text_6,
     fontSize: 22,
+  },
+  toggle: {
+    ...Platform.select({
+      ios: {marginRight: 8, transform: [{scaleX: 0.7}, {scaleY: 0.7}]},
+      android: {marginRight: 5},
+    }),
+  },
+  datePicker: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
   },
 });

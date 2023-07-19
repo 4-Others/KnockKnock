@@ -1,7 +1,6 @@
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
 import React, {useCallback, useState} from 'react';
-import {variables} from '../../style/variables';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
 import ProfileHeader from '../../components/ProfileHeader';
