@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, Image} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Text, Image, Platform} from 'react-native';
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
