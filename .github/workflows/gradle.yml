@@ -53,3 +53,5 @@ jobs:
     # 압축한 프로젝트를 S3로 전송합니다.
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./practice-deploy.zip s3://b-knockknock/practice-deploy.zip
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
