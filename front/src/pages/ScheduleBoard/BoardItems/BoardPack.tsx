@@ -1,5 +1,4 @@
-import {StyleSheet, Platform, Dimensions} from 'react-native';
-import {View} from 'react-native-animatable';
+import {View, StyleSheet, Platform, Dimensions} from 'react-native';
 import React, {useRef, useEffect} from 'react';
 import Carousel from 'react-native-snap-carousel';
 import LinearGradient from 'react-native-linear-gradient';
@@ -48,7 +47,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
   });
 
   return (
-    <View>
+    <View style={styles.Container}>
       <LinearGradient
         style={[styles.linearGradient, {top: 0}]}
         start={{x: 0, y: 0.1}}
@@ -68,7 +67,7 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
         onSnapToItem={index => onActiveChange(boardData[index].boardId)}
       />
       <LinearGradient
-        style={[styles.linearGradient]}
+        style={styles.linearGradient}
         start={{x: 0, y: 0.1}}
         end={{x: 0, y: 0.9}}
         colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
@@ -79,6 +78,10 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
 export default BoardPack;
 
 const styles = StyleSheet.create({
+  Container: {
+    height: '100%',
+    justifyContent: 'space-between',
+  },
   linearGradient: {
     position: 'absolute',
     width: '100%',

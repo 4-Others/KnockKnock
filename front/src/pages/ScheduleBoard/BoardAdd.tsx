@@ -17,7 +17,7 @@ const BoardAdd = () => {
   const [contentTitle, setContentTitle] = useState('');
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="리스트 보드 추가" />
+      <Header title="스케줄 보드 추가" />
       <View style={styles.contentLayout}>
         <TextInput
           placeholder="보드 이름을 입력해 주세요."

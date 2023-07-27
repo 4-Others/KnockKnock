@@ -80,7 +80,7 @@ const Calendar: React.FC = () => {
         end={{x: 0, y: 1.2}}
         colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
       />
-      <StatusBar />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
     </View>
   );
 };
