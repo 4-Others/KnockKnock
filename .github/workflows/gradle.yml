@@ -51,3 +51,9 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # 등록한 Github Secret이 자동으로 불려옵니다.
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # 등록한 Github Secret이 자동으로 불려옵니다.
         aws-region: us-east-1
+        
+     # 압축한 프로젝트를 S3로 전송합니다.
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./practice-deploy.zip s3://b-knockknock/practice-deploy.zip
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew build
