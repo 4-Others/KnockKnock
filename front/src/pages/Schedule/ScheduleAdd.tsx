@@ -4,8 +4,6 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {ScheduleOption} from '../../components/ScheduleSelectOption';
 
-const {width, height} = Dimensions.get('window');
-
 //? 스케줄 추가하는 스크린
 const ScheduleAdd = () => {
   const itemData = {
@@ -26,8 +24,7 @@ const ScheduleAdd = () => {
 
 export const scheduleOptionStyles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    flex: 1,
   },
   contentLayout: {
     marginRight: 24,

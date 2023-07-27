@@ -30,7 +30,9 @@ const Header = ({title, type, nextNavigation}: HeaderProps) => {
         <Text style={styles.title}>{title}</Text>
       </View>
       <TouchableOpacity onPress={nextNavigation}>
-        <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
+        {type === 'alarm' ? null : (
+          <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
+        )}
       </TouchableOpacity>
     </View>
   );

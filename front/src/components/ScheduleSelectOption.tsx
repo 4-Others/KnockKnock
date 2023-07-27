@@ -1,5 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Image, Text, TouchableOpacity, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {variables} from '../style/variables';
 import BottomSheetSelectBoard from './BottomSheetSelectBoard';
 import BottomSheetSelectPeriod from './BottomSheetSelectPeriod';
@@ -142,6 +152,7 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
 
   const toggleIsOpenStartAt = () => {
     setVisible(prevState => !prevState);
+    0;
     setTimeType('start');
   };
 
@@ -162,7 +173,7 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
     : parseDate(scheduleData.day + scheduleData.endAt);
 
   return (
-    <View style={scheduleOptionStyles.contentLayout}>
+    <ScrollView showsVerticalScrollIndicator={false} style={scheduleOptionStyles.contentLayout}>
       <TextInput
         defaultValue={scheduleData.name}
         placeholder="스케줄을 입력해 주세요."
@@ -185,18 +196,20 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
         state={`${scheduleData.day} ${scheduleData.endAt}`}
         event={toggleIsOpenEndAt}
       />
-      <View style={scheduleOptionStyles.contentInput}>
+      <KeyboardAvoidingView
+        style={scheduleOptionStyles.contentInput}
+        behavior={Platform.OS === 'android' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'android' ? 64 : 0}>
         <Icon name="create-outline" style={styles.icon} />
         <View style={scheduleOptionStyles.inputContainer}>
           <Text style={scheduleOptionStyles.inputTitle}>메모</Text>
           <TextInput
             defaultValue={scheduleData.content}
             placeholder="메모를 입력하세요"
-            style={styles.contentText}
             onChangeText={text => setScheduleData(prevData => ({...prevData, contentText: text}))}
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <BottomSheetSelectBoard
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
@@ -214,7 +227,7 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
         onCancel={onCancel}
         date={date}
       />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -324,17 +337,17 @@ export const SearchOption: React.FC<any> = ({itemData}) => {
 
 const styles = StyleSheet.create({
   contentInput: {
-    width: '100%',
     marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
   inputContainer: {
     flex: 1,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
-    paddingBottom: 16,
+    ...Platform.select({
+      ios: {paddingBottom: 16},
+      android: {paddingBottom: 0},
+    }),
   },
   inputTitle: {
     fontFamily: variables.font_3,
@@ -344,8 +357,10 @@ const styles = StyleSheet.create({
   contentText: {
     fontFamily: variables.font_4,
     color: variables.text_3,
-    fontSize: 14,
-    marginTop: 10,
+    ...Platform.select({
+      ios: {marginTop: 10},
+      android: {marginTop: 0},
+    }),
   },
   arrowIcon: {
     width: 16,
@@ -356,7 +371,7 @@ const styles = StyleSheet.create({
   selectContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   searchBar: {
     fontFamily: variables.font_3,
