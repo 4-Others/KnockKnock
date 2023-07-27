@@ -15,6 +15,9 @@ on:
 
 permissions:
   contents: read
+  
+env:
+  S3_BUCKET_NAME: b-knockknock
 
 jobs:
   build:
