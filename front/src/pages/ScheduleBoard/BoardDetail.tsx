@@ -86,7 +86,7 @@ const BoardDetail = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header
-        title="리스트 보드"
+        title="스케줄 보드"
         type="edit"
         nextNavigation={() => navigation.navigate('BoardEdit')}
       />
