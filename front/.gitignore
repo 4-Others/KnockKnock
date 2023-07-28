@@ -65,3 +65,4 @@ yarn-error.log
 # lock file
 Podfile.lock
 package-lock.json
+.env

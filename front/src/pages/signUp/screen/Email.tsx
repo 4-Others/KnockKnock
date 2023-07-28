@@ -1,17 +1,37 @@
-import * as React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import {variables} from '../../../style/variables';
 
-interface InputArea {
+interface InputAreaProps {
+  type: string;
   text: string;
   btnText: string;
   func: () => void;
+  setInput: (text: string) => void;
+  input: string;
 }
 
-export const InputArea: React.FC<InputArea> = ({text, btnText, func}) => {
+interface EmailProps {
+  url?: string;
+}
+
+export const InputArea: React.FC<InputAreaProps> = ({
+  type,
+  text,
+  btnText,
+  func,
+  setInput,
+  input,
+}) => {
   return (
     <View style={styles.inputArea}>
-      <TextInput style={styles.inputContainer} placeholder={text} />
+      <TextInput
+        value={input}
+        onChangeText={setInput}
+        style={styles.inputContainer}
+        placeholder={text}
+        keyboardType={type === 'email' ? 'email-address' : 'numeric'}
+      />
       <TouchableOpacity style={styles.inputBtn} onPress={func}>
         <Text style={styles.BtnInnerText}>{btnText}</Text>
       </TouchableOpacity>
@@ -19,15 +39,41 @@ export const InputArea: React.FC<InputArea> = ({text, btnText, func}) => {
   );
 };
 
-const Email: React.FC = () => {
+const Email: React.FC<EmailProps> = ({url}) => {
+  const [email, setEmail] = useState('');
+  const [certification, setCertification] = useState('');
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+  };
+
+  const handleCertificationChange = (text: string) => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setCertification(numericValue);
+  };
+
   return (
     <SafeAreaView>
       <View style={styles.title}>
         <Text style={styles.text}>사용하실 이메일을</Text>
         <Text style={styles.text}>입력해 주세요.</Text>
       </View>
-      <InputArea text="이메일 입력" btnText="메일 발송" func={() => {}} />
-      <InputArea text="인증번호 입력" btnText="인증하기" func={() => {}} />
+      <InputArea
+        type="email"
+        text="이메일 입력"
+        btnText="메일 발송"
+        func={() => {}}
+        setInput={handleEmailChange}
+        input={email}
+      />
+      <InputArea
+        type="number"
+        text="인증번호 입력"
+        btnText="인증하기"
+        func={() => {}}
+        setInput={handleCertificationChange}
+        input={certification}
+      />
     </SafeAreaView>
   );
 };
