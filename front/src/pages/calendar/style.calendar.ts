@@ -17,6 +17,9 @@ export const theme = {
   indicatorColor: 'red',
   selectedDayBackgroundColor: 'white',
   selectedDayTextColor: variables.main,
+  'stylesheet.calendar.header': {
+    week: {marginTop: 0, flexDirection: 'row', justifyContent: 'space-between'},
+  },
 };
 
 export const markedDates = (selected: Date, today: string) => {

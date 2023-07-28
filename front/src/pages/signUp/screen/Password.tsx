@@ -16,10 +16,16 @@ interface InputArea {
   setInput: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export interface SignData {
+  email: string;
+  password: string;
+}
+
 export const InputArea: React.FC<InputArea> = ({text, input, setInput}) => {
-  const [open, setOpen] = React.useState(false);
-  const passwordMasking = (value: string) => {
-    open ? setInput(value) : setInput('*'.repeat(value.length));
+  const [masking, setMasking] = React.useState(false);
+
+  const handleInputChange = (value: string) => {
+    setInput(value);
   };
 
   return (
@@ -27,14 +33,14 @@ export const InputArea: React.FC<InputArea> = ({text, input, setInput}) => {
       <TextInput
         style={styles.inputContainer}
         placeholder={text}
-        value={input}
-        onChangeText={passwordMasking}
+        value={masking ? '*'.repeat(input.length) : input}
+        onChangeText={handleInputChange}
       />
-      <TouchableOpacity onPress={() => setOpen(!open)}>
+      <TouchableOpacity onPress={() => setMasking(open => !open)}>
         <Image
           style={styles.swmIcon}
           source={
-            open
+            masking
               ? require('front/assets/image/swm_close_btn.png')
               : require('front/assets/image/swm_open_btn.png')
           }
