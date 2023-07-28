@@ -1,6 +1,7 @@
 import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import React, {useState} from 'react';
 import {useNavigation, StackActions} from '@react-navigation/native';
+import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
 import {variables} from '../../style/variables';
 
@@ -56,8 +57,8 @@ const Login: React.FC<onLoginProps> = ({onLogin}) => {
           </TouchableOpacity>
         </View>
       </View>
-
       <GradientButton_L text="로그인" onPress={handleLogin} />
+      <Oauth2 />
     </View>
   );
 };
@@ -89,8 +90,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingLeft: 24,
+    paddingTop: 24,
     paddingRight: 24,
+    paddingLeft: 24,
   },
   text: {
     fontFamily: 'Pretendard-Medium',
@@ -147,12 +149,12 @@ const styles = StyleSheet.create({
   textBtn: {
     fontFamily: variables.font_4,
     fontSize: 14,
-    color: variables.text_3,
+    color: variables.text_4,
   },
   checkBoxBtn: {
     fontFamily: variables.font_4,
     fontSize: 14,
-    color: variables.text_2,
+    color: variables.text_4,
     marginLeft: 10,
   },
 });
