@@ -119,4 +119,5 @@ public class UserController {
         System.out.println(code);
         return  new BaseResponse<String>(response);
     }
+    //배포자동화 테스트입니다.
 }
