@@ -73,7 +73,6 @@ const Calendar: React.FC = () => {
         removeClippedSubviews={false}
         onEndReachedThreshold={0.1}
       />
-      <StatusBar />
     </View>
   );
 };

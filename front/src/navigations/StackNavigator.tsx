@@ -139,6 +139,7 @@ const StackSchedule = () => {
       <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
       <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}} />
       <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
     </Stack.Navigator>

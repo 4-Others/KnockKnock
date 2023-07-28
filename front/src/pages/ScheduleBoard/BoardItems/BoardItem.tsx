@@ -40,7 +40,7 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
   };
 
   const handleBoardPress = () => {
-    navigation.navigate('BoardDetail');
+    navigation.navigate('BoardDetail', {title, color});
   };
 
   const handleSwipeableRightOpen = () => {
