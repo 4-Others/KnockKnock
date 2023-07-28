@@ -57,3 +57,10 @@ jobs:
       run: aws s3 cp --region ap-northeast-2 ./practice-deploy.zip s3://b-knockknock/practice-deploy.zip
 #     - name: Grant execute permission for gradlew
 #       run: chmod +x ./gradlew build
+#     CodeDeploy에게 배포 명령을 내립니다.
+    - name: Code Deploy
+      run: >
+        aws deploy create-deployment --knockknock
+        --deployment-config-name CodeDeployDefault.AllAtOnce
+        --deployment-group-name knockknock-group
+        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=practice-deploy.zip
