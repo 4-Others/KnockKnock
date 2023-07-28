@@ -7,7 +7,6 @@ import {loadItems} from './CalendarUtil';
 import {theme, markedDates} from './style.calendar';
 import {MarkedDate, ItemsData} from './style';
 import ProfileHeader from '../../components/ProfileHeader';
-import LinearGradient from 'react-native-linear-gradient';
 import ScheduleItemList from '../../components/ScheduleItemList';
 
 const {width, height} = Dimensions.get('window');
@@ -74,12 +73,6 @@ const Calendar: React.FC = () => {
         removeClippedSubviews={false}
         onEndReachedThreshold={0.1}
       />
-      <LinearGradient
-        style={[styles.linearGradient]}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1.2}}
-        colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
-      />
       <StatusBar />
     </View>
   );
@@ -93,13 +86,9 @@ export const styles = StyleSheet.create({
       ios: {top: (width - 67) / 8},
       android: {top: (width - 150) / 8},
     }),
-    height: height,
   },
   calendar: {
     marginTop: 5,
-    height: 360,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
   },
   scheduleListContainer: {
     flex: 1,
@@ -113,15 +102,6 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
     marginBottom: 20,
-  },
-  linearGradient: {
-    position: 'absolute',
-    width: '100%',
-    zIndex: 1,
-    ...Platform.select({
-      ios: {height: '15%', bottom: 42},
-      android: {height: '18%', bottom: 25},
-    }),
   },
 });
 

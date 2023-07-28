@@ -12,6 +12,10 @@ import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
+import SignAgree from '../pages/signUp/screen/Agree';
+import SignEmail from '../pages/signUp/screen/Email';
+import SignPassword from '../pages/signUp/screen/Password';
+import SignSuccess from '../pages/signUp/screen/Success';
 
 interface onLoginProps {
   onLogin: (loginState: boolean) => void;
@@ -41,8 +45,8 @@ const Stack = createStackNavigator();
 const StackSign: React.FC<onLoginProps> = ({onLogin}) => {
   const [deps, setDeps] = useState([
     {Agree: true},
-    {Email: false},
     {Password: false},
+    {Email: false},
     {Success: false},
   ]);
 
@@ -112,6 +116,17 @@ const StackSign: React.FC<onLoginProps> = ({onLogin}) => {
         })}>
         {props => <SignUp {...props} deps={deps} locate={locate} onLogin={onLogin} />}
       </Stack.Screen>
+    </Stack.Navigator>
+  );
+};
+
+const stackSignUp = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="SignAgree" component={SignAgree} options={{headerShown: false}} />
+      <Stack.Screen name="SignAgree" component={SignAgree} options={{headerShown: false}} />
+      <Stack.Screen name="SignAgree" component={SignAgree} options={{headerShown: false}} />
+      <Stack.Screen name="SignAgree" component={SignAgree} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };

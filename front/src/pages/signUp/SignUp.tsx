@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView, View, StyleSheet} from 'react-native';
 import ProgressBar from '../../components/ProgressBar';
 import Agree from './screen/Agree';
 import Email from './screen/Email';
 import Password from './screen/Password';
 import Success from './screen/Success';
+import Config from 'react-native-config';
+import {SignData} from './screen/Password';
 
 interface SignUpProps {
   locate: string;
@@ -13,20 +15,22 @@ interface SignUpProps {
 }
 
 const SignUp: React.FC<SignUpProps> = ({locate, deps, onLogin}) => {
+  const [signData, setSignData] = useState<SignData>({email: '', password: ''});
+  const url = Config.API_APP_KEY;
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={signUpStyles.container}>
       <ProgressBar deps={deps} />
-      <View style={styles.contents}>
+      <View style={signUpStyles.contents}>
         {locate === 'Agree' && <Agree />}
-        {locate === 'Email' && <Email />}
         {locate === 'Password' && <Password />}
+        {locate === 'Email' && <Email url={url} />}
         {locate === 'Success' && <Success onLogin={onLogin} />}
       </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+export const signUpStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
