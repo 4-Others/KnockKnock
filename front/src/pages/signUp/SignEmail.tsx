@@ -36,6 +36,7 @@ const SignEmail: React.FC<SignUpProps> = ({navigation, setDeps, url}) => {
     navigation.jumpTo('SignSuccess');
     setDeps(1);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -139,6 +140,6 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     bottom: 0,
-    marginBottom: 40,
+    marginBottom: 60,
   },
 });

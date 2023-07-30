@@ -30,6 +30,7 @@ type SignUpProps = {
 const SignPassword: React.FC<SignUpProps> = ({navigation, setDeps, route, url}) => {
   const [passwordInput, setPasswordInput] = React.useState('');
   const [passwordCheck, setPasswordCheck] = React.useState('');
+
   const {password} = route.params;
 
   const handleNextPage = () => {
@@ -126,6 +127,6 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     bottom: 0,
-    marginBottom: 40,
+    marginBottom: 60,
   },
 });

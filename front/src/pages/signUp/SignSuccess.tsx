@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     bottom: 0,
-    marginBottom: 40,
+    marginBottom: 60,
   },
 });

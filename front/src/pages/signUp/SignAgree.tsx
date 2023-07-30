@@ -41,6 +41,7 @@ const SignAgree: React.FC<SignUpProps> = ({navigation, setDeps}) => {
     navigation.jumpTo('SignPassword');
     setDeps(0.5);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -164,6 +165,6 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     bottom: 0,
-    marginBottom: 40,
+    marginBottom: 60,
   },
 });

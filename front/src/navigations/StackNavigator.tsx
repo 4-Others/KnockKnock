@@ -25,6 +25,7 @@ const StackSign: React.FC<onLoginProps> = ({onLogin}) => {
       <Stack.Screen name="Login" options={{headerShown: false}}>
         {props => <Login {...props} onLogin={onLogin} />}
       </Stack.Screen>
+
       <Stack.Screen name="SignUpTab" options={{headerShown: false}}>
         {props => <SignUpTab {...props} onLogin={onLogin} />}
       </Stack.Screen>
