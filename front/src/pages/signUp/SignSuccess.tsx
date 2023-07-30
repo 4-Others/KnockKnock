@@ -1,17 +1,17 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import {SafeAreaView, View, Text, StyleSheet, Image} from 'react-native';
-import {variables} from '../../../style/variables';
-import {GradientButton_L} from '../../../components/GradientButton';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import {variables} from '../../style/variables';
+import {GradientButton_L} from '../../components/GradientButton';
 
 interface onLoginProps {
   onLogin: (loginState: boolean) => void;
 }
 
-const Success: React.FC<onLoginProps> = ({onLogin}) => {
+const SignSuccess: React.FC<onLoginProps> = ({onLogin}) => {
   const handleLogin = () => {
     onLogin(true);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -23,24 +23,28 @@ const Success: React.FC<onLoginProps> = ({onLogin}) => {
         <Text style={styles.text}>정상적으로 완료됐습니다!</Text>
         <Text style={styles.subText}>KnockKnock의 다양한 서비스를 만나보세요.</Text>
       </View>
-      <GradientButton_L text="로그인" onPress={handleLogin} />
+      <View style={styles.bottomButton}>
+        <GradientButton_L text="로그인" onPress={handleLogin} />
+      </View>
     </SafeAreaView>
   );
 };
 
-export default Success;
+export default SignSuccess;
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    flexDirection: 'column',
+    flex: 1,
+    marginTop: 30,
+    marginLeft: 20,
+    marginRight: 20,
     justifyContent: 'space-between',
   },
   title: {
     position: 'absolute',
     width: '100%',
     marginBottom: 24,
-    top: '40%',
+    top: '35%',
   },
   text: {
     fontFamily: variables.font_4,
@@ -55,5 +59,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 10,
+  },
+  bottomButton: {
+    bottom: 0,
+    marginBottom: 40,
   },
 });
