@@ -16,7 +16,7 @@ const Login: React.FC<onLoginProps> = ({onLogin}) => {
   const [on, setOn] = useState(false);
 
   const handleSignUp = () => {
-    navigation.dispatch(StackActions.push('SignUp', {locate: undefined}));
+    navigation.dispatch(StackActions.push('SignUpTab', {locate: undefined}));
   };
 
   const handleLogin = () => {

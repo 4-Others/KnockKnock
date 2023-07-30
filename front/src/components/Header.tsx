@@ -1,17 +1,16 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import React from 'react';
 import {variables} from '../style/variables';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, TabActions} from '@react-navigation/native';
 
 interface HeaderProps {
   title: string;
   type?: string;
-  nextNavigation?: () => void;
+  nextFunc?: () => void;
 }
 
-const Header = ({title, type, nextNavigation}: HeaderProps) => {
+const Header = ({title, type, nextFunc}: HeaderProps) => {
   const navigation = useNavigation();
-
   const prevBtnIconHandller = () => {
     if (type === 'search') return require('front/assets/image/search_icon.png');
     if (type === 'edit') return require('front/assets/image/edit_icon.png');
@@ -19,22 +18,24 @@ const Header = ({title, type, nextNavigation}: HeaderProps) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.left}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require('front/assets/image/back-btn.png')}
-            style={[styles.icon, {marginLeft: 24}]}
-          />
+    <SafeAreaView>
+      <View style={[styles.container, type === 'signUp' ? null : styles.bottomLine]}>
+        <View style={styles.left}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require('front/assets/image/back-btn.png')}
+              style={[styles.icon, {marginLeft: 24}]}
+            />
+          </TouchableOpacity>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        <TouchableOpacity onPress={nextFunc}>
+          {type === 'alarm' || type === 'signUp' ? null : (
+            <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
+          )}
         </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
       </View>
-      <TouchableOpacity onPress={nextNavigation}>
-        {type === 'alarm' ? null : (
-          <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
-        )}
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -47,6 +48,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     height: 72,
+  },
+  bottomLine: {
     borderBottomWidth: 2,
     borderBottomColor: variables.line_2,
   },
