@@ -17,7 +17,7 @@ const ScheduleBoard = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ProfileHeader />
       <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View style={styles.body}>
