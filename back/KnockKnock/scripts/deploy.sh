@@ -22,6 +22,7 @@ then
 else
   echo "> 컨테이너를 중지시킵니다." >> "$LOG_FILE"
   docker stop "$CONTAINER_ID"
+  docker rm "$CONTAINER_ID"
 fi
 
 echo "> DEPLOY_JAR 배포" >> "$LOG_FILE"
