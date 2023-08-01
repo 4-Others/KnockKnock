@@ -3,7 +3,7 @@
 # 빌드 파일의 이름이 콘텐츠와 다르다면 다음 줄의 .jar 파일 이름을 수정하시기 바랍니다.
 BUILD_JAR=$(ls /home/ssm-user/KnockKnock/back/KnockKnock/build/libs/KnockKnock-0.0.1-SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
-
+DOCKER_IMAGE_NAME="knockknock"
 LOG_FILE="/home/ssm-user/KnockKnock/back/KnockKnock/scripts/deploy.log"
 
 echo "> 현재 시간: $(date)" >> "$LOG_FILE"
@@ -14,7 +14,7 @@ DEPLOY_PATH="/home/ssm-user/KnockKnock/"
 cp $BUILD_JAR $DEPLOY_PATH
 
 echo "> 현재 실행중인 애플리케이션 컨테이너 확인" >> "$LOG_FILE"
-CONTAINER_ID=$(docker ps -q -f name=epic_mccarthy)  # Docker 컨테이너 이름을 여기에 입력하세요.
+CONTAINER_ID=$(docker ps -q -f ancestor=$DOCKER_IMAGE_NAME)  # Docker 컨테이너 이름을 여기에 입력하세요.
 
 if [ -z "$CONTAINER_ID" ]
 then
