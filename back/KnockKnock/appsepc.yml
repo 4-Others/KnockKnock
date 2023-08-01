@@ -12,8 +12,20 @@ permissions:
     group: ubuntu
 
 hooks:
+  ApplicationStop:
+    - location: scripts/empty_script.sh
+      timeout: 3000
+      runas: root
+  DownloadBundle:
+    - location: scripts/empty_script.sh
+      timeout: 3000
+      runas: root
   BeforeInstall:
     - location: scripts/server_clear.sh
+      timeout: 3000
+      runas: root
+  Install:
+    - location: scripts/empty_script.sh
       timeout: 3000
       runas: root
   AfterInstall:
