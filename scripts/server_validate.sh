@@ -3,8 +3,8 @@
 # Docker 서비스가 응답하는지 확인합니다.
 # 여기서 ACTIVE_PROFILE과 ACTIVE_PORT는 여러분의 프로젝트에 맞게 수정해야 합니다.
 ROOT_PATH="/home/ssm-user/KnockKnock/back/KnockKnock"  # 애플리케이션 루트 경로 설정
-ACTIVE_PROFILE=$(cat ${ROOT_PATH}/app.env | grep "^ACTIVE_PROFILE" | cut -d "=" -f2)  # app.env 파일에서 ACTIVE_PROFILE 읽어오기
-ACTIVE_PORT=$(cat ${ROOT_PATH}/app.env | grep "^ACTIVE_PORT" | cut -d "=" -f2)  # app.env 파일에서 ACTIVE_PORT 읽어오기
+ACTIVE_PROFILE=$(cat $/home/ssm-user/app.env | grep "^ACTIVE_PROFILE" | cut -d "=" -f2)  # app.env 파일에서 ACTIVE_PROFILE 읽어오기
+ACTIVE_PORT=$(cat $/home/ssm-user/app.env | grep "^ACTIVE_PORT" | cut -d "=" -f2)  # app.env 파일에서 ACTIVE_PORT 읽어오기
 
 # Active profile과 port가 설정되었는지 확인
 if [ -z "$ACTIVE_PROFILE" ] || [ -z "$ACTIVE_PORT" ]; then
