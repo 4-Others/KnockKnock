@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 //@RedisHash(value = "EmailConfirmRandomKey")
 @Entity
-@Table(name = "email_confirm_random_key")
+@Table(name = "EMAIL_CONFIRM_RANDOM")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

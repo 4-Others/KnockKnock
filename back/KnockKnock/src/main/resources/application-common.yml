@@ -3,8 +3,8 @@ jwt:
   expirationMs: 3600000
 token:
   expiration:
-    access: 3600000
-    refresh: 86400000
+    access: 86400000
+    refresh: 31536000000
 sns:
   google:
     url: "https://accounts.google.com/o/oauth2/v2/auth"
@@ -12,7 +12,7 @@ sns:
       id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
       secret: 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
     callback:
-      url: "http://localhost:8080/auth/google/callback"
+      url: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/auth/google/callback"
     token:
       url: "https://oauth2.googleapis.com/token"
 spring:
@@ -26,7 +26,7 @@ spring:
             scope: profile,email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://localhots:8080/login/oauth2/code/kakao"
+            redirect-uri: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/login/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
@@ -37,13 +37,13 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    datasource:
+    url: jdbc:mysql://localhost:3306/knockdb?serverTimeZone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: xogud96
     jpa:
-      database-platform: org.hibernate.dialect.H2Dialect
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate:
         ddl-auto: create
   quartz:

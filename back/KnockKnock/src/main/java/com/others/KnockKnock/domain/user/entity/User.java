@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "USERS")
 @Getter
 @Builder
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "USERS")
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
