@@ -1,16 +1,19 @@
 import {StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import React from 'react';
 import {variables} from '../style/variables';
-import {useNavigation, TabActions} from '@react-navigation/native';
+import * as Progress from 'react-native-progress';
+import {useNavigation} from '@react-navigation/native';
 
 interface HeaderProps {
   title: string;
+  state?: any;
+  navigation?: any;
   type?: string;
   nextFunc?: () => void;
 }
 
-const Header = ({title, type, nextFunc}: HeaderProps) => {
-  const navigation = useNavigation();
+const Header = ({title, type, nextFunc, state, navigation}: HeaderProps) => {
+  const before = useNavigation();
   const prevBtnIconHandller = () => {
     if (type === 'search') return require('front/assets/image/search_icon.png');
     if (type === 'edit') return require('front/assets/image/edit_icon.png');
@@ -21,7 +24,7 @@ const Header = ({title, type, nextFunc}: HeaderProps) => {
     <SafeAreaView>
       <View style={[styles.container, type === 'signUp' ? null : styles.bottomLine]}>
         <View style={styles.left}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => (navigation ? navigation.goBack() : before.goBack())}>
             <Image
               source={require('front/assets/image/back-btn.png')}
               style={[styles.icon, {marginLeft: 24}]}
@@ -35,6 +38,16 @@ const Header = ({title, type, nextFunc}: HeaderProps) => {
           )}
         </TouchableOpacity>
       </View>
+      {state ? (
+        <Progress.Bar
+          progress={(state.index + 1) / state.routeNames.length}
+          width={null}
+          height={2}
+          color={'#1b1b1b'}
+          unfilledColor={'#eee'}
+          borderColor={'#fff'}
+        />
+      ) : null}
     </SafeAreaView>
   );
 };
