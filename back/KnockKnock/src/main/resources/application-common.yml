@@ -12,7 +12,7 @@ sns:
       id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
       secret: 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
     callback:
-      url: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/auth/google/callback"
+      url: "http://localhost:8080/auth/google/callback"
     token:
       url: "https://oauth2.googleapis.com/token"
 spring:
@@ -26,7 +26,7 @@ spring:
             scope: profile,email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/oauth/kakao"
+            redirect-uri: "http://localhost:8080/auth/kakao/callback"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
