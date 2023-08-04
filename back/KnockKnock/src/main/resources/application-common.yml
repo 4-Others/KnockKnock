@@ -26,7 +26,7 @@ spring:
             scope: profile,email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/login/oauth2/code/kakao"
+            redirect-uri: "http://ec2-54-90-128-33.compute-1.amazonaws.com:8080/oauth/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
