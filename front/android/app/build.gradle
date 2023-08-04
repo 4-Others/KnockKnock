@@ -160,7 +160,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
+    implementation 'com.facebook.fresco:fresco:2.5.0'
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
