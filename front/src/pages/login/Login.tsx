@@ -58,7 +58,7 @@ const Login: React.FC<onLoginProps> = ({onLogin}) => {
         </View>
       </View>
       <GradientButton_L text="로그인" onPress={handleLogin} />
-      <Oauth2 />
+      <Oauth2 onLogin={onLogin} />
     </View>
   );
 };

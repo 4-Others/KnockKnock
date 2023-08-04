@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import {Image, TouchableOpacity, StyleSheet, TouchableOpacityProps} from 'react-native';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../pages/login/Login';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
@@ -59,9 +58,3 @@ const StackCalendar = () => {
 };
 
 export {StackSign, StackSchedule, StackCalendar};
-
-const styles = StyleSheet.create({
-  headerStyle: {
-    height: 80,
-  },
-});

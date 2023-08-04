@@ -7,6 +7,7 @@ import TabNavigator from './src/navigations/TabNavigator';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const checkLogin = (loginState: boolean) => {
+    console.log('checkLogin called with:', loginState);
     setIsLoggedIn(loginState);
   };
 
