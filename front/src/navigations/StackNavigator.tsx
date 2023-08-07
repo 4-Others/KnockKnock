@@ -1,6 +1,8 @@
 import React from 'react';
+import Config from 'react-native-config';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../pages/login/Login';
+import AuthSplashScreen from '../pages/login/AuthSplashScreen';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
 import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
@@ -11,23 +13,30 @@ import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
 import SignUpTab from '../pages/signUp/SignUpTab';
+import TabNavigator from './TabNavigator';
 
-export interface onLoginProps {
-  onLogin: (loginState: boolean) => void;
+export interface AuthProps {
+  route: any;
+  navigation: any;
+  url?: string;
 }
 
 const Stack = createStackNavigator();
+const url = Config.API_APP_KEY;
 
-const StackSign: React.FC<onLoginProps> = ({onLogin}) => {
+const AuthStack: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="AuthSplach">
+      <Stack.Screen name="AuthSplach" options={{headerShown: false}}>
+        {props => <AuthSplashScreen {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="Login" options={{headerShown: false}}>
-        {props => <Login {...props} onLogin={onLogin} />}
+        {props => <Login {...props} url={url} />}
       </Stack.Screen>
-
       <Stack.Screen name="SignUpTab" options={{headerShown: false}}>
-        {props => <SignUpTab {...props} onLogin={onLogin} />}
+        {props => <SignUpTab {...props} url={url} />}
       </Stack.Screen>
+      <Stack.Screen name="MainTab" component={TabNavigator} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };
@@ -57,4 +66,4 @@ const StackCalendar = () => {
   );
 };
 
-export {StackSign, StackSchedule, StackCalendar};
+export {AuthStack, StackSchedule, StackCalendar};

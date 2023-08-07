@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {StackSign} from './src/navigations/StackNavigator';
-import TabNavigator from './src/navigations/TabNavigator';
+import {AuthStack} from './src/navigations/StackNavigator';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,7 +21,7 @@ const App = () => {
       }}
       independent={true}>
       <View style={styles.container}>
-        {isLoggedIn ? <TabNavigator /> : <StackSign onLogin={checkLogin} />}
+        <AuthStack />
       </View>
     </NavigationContainer>
   );

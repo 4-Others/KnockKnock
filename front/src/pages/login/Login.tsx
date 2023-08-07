@@ -1,27 +1,27 @@
-import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
-import React, {useState} from 'react';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
+import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
+import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
+import {isPasswordValid} from '../signUp/SignupUtil';
+import {AutomaticLoginAuth} from '../../util/AuthToken';
 
-interface onLoginProps {
-  onLogin: (loginState: boolean) => void;
-}
-
-const Login: React.FC<onLoginProps> = ({onLogin}) => {
-  const navigation = useNavigation();
+const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
-  const [on, setOn] = useState(false);
-
+  const [autoLogin, setAutoLogin] = useState(false);
+  const [passwordCheck, setPasswordCheck] = React.useState(false);
+  const data = {email: id, password: pw};
   const handleSignUp = () => {
-    navigation.dispatch(StackActions.push('SignUpTab', {locate: undefined}));
+    navigation.navigate('SignUpTab');
   };
 
-  const handleLogin = () => {
-    onLogin(true);
-  };
+  useEffect(() => {
+    isPasswordValid(pw) === true || pw.length <= 0
+      ? setPasswordCheck(true)
+      : setPasswordCheck(false);
+  }, [pw]);
 
   return (
     <View style={styles.container}>
@@ -32,21 +32,30 @@ const Login: React.FC<onLoginProps> = ({onLogin}) => {
           style={[styles.input, styles.inputBottomLine]}
           onChangeText={setId}
           value={id}
-          placeholder="아이디"
+          placeholder="이메일"
         />
         <TextInput style={styles.input} onChangeText={setPw} value={pw} placeholder="비밀번호" />
       </View>
+      {passwordCheck === false ? (
+        <Text style={styles.alertText}>
+          8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
+        </Text>
+      ) : null}
       <View style={styles.loginMenu}>
-        <View style={styles.autoLogin}>
+        <TouchableOpacity
+          style={styles.autoLogin}
+          onPress={() => {
+            setAutoLogin(on => !on);
+          }}>
           <TouchableOpacity
             onPress={() => {
-              setOn(on => !on);
+              setAutoLogin(on => !on);
             }}
-            style={on ? styles.checkState : styles.unCheckState}>
+            style={autoLogin ? styles.checkState : styles.unCheckState}>
             <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
           </TouchableOpacity>
           <Text style={styles.checkBoxBtn}>자동 로그인</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.textBtns}>
           <TouchableOpacity>
             <Text style={styles.textBtn}>계정 찾기</Text>
@@ -57,8 +66,15 @@ const Login: React.FC<onLoginProps> = ({onLogin}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <GradientButton_L text="로그인" onPress={handleLogin} />
-      <Oauth2 onLogin={onLogin} />
+      <GradientButton_L
+        text="로그인"
+        onPress={() => AutomaticLoginAuth(url, data, passwordCheck)}
+      />
+      <Oauth2
+        onLogin={function (loginState: boolean): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
     </View>
   );
 };
@@ -156,6 +172,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: variables.text_4,
     marginLeft: 10,
+  },
+  alertText: {
+    fontFamily: variables.font_4,
+    color: variables.board_8,
+    lineHeight: 20,
   },
 });
 

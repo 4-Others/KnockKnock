@@ -6,10 +6,10 @@ import LinearGradient from 'react-native-linear-gradient';
 interface ComponentType {
   text: string;
   onPress?: () => any;
-  style?: object | object[];
+  disabled?: boolean;
 }
 
-const GradientButton_S: React.FC<ComponentType> = ({text, onPress, style}) => {
+const GradientButton_S: React.FC<ComponentType> = ({text, onPress}) => {
   return (
     <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={onPress}>
       <LinearGradient
@@ -23,14 +23,18 @@ const GradientButton_S: React.FC<ComponentType> = ({text, onPress, style}) => {
   );
 };
 
-const GradientButton_L: React.FC<ComponentType> = ({text, onPress, style}) => {
+const GradientButton_L: React.FC<ComponentType> = ({text, onPress, disabled}) => {
   return (
-    <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.container}
+      onPress={onPress}
+      disabled={disabled}>
       <LinearGradient
         style={styles.button_L}
         start={{x: -0.1, y: 0}}
         end={{x: 0.9, y: 0.5}}
-        colors={['#FEA97A', '#FF5789']}>
+        colors={disabled ? ['#eee', '#f1f1f1'] : ['#FEA97A', '#FF5789']}>
         <Text style={styles.text}>{text}</Text>
       </LinearGradient>
     </TouchableOpacity>
