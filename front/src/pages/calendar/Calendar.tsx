@@ -1,6 +1,14 @@
 import React, {useState} from 'react';
 import {Agenda} from 'react-native-calendars';
-import {StyleSheet, View, StatusBar, Platform, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  StatusBar,
+  Platform,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import calendarData from './calendarData.json';
 import {variables} from '../../style/variables';
 import {loadItems} from './CalendarUtil';
@@ -8,10 +16,13 @@ import {theme, markedDates} from './style.calendar';
 import {MarkedDate, ItemsData} from './style';
 import ProfileHeader from '../../components/ProfileHeader';
 import ScheduleItemList from '../../components/ScheduleItemList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthProps} from '../../navigations/StackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
-const Calendar: React.FC = () => {
+const Calendar: React.FC<AuthProps> = ({navigation}) => {
+  AsyncStorage.getItem('tokens').then(token => console.log(token));
   const [items, setItems] = useState<ItemsData>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
   const [selected, setSelected] = useState(() => new Date()); // 선택한 날짜 state로 저장 & 업데이트
   const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
@@ -50,6 +61,13 @@ const Calendar: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          AsyncStorage.clear();
+          navigation.navigate('AuthSplach');
+        }}>
+        <Text>로그아웃</Text>
+      </TouchableOpacity>
       <ProfileHeader />
       <Agenda
         style={styles.calendar}

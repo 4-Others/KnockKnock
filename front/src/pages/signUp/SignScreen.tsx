@@ -17,7 +17,7 @@ import {RouteProp, ParamListBase} from '@react-navigation/native';
 
 type inputValue = {email: string; password: string};
 
-type sendDataValue = {email: string; password: string; key: string};
+type sendDataValue = {email: string; password: string; tokenOrKey: string};
 
 type AgreeScreenProps = {
   route: RouteProp<ParamListBase, 'SignAgree'>;
@@ -30,6 +30,7 @@ type DataPostScreenProps = {
   url?: string;
 };
 
+// 약관동의 스크린
 const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   const [allAgree, setAllAgree] = useState(false);
   const [eachAgree, seteachAgree] = useState([
@@ -109,12 +110,16 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({navigation, url}) => {
   const [error, setError] = useState(false);
   const {password, email} = inputValue;
 
+  // 이메일 & 비밀번호 입력 api
   const handleNextPage = async () => {
-    navigation.navigate('SignEmailAuth', inputValue);
     try {
       const response = await axios.post(`${url}api/v1/users/signup`, inputValue);
+      console.log(response);
+      if (response.status === 200) navigation.navigate('SignEmailAuth', inputValue);
     } catch (error: any) {
-      setError(true);
+      console.log(error);
+      // 에러 처리
+      setError(error => !error);
     }
   };
 
@@ -150,6 +155,7 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({navigation, url}) => {
             {!isEmaildValid(email) && email.length > 0 ? (
               <Text style={styles.alertText}>올바른 이메일 주소를 입력하세요.</Text>
             ) : null}
+            {error ? <Text style={styles.alertText}>다른 이메일 주소를 입력해 주세요.</Text> : null}
           </View>
           <View style={styles.InputTextArea}>
             <PasswordInputArea
@@ -179,19 +185,21 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({navigation, url}) => {
 const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
   const initialEmail = route.params?.email;
   const initialPassword = route.params?.password;
+  const [complete, setComplete] = useState(false);
   const [inputValue, setInputValue] = useState<sendDataValue>({
     email: '',
     password: '',
-    key: '',
+    tokenOrKey: '',
   });
-  const {email, password, key} = inputValue;
+  const {email, tokenOrKey} = inputValue;
+
   const changeEmailKey = (text: string) => {
     setInputValue({
       ...inputValue,
-      key: text,
+      tokenOrKey: text,
     });
   };
-  console.log(initialEmail, initialPassword);
+
   const changeCertifyEmail = (text: string) => {
     setInputValue({
       ...inputValue,
@@ -199,6 +207,7 @@ const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) 
     });
   };
 
+  // 회원가입 인증 메일 발송 api
   const certifyEmailPost = async () => {
     const formData = new FormData();
     formData.append('recipientEmail', email);
@@ -215,11 +224,24 @@ const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) 
     };
     try {
       const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
+      console.log('인증메일발송', response.status);
     } catch (error: any) {
-      console.log('인증메일발송', error.request.status);
+      console.log('인증메일발송', error.request);
     }
   };
 
+  // 최종 회원가입 인증 api
+  const SignupKeyPost = async () => {
+    try {
+      const response = await axios.post(`${url}api/v1/emails/verify`, inputValue);
+      console.log('인증키발송', response.status);
+      if (response.status === 200) setComplete(boolean => !boolean);
+    } catch (error: any) {
+      console.log('인증키발송', error.request);
+    }
+  };
+
+  // inputvalue 초기값 설정
   useEffect(() => {
     setInputValue({
       ...inputValue,
@@ -252,9 +274,9 @@ const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) 
               text="전달받은 인증번호를 입력하세요"
               btnText="인증하기"
               setInput={changeEmailKey}
-              input={key}
-              func={() => {}}
-              disabled={!(key.length >= 6)}
+              input={tokenOrKey}
+              func={SignupKeyPost}
+              disabled={!(tokenOrKey.length >= 6)}
               defaultValue={initialEmail}
             />
             {!isEmaildValid(email) && email.length > 0 ? (
@@ -264,7 +286,11 @@ const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) 
         </View>
       </ScrollView>
       <View style={styles.bottomButton}>
-        <GradientButton_L text="다음" />
+        <GradientButton_L
+          text="다음"
+          onPress={() => navigation.navigate('SignSuccess')}
+          disabled={!complete}
+        />
       </View>
     </SafeAreaView>
   );
