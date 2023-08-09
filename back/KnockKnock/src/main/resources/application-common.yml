@@ -10,7 +10,7 @@ sns:
     url: "https://accounts.google.com/o/oauth2/v2/auth"
     client:
       id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
-      secret: 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
+      secret: ${GOOGLE_SECRET}
     callback:
       url: "http://localhost:8080/auth/google/callback"
     token:
@@ -38,14 +38,14 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
     datasource:
-    url: jdbc:mysql://localhost:3306/knockdb?serverTimeZone=Asia/Seoul
+    url: jdbc:mysql://knockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb?serverTimeZone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: xogud96
+    username: admin
+    password: ${RDS_PW}
     jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate:
-        ddl-auto: create
+        ddl-auto: update
   quartz:
     job-store-type: jdbc
     jdbc:
@@ -66,7 +66,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: 4othersofficial@gmail.com
-    password: ncqvjjaaneuonkwx
+    password: ${SMTP_CREDENTIALS}
     properties:
       mail:
         smtp:
