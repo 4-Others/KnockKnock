@@ -59,7 +59,9 @@ const StackSchedule = () => {
 const StackCalendar = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Calendar" component={Calendar} options={{headerShown: false}} />
+      <Stack.Screen name="Calendar" options={{headerShown: false}}>
+        {props => <Calendar {...props} />}
+      </Stack.Screen>
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
