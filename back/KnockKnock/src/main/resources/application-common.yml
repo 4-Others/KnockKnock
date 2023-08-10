@@ -45,7 +45,7 @@ spring:
     jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate:
-        ddl-auto: update
+        ddl-auto: create
   quartz:
     job-store-type: jdbc
     jdbc:
