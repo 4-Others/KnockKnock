@@ -25,4 +25,4 @@ else
 fi
 
 echo "> DEPLOY_JAR 배포" >> "$LOG_FILE"
-docker run -d -p 8080:8080 --env-file /home/ubuntu/action/app.env --name knockknockcon knockknock java -jar /app.jar
+docker run -d -p 8080:8080 --env-file /home/ubuntu/action/app.env --name knockknockcon knockknock java -Djava.security.egd=file:/dev/./urandom -jar /app.jar
