@@ -26,7 +26,7 @@ USER nobody
 ENTRYPOINT [ \
    "java", \
    "-jar", \
-   "-Djava.security.egd=file:/dev/./urandom", \
+   "-Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=dev", \
    "-Dsun.net.inetaddr.ttl=0", \
    "KnockKnock-0.0.1-SNAPSHOT.jar" \
 ]
