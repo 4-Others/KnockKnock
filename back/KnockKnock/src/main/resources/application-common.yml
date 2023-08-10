@@ -38,7 +38,7 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
     datasource:
-      url: jdbc:mysql://knockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
+      url: jdbc:mysql://knockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockknockdb
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: admin
       password: ${RDS_PW}
