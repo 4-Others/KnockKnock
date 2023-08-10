@@ -38,10 +38,10 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
     datasource:
-    url: jdbc:mysql://knockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb?serverTimeZone=Asia/Seoul
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: ${RDS_PW}
+      url: jdbc:mysql://knockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: admin
+      password: ${RDS_PW}
     jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate:
