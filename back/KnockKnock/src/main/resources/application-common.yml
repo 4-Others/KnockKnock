@@ -43,6 +43,7 @@ spring:
       username: admin
       password: ${RDS_PW}
     jpa:
+      database: mysql
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate:
         ddl-auto: create
