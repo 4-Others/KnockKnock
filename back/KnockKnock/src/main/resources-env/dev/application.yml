@@ -12,6 +12,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: create
+  batch:
+    initialize-schema: always
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com

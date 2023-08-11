@@ -22,6 +22,7 @@ public class QuartzConfiguration {
         factoryBean.setDurability(true);
         return factoryBean;
     }
+
     @Bean
     public CronTriggerFactoryBean cronTriggerFactoryBean(JobDetailFactoryBean jobDetailFactoryBean) {
         CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
@@ -30,12 +31,14 @@ public class QuartzConfiguration {
         factoryBean.setCronExpression("0 0 0 * * ?"); // 매일 자정에 실행
         return factoryBean;
     }
+
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean(CronTriggerFactoryBean cronTriggerFactoryBean) {
         SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
         factoryBean.setTriggers(cronTriggerFactoryBean.getObject());
         return factoryBean;
     }
+}
     /*
     @Bean
     public SimpleTriggerFactoryBean simpleTriggerFactoryBean(JobDetailFactoryBean jobDetailFactoryBean) {
@@ -55,5 +58,4 @@ public class QuartzConfiguration {
     }
     주석처리한 코드는 애플리케이션 시작한기준으로 24시간마다 스케줄링 무한반복함. 안한 코드는 매일 자정에 시작함.
     */
-}
 
