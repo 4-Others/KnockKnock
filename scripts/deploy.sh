@@ -26,6 +26,4 @@ fi
 
 echo "> DEPLOY_JAR 배포" >> "$LOG_FILE"
 
-docker build -t knockknock /home/ubuntu/action/back/KnockKnock
-
 docker run -d -p 8080:8080 --env-file /home/ubuntu/action/app.env --name knockknockcon knockknock java -Dspring.profiles.active=dev -jar /app.jar
