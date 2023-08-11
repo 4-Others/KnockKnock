@@ -12,3 +12,54 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: create
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: 4othersofficial@gmail.com
+    password: ${SMTP_CREDENTIALS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${sns.google.client-id}
+            client-secret: ${sns.google.client-secret}
+            scope: profile,email
+          kakao:
+            client-id: fdfae2918a363efc5fad0a501f3dcd55
+            redirect-uri: "http://localhost:8080/auth/kakao/callback"
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code
+            scope: profile_image, account_email
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: id
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expirationMs: 3600000
+token:
+  expiration:
+    access: 86400000
+    refresh: 31536000000
+sns:
+  google:
+    url: "https://accounts.google.com/o/oauth2/v2/auth"
+    client:
+      id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
+      secret: ${GOOGLE_SECRET}
+    callback:
+      url: "http://localhost:8080/auth/google/callback"
+    token:
+      url: "https://oauth2.googleapis.com/token"
