@@ -49,6 +49,7 @@ spring:
       ddl-auto: create
   batch:
     initialize-schema: always
+    table-prefix: BATCH_
   quartz:
     job-store-type: jdbc
     jdbc:
