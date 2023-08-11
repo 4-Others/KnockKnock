@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 배포된 파일들에 대해 실행 권한을 추가합니다.
-chmod +x /home/ubuntu/action/back/KnockKnock/build/**
+chmod +x /home/ubuntu/action/**
 
 docker build -t knockknock /home/ubuntu/action/back/KnockKnock
 
