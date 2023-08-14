@@ -17,54 +17,54 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@EnableBatchProcessing
-public class BatchConfiguration {
-
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
-    private final UserRepository userRepository;
-
-    public BatchConfiguration(JobBuilderFactory jobBuilderFactory,
-                              StepBuilderFactory stepBuilderFactory,
-                              UserRepository userRepository) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.userRepository = userRepository;
-    }
-
-    @Bean
-    public ItemReader<User> inactiveUserItemReader() {
-        return new InactiveUserItemReader(userRepository);
-    }
-
-    @Bean
-    public ItemProcessor<User, User> inactiveUserItemProcessor() {
-        return new InactiveUserItemProcessor();
-    }
-
-    @Bean
-    public ItemWriter<User> inactiveUserItemWriter() {
-        return new InactiveUserItemWriter(userRepository);
-    }
-    @Bean
-    public Step inactiveUserProcessingStep(ItemReader<User> reader,
-                                           ItemProcessor<User, User> processor,
-                                           ItemWriter<User> writer) {
-        return stepBuilderFactory.get("inactiveUserProcessingStep")
-                .<User, User>chunk(10)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .build();
-    }
-
-    @Bean
-    public Job inactiveUserProcessingJob(Step inactiveUserProcessingStep) {
-        return jobBuilderFactory.get("inactiveUserProcessingJob")
-                .incrementer(new RunIdIncrementer())
-                .flow(inactiveUserProcessingStep)
-                .end()
-                .build();
-    }
-}
+//@Configuration
+//@EnableBatchProcessing
+//public class BatchConfiguration {
+//
+//    private final JobBuilderFactory jobBuilderFactory;
+//    private final StepBuilderFactory stepBuilderFactory;
+//    private final UserRepository userRepository;
+//
+//    public BatchConfiguration(JobBuilderFactory jobBuilderFactory,
+//                              StepBuilderFactory stepBuilderFactory,
+//                              UserRepository userRepository) {
+//        this.jobBuilderFactory = jobBuilderFactory;
+//        this.stepBuilderFactory = stepBuilderFactory;
+//        this.userRepository = userRepository;
+//    }
+//
+//    @Bean
+//    public ItemReader<User> inactiveUserItemReader() {
+//        return new InactiveUserItemReader(userRepository);
+//    }
+//
+//    @Bean
+//    public ItemProcessor<User, User> inactiveUserItemProcessor() {
+//        return new InactiveUserItemProcessor();
+//    }
+//
+//    @Bean
+//    public ItemWriter<User> inactiveUserItemWriter() {
+//        return new InactiveUserItemWriter(userRepository);
+//    }
+//    @Bean
+//    public Step inactiveUserProcessingStep(ItemReader<User> reader,
+//                                           ItemProcessor<User, User> processor,
+//                                           ItemWriter<User> writer) {
+//        return stepBuilderFactory.get("inactiveUserProcessingStep")
+//                .<User, User>chunk(10)
+//                .reader(reader)
+//                .processor(processor)
+//                .writer(writer)
+//                .build();
+//    }
+//
+//    @Bean
+//    public Job inactiveUserProcessingJob(Step inactiveUserProcessingStep) {
+//        return jobBuilderFactory.get("inactiveUserProcessingJob")
+//                .incrementer(new RunIdIncrementer())
+//                .flow(inactiveUserProcessingStep)
+//                .end()
+//                .build();
+//    }
+//}

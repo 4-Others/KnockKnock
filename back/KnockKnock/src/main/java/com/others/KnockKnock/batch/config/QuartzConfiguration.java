@@ -12,33 +12,33 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 
-@Configuration
-public class QuartzConfiguration {
-
-    @Bean
-    public JobDetailFactoryBean jobDetailFactoryBean() {
-        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-        factoryBean.setJobClass(SampleJob.class);
-        factoryBean.setDurability(true);
-        return factoryBean;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean cronTriggerFactoryBean(JobDetailFactoryBean jobDetailFactoryBean) {
-        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-        factoryBean.setJobDetail(jobDetailFactoryBean.getObject());
-        factoryBean.setStartDelay(0); // 즉시 시작
-        factoryBean.setCronExpression("0 0 0 * * ?"); // 매일 자정에 실행
-        return factoryBean;
-    }
-
-    @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(CronTriggerFactoryBean cronTriggerFactoryBean) {
-        SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
-        factoryBean.setTriggers(cronTriggerFactoryBean.getObject());
-        return factoryBean;
-    }
-}
+//@Configuration
+//public class QuartzConfiguration {
+//
+//    @Bean
+//    public JobDetailFactoryBean jobDetailFactoryBean() {
+//        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+//        factoryBean.setJobClass(SampleJob.class);
+//        factoryBean.setDurability(true);
+//        return factoryBean;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean cronTriggerFactoryBean(JobDetailFactoryBean jobDetailFactoryBean) {
+//        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+//        factoryBean.setJobDetail(jobDetailFactoryBean.getObject());
+//        factoryBean.setStartDelay(0); // 즉시 시작
+//        factoryBean.setCronExpression("0 0 0 * * ?"); // 매일 자정에 실행
+//        return factoryBean;
+//    }
+//
+//    @Bean
+//    public SchedulerFactoryBean schedulerFactoryBean(CronTriggerFactoryBean cronTriggerFactoryBean) {
+//        SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
+//        factoryBean.setTriggers(cronTriggerFactoryBean.getObject());
+//        return factoryBean;
+//    }
+//}
     /*
     @Bean
     public SimpleTriggerFactoryBean simpleTriggerFactoryBean(JobDetailFactoryBean jobDetailFactoryBean) {
