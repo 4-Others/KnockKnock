@@ -1,21 +1,21 @@
-package com.others.KnockKnock.batch.config;
+//package com.others.KnockKnock.batch.config;
 
-import com.others.KnockKnock.batch.job.InactiveUserItemProcessor;
-import com.others.KnockKnock.batch.job.InactiveUserItemReader;
-import com.others.KnockKnock.batch.job.InactiveUserItemWriter;
-import com.others.KnockKnock.domain.user.entity.User;
-import com.others.KnockKnock.domain.user.repository.UserRepository;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+//import com.others.KnockKnock.batch.job.InactiveUserItemProcessor;
+//import com.others.KnockKnock.batch.job.InactiveUserItemReader;
+//import com.others.KnockKnock.batch.job.InactiveUserItemWriter;
+//import com.others.KnockKnock.domain.user.entity.User;
+//import com.others.KnockKnock.domain.user.repository.UserRepository;
+//import org.springframework.batch.core.Job;
+//import org.springframework.batch.core.Step;
+//import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+//import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+//import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+//import org.springframework.batch.core.launch.support.RunIdIncrementer;
+//import org.springframework.batch.item.ItemProcessor;
+//import org.springframework.batch.item.ItemReader;
+//import org.springframework.batch.item.ItemWriter;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
 
 //@Configuration
 //@EnableBatchProcessing
