@@ -73,7 +73,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     }
 
     private BooleanExpression readEq(boolean isRead) {
-        return notification.read.eq(isRead);
+        return notification.isRead.eq(isRead);
     }
 
     private BooleanExpression deliveredEq(boolean isDelivered) {

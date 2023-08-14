@@ -73,7 +73,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .title("WorkOut")
                 .notifyAt("2023-08-07 09:45")
                 .delivered(false)
-                .read(false)
+                .isRead(false)
                 .schedule(schedule1)
                 .user(user1)
                 .build();
@@ -83,7 +83,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .title("Study")
                 .notifyAt("2023-08-07 09:45")
                 .delivered(false)
-                .read(false)
+                .isRead(false)
                 .schedule(schedule2)
                 .user(user2)
                 .build();
