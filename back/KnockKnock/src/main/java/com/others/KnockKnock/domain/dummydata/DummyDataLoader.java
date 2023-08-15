@@ -5,6 +5,7 @@ import com.others.KnockKnock.domain.notification.repository.NotificationReposito
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
 import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.boot.CommandLineRunner;
@@ -20,27 +21,32 @@ public class DummyDataLoader implements CommandLineRunner {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    public DummyDataLoader(ScheduleRepository scheduleRepository, NotificationRepository notificationRepository, UserRepository userRepository) {
+    private final MyPasswordEncoder mypasswordEncoder;
+
+    public DummyDataLoader(ScheduleRepository scheduleRepository, NotificationRepository notificationRepository, UserRepository userRepository, MyPasswordEncoder mypasswordEncoder) {
         this.scheduleRepository = scheduleRepository;
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
+        this.mypasswordEncoder = mypasswordEncoder;
     }
 
 
     @Override
     public void run(String... args) throws Exception {
+        String encryptedPassword1 = mypasswordEncoder.encode("ADSDSDS12!!");
         User user1 = User.builder()
                 .email("john@example.com")
-                .password("ADSDSDS12!!")
+                .password(encryptedPassword1)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
                 .lastLoggedIn(LocalDateTime.now())
                 .build();
         userRepository.save(user1);
 
+        String encryptedPassword2 = mypasswordEncoder.encode("ADSDS126@@#");
         User user2 = User.builder()
                 .email("adsds126@gmail.com")
-                .password("ADSDS126@@#")
+                .password(encryptedPassword2)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
                 .lastLoggedIn(LocalDateTime.now())
