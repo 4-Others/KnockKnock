@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+    Optional<User> findByUserId(Long userId);
     List<User> findByLastLoggedInBeforeAndStatus(LocalDateTime lastLoggedIn, Status status);
 
     List<User> findByLastLoggedInBefore(LocalDateTime oneYearAgo);

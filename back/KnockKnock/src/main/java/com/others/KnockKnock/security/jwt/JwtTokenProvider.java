@@ -6,6 +6,8 @@ import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
@@ -126,9 +128,9 @@ public class JwtTokenProvider {
                 // Refresh Token 재발급
                 String newRefreshToken = generateRefreshToken(email);
                 // 새로운 토큰들을 포함한 응답 객체 생성
-                String[] tokens = { "accessToken: " + newAccessToken, "refreshToken: " + newRefreshToken };
-                // 새로운 토큰들을 포함한 응답 객체 생성
-                JwtAuthenticationResponse response = new JwtAuthenticationResponse(tokens);
+                //String[] tokens = { "accessToken: " + newAccessToken, "refreshToken: " + newRefreshToken };
+                // 새로운 토큰들,유저아이디를 포함한 응답 객체 생성
+                JwtAuthenticationResponse response = new JwtAuthenticationResponse(newAccessToken,newRefreshToken,userRepository.findByEmail(email).get().getUserId());
                 return response;
             }
         } catch (SignatureException ex) {
@@ -149,39 +151,53 @@ public class JwtTokenProvider {
 
 
     public static class JwtAuthenticationResponse {
-        private String[] tokens;
-
-        public JwtAuthenticationResponse(String[] tokens) {
-            this.tokens = tokens;
-        }
-
-        public String[] getTokens() {
-            return tokens;
-        }
-
-        public void setTokens(String[] tokens) {
-            this.tokens = tokens;
-        }
-    }
-
-    public static class Tokens {
         private String accessToken;
         private String refreshToken;
 
-        public Tokens(String accessToken, String refreshToken) {
+        private Long userId;
+
+        public JwtAuthenticationResponse(String accessToken, String refreshToken, Long userId) {
             this.accessToken = accessToken;
             this.refreshToken = refreshToken;
+            this.userId = userId;
         }
-
         public String getAccessToken() {
             return accessToken;
         }
-
-        public String getRefreshToken() {
+        public String getRefreshToken(){
             return refreshToken;
+        }
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+        public Long getUserId() {
+            return userId;
+        }
+        public void setUserId(Long userId) {
+            this.userId = userId;
         }
     }
 
+//    public static class Tokens {
+//        private String accessToken;
+//        private String refreshToken;
+//
+//        public Tokens(String accessToken, String refreshToken) {
+//            this.accessToken = accessToken;
+//            this.refreshToken = refreshToken;
+//        }
+//
+//        public String getAccessToken() {
+//            return accessToken;
+//        }
+//
+//        public String getRefreshToken() {
+//            return refreshToken;
+//        }
+//    }
 }
 
 
