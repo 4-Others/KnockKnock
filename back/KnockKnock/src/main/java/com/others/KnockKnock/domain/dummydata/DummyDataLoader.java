@@ -8,9 +8,11 @@ import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.status.Status;
+import net.bytebuddy.asm.Advice;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -34,21 +36,27 @@ public class DummyDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String encryptedPassword1 = mypasswordEncoder.encode("ADSDSDS12!!");
+        LocalDate birth1 = LocalDate.of(1993,12,13);
         User user1 = User.builder()
                 .email("john@example.com")
                 .password(encryptedPassword1)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
+                .birth(birth1)
+                .pushAgree(true)
                 .lastLoggedIn(LocalDateTime.now())
                 .build();
         userRepository.save(user1);
 
         String encryptedPassword2 = mypasswordEncoder.encode("ADSDS126@@#");
+        LocalDate birth2 = LocalDate.of(1994,06,17);
         User user2 = User.builder()
-                .email("adsds126@gmail.com")
+                .email("thisissample@gmail.com")
                 .password(encryptedPassword2)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
+                .birth(birth2)
+                .pushAgree(true)
                 .lastLoggedIn(LocalDateTime.now())
                 .build();
         userRepository.save(user2);

@@ -1,5 +1,6 @@
 package com.others.KnockKnock.domain.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.others.KnockKnock.custom.Password;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -34,8 +36,8 @@ public class UserDto {
                 message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
         private String password;
 
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private LocalDateTime birth;
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private LocalDate birth;
 
         private boolean pushAgree;
     }

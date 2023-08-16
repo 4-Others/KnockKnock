@@ -1,10 +1,12 @@
 package com.others.KnockKnock.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.others.KnockKnock.domain.user.status.Status;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,8 @@ public class User{
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = true)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime birth;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birth;
     @Column(nullable = false)
     private boolean pushAgree;
 
