@@ -2,6 +2,7 @@ package com.others.KnockKnock.domain.user.entity;
 
 import com.others.KnockKnock.domain.user.status.Status;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +24,12 @@ public class User{
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = true)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime birth;
+    @Column(nullable = false)
+    private boolean pushAgree;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
