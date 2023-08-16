@@ -13,7 +13,7 @@ interface onLoginProps {
 }
 
 const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
-  const signIn = async () => {
+  const GoogleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
@@ -32,7 +32,7 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
         <View style={styles.partition} />
       </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity onPress={signIn}>
+        <TouchableOpacity onPress={GoogleSignIn}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
         <TouchableOpacity>

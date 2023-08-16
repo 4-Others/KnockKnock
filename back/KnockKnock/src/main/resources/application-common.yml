@@ -10,7 +10,7 @@ sns:
     url: "https://accounts.google.com/o/oauth2/v2/auth"
     client:
       id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
-      secret: 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
+      secret: ${GOOGLE_SECRET}
     callback:
       url: "http://localhost:8080/auth/google/callback"
     token:
@@ -37,15 +37,19 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
-    datasource:
-    url: jdbc:mysql://localhost:3306/knockdb?serverTimeZone=Asia/Seoul
+  datasource:
+    url: jdbc:mysql://knockknockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: xogud96
-    jpa:
-      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-      hibernate:
-        ddl-auto: create
+    username: admin
+    password: ${RDS_PW}
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: create
+  batch:
+    initialize-schema: always
+    table-prefix: BATCH_
   quartz:
     job-store-type: jdbc
     jdbc:
@@ -62,13 +66,15 @@ spring:
             isClustered: false
             useProperties: false
   mail:
+    default-encoding: UTF-8
     host: smtp.gmail.com
     port: 587
     username: 4othersofficial@gmail.com
-    password: evvkvksaldrjsoen
+    password: ${SMTP_CREDENTIALS}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+    protocol: smtp

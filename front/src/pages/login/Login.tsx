@@ -5,23 +5,57 @@ import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
 import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import {isPasswordValid} from '../signUp/SignupUtil';
-import {AutomaticLoginAuth} from '../../util/AuthToken';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {responseToken, getStorageValue} from './AuthSplashScreen';
 
 const Login: React.FC<AuthProps> = ({url, navigation}) => {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
+  const [data, setData] = useState({email: '', password: ''});
+  const {password, email} = data;
+  const [masking, setMasking] = React.useState(true);
   const [autoLogin, setAutoLogin] = useState(false);
-  const [passwordCheck, setPasswordCheck] = React.useState(false);
-  const data = {email: id, password: pw};
+
+  const loginAuth = async () => {
+    if (url !== undefined) {
+      try {
+        const response = await axios.post(`${url}api/v1/users/login`, data);
+        const {accessToken, refreshToken} = responseToken(response.data.tokens);
+        //? 토큰 정보를 수집
+        AsyncStorage.setItem(
+          'tokens',
+          JSON.stringify({
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }),
+        );
+        //? 자동 로그인 정보 수집
+        autoLogin
+          ? AsyncStorage.setItem('saveEmail', JSON.stringify(`${email}`))
+          : AsyncStorage.removeItem('saveEmail');
+        navigation.navigate('MainTab');
+      } catch (error: any) {
+        console.log(error.response.status);
+      }
+    }
+  };
+
   const handleSignUp = () => {
     navigation.navigate('SignUpTab');
   };
 
-  useEffect(() => {
-    isPasswordValid(pw) === true || pw.length <= 0
-      ? setPasswordCheck(true)
-      : setPasswordCheck(false);
-  }, [pw]);
+  const inputPassword = (text: string) => {
+    setData({
+      ...data,
+      password: text,
+    });
+  };
+
+  const inputEmail = (text: string) => {
+    setData({
+      ...data,
+      email: text,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -29,14 +63,33 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       <Image source={require('front/assets/image/SymbolLogo.png')} style={styles.symbolLogo} />
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.input, styles.inputBottomLine]}
-          onChangeText={setId}
-          value={id}
+          style={[styles.inputArea, styles.inputBottomLine]}
+          onChangeText={inputEmail}
+          value={email}
           placeholder="이메일"
         />
-        <TextInput style={styles.input} onChangeText={setPw} value={pw} placeholder="비밀번호" />
+        <View style={styles.passwordInputArea}>
+          <TextInput
+            style={styles.inputArea}
+            onChangeText={inputPassword}
+            value={password}
+            placeholder="비밀번호"
+            keyboardType="ascii-capable"
+            secureTextEntry={masking}
+          />
+          <TouchableOpacity onPress={() => setMasking(open => !open)}>
+            <Image
+              style={styles.swmIcon}
+              source={
+                masking
+                  ? require('front/assets/image/swm_close_btn.png')
+                  : require('front/assets/image/swm_open_btn.png')
+              }
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      {passwordCheck === false ? (
+      {isPasswordValid(password) === false && password.length > 0 ? (
         <Text style={styles.alertText}>
           8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
         </Text>
@@ -56,20 +109,14 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
           </TouchableOpacity>
           <Text style={styles.checkBoxBtn}>자동 로그인</Text>
         </TouchableOpacity>
-        <View style={styles.textBtns}>
-          <TouchableOpacity>
-            <Text style={styles.textBtn}>계정 찾기</Text>
-          </TouchableOpacity>
-          <View style={styles.VerticalBar}></View>
-          <TouchableOpacity onPress={handleSignUp}>
-            <Text style={styles.textBtn}>회원가입</Text>
-          </TouchableOpacity>
-        </View>
       </View>
-      <GradientButton_L
-        text="로그인"
-        onPress={() => AutomaticLoginAuth(url, data, passwordCheck)}
-      />
+      <GradientButton_L text="로그인" onPress={loginAuth} />
+      <View style={styles.textBtns}>
+        <Text style={styles.textBtn}>계정이 없으신가요?</Text>
+        <TouchableOpacity onPress={handleSignUp}>
+          <Text style={styles.signBtn}>가입하기</Text>
+        </TouchableOpacity>
+      </View>
       <Oauth2
         onLogin={function (loginState: boolean): void {
           throw new Error('Function not implemented.');
@@ -126,12 +173,16 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 6,
   },
-  input: {
+  inputArea: {
     fontFamily: variables.font_4,
     fontSize: 14,
-    width: '100%',
     padding: 16,
     height: 48,
+  },
+  passwordInputArea: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   inputBottomLine: {
     borderBottomColor: variables.line_1,
@@ -154,13 +205,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 30,
   },
-  VerticalBar: {
-    marginLeft: 8,
-    marginRight: 8,
-    height: 10,
-    width: 1,
-    backgroundColor: variables.line_2,
+  signBtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    color: variables.Mater_5,
+    marginLeft: 5,
   },
   textBtn: {
     fontFamily: variables.font_4,
@@ -177,6 +229,11 @@ const styles = StyleSheet.create({
     fontFamily: variables.font_4,
     color: variables.board_8,
     lineHeight: 20,
+  },
+  swmIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 16,
   },
 });
 

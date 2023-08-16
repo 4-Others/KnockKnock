@@ -67,7 +67,7 @@ public class NotificationService {
                                   .title(schedule.getTitle())
                                   .notifyAt(convertLocalDateTimeToFormatString(notifyAt))
                                   .delivered(false)
-                                  .read(false)
+                                  .isRead(false)
                                   .build();
                    })
                    .collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class NotificationService {
     public List<NotificationDto.Response> updateReadStatus(Long userId, List<Long> notificationIds) {
         List<Notification> allNotificationByUserIdAndNotificationIds = notificationRepository.findAllByUserIdAndNotificationIds(userId, notificationIds);
 
-        allNotificationByUserIdAndNotificationIds.forEach(ntf -> ntf.setRead(true));
+        allNotificationByUserIdAndNotificationIds.forEach(ntf -> ntf.setIsRead(true));
 
         List<Notification> updatedNotifications = notificationRepository.saveAll(allNotificationByUserIdAndNotificationIds);
 
