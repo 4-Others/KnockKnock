@@ -92,8 +92,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("tokens", new String[0]));
         }
 
-//        String[] tokens = { "accessToken: " + accessToken, "refreshToken: " + refreshToken };
-
         Map<String, Object> response = new HashMap<>();
         response.put("userId", user.getUserId());
         response.put("accessToken", accessToken);
