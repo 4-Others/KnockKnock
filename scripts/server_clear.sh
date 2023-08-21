@@ -15,11 +15,11 @@ if docker ps -a | grep -q $CONTAINER_NAME; then
 else
     echo "Container $CONTAINER_NAME not found, skipping removal"
 fi
-# 도커 이미지 삭제
-if docker images | grep -q $IMAGE_NAME; then
-    docker rmi $IMAGE_NAME
-    echo "Image $IMAGE_NAME removed"
-else
-    echo "Image $IMAGE_NAME not found, skipping removal"
-fi
+## 도커 이미지 삭제
+#if docker images | grep -q $IMAGE_NAME; then
+#    docker rmi $IMAGE_NAME
+#    echo "Image $IMAGE_NAME removed"
+#else
+#    echo "Image $IMAGE_NAME not found, skipping removal"
+#fi
 
