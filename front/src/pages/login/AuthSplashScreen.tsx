@@ -2,47 +2,40 @@ import React, {useEffect} from 'react';
 import {Image} from 'react-native';
 import {AuthProps} from '../../navigations/StackNavigator';
 import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const getStorageValue = async (key: string) => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      return JSON.parse(value);
-    } else {
-      return null;
-    }
-  } catch (e: any) {
-    console.log(e.message);
-  }
-};
-
-export const responseToken = (res: string[]) => {
-  const resultObject: Record<string, string> = {};
-  res.forEach(item => {
-    const [key, value] = item.split(': ');
-    resultObject[key] = value;
-  });
-  return resultObject;
-};
+import {storageGetValue, storageSetValue} from '../../util/authUtil';
+import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import {setUserId, setAccessToken} from '../../util/redux/userSlice';
 
 const AuthSplashScreen: React.FC<AuthProps> = props => {
   //? 첫 실행 시 동작
+  const dispatch = useDispatch();
   const verifyTokens = async ({navigation, url}: any) => {
-    const token = await getStorageValue('tokens');
-    const saveEmail = await getStorageValue('saveEmail');
-    //
-    if (token === null || saveEmail === null) {
-      navigation.reset({routes: [{name: 'Login'}]});
-    }
-    // 로컬 스토리지에 Token데이터가 있으면 -> 토큰들을 헤더에 넣어 검증
-    else {
+    // 메모리에 저장된 토큰 호출
+    const tokens = await storageGetValue('tokens');
+    if (tokens) {
       try {
+        const header = {headers: {Authorization: `Bearer ${tokens.accessToken}`}};
+        //  토큰 갱신 후 저장
+        const response = await axios.post(
+          `${url}api/v1/users/refreshToken`,
+          {refreshToken: tokens.refreshToken},
+          header,
+        );
+        const {accessToken, refreshToken, userId} = response.data;
+        await storageSetValue('tokens', {accessToken, refreshToken});
+        dispatch(setAccessToken(accessToken));
+        dispatch(setUserId(userId));
+        // 로그인 성공 후 메인탭 이동
         navigation.navigate('MainTab');
-      } catch (error: any) {
+      } catch (error) {
         console.log(error);
+        // 로그인 실패 -> 재로그인
         navigation.reset({routes: [{name: 'Login'}]});
       }
+    } else {
+      // 로그인 실패 -> 재로그인
+      navigation.reset({routes: [{name: 'Login'}]});
     }
   };
 
@@ -50,9 +43,9 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
     const timer = setTimeout(() => {
       verifyTokens(props);
     }, 1000);
-
+    // 컴포넌트가 언마운트되면 타이머 정리
     return () => {
-      clearTimeout(timer); // 컴포넌트가 언마운트되면 타이머 정리
+      clearTimeout(timer);
     };
   }, []);
 
