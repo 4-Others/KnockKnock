@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class GoogleUserDto {
-    private String id;
+    private String email;
     private String name;
     private String given_name;
     private String family_name;
