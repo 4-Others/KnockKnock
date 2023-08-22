@@ -1,6 +1,8 @@
 package com.others.KnockKnock.domain.user.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.others.KnockKnock.domain.user.dto.BaseResponse;
+import com.others.KnockKnock.domain.user.dto.GoogleUserDto;
 import com.others.KnockKnock.domain.user.dto.UserDto;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
@@ -9,14 +11,17 @@ import com.others.KnockKnock.domain.user.service.UserService;
 import com.others.KnockKnock.domain.user.status.Status;
 import com.others.KnockKnock.security.jwt.JwtTokenProvider;
 import com.others.KnockKnock.security.jwt.RefreshTokenRequest;
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,10 +35,22 @@ public class UserController {
     private final MyPasswordEncoder mypasswordEncoder;
 
 
+    @GetMapping("/userDetails")
+    public ResponseEntity<Map<String, Object>> getUserDetails(Long userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userEmail", user.get().getEmail());
+        response.put("userBirth", user.get().getBirth());
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Validated @RequestBody UserDto.Signup signupDto) {
         String email = signupDto.getEmail();
         String password = signupDto.getPassword();
+        LocalDate birth = signupDto.getBirth();
+        boolean pushAgree = signupDto.isPushAgree();
 
         String encryptedPassword = mypasswordEncoder.encode(password);
 
@@ -43,13 +60,15 @@ public class UserController {
                 .password(encryptedPassword)
                 .emailVerified(false)
                 .status(Status.INACTIVE)
+                .birth(birth)
+                .pushAgree(pushAgree)
                 .build();
         userRepository.save(user);
 
         return ResponseEntity.ok("이메일 인증을 해주세요.");
     }
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String[]>> login(@RequestBody @Valid UserDto.Login loginDto) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid UserDto.Login loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -73,9 +92,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("tokens", new String[0]));
         }
 
-        String[] tokens = { "accessToken: " + accessToken, "refreshToken: " + refreshToken };
-
-        Map<String, String[]> response = Collections.singletonMap("tokens", tokens);
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", user.getUserId());
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
 
         return ResponseEntity.ok(response);
     }
@@ -86,8 +106,14 @@ public class UserController {
 
         JwtTokenProvider.JwtAuthenticationResponse response = jwtTokenProvider.refreshTokens(refreshToken);
 
+
         if (response != null) {
-            return ResponseEntity.ok(response);
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("accessToken", response.getAccessToken());
+            responseBody.put("refreshToken", response.getRefreshToken());
+            responseBody.put("userId", response.getUserId());
+
+            return ResponseEntity.ok(responseBody);
         } else {
             return ResponseEntity.badRequest().body("Invalid refresh token");
         }
@@ -112,6 +138,7 @@ public class UserController {
         userService.deleteUser(email);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
     }
+}
 //    @ResponseBody
 //    @GetMapping("/kakao")
 //    public BaseResponse<String> kakaoCallback(@RequestParam String code){
@@ -119,4 +146,3 @@ public class UserController {
 //        System.out.println(code);
 //        return  new BaseResponse<String>(response);
 //    }
-}

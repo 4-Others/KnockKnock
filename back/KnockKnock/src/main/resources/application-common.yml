@@ -9,10 +9,10 @@ sns:
   google:
     url: "https://accounts.google.com/o/oauth2/v2/auth"
     client:
-      id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
+      id: ${GOOGLE_CLIENT_ID}
       secret: ${GOOGLE_SECRET}
     callback:
-      url: "http://localhost:8080/auth/google/callback"
+      url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
     token:
       url: "https://oauth2.googleapis.com/token"
 spring:
@@ -23,10 +23,10 @@ spring:
           google:
             client-id: ${sns.google.client-id}
             client-secret: ${sns.google.client-secret}
-            scope: profile,email
+            scope: email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://localhost:8080/auth/kakao/callback"
+            redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
@@ -47,6 +47,9 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: create
+  batch:
+    initialize-schema: always
+    table-prefix: BATCH_
   quartz:
     job-store-type: jdbc
     jdbc:

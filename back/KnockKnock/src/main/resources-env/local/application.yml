@@ -8,6 +8,16 @@ spring:
   profiles:
     include: common
     active: local
+  datasource:
+    url: jdbc:mysql://knockknockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+    password: ${RDS_PW}
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: create
 #  h2:
 #    console:
 #      enabled: true
@@ -17,9 +27,9 @@ spring:
 #    username: sa
 #    password:
 #    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
 #    database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
     properties:

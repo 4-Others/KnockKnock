@@ -1,10 +1,10 @@
 package com.others.KnockKnock.security.oauth.google;
 
+import com.others.KnockKnock.domain.user.dto.GoogleUserDto;
 import com.others.KnockKnock.security.oauth.SocialOauth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +35,7 @@ public class GoogleOauth implements SocialOauth {
     @Override
     public String getOauthRedirectURL() {
         Map<String, Object> params = new HashMap<>();
-        params.put("scope", "profile");
+        params.put("scope", "email");
         params.put("response_type", "code");
         params.put("client_id", GOOGLE_SNS_CLIENT_ID);
         params.put("redirect_uri", GOOGLE_SNS_CALLBACK_URL);
@@ -106,6 +106,28 @@ public class GoogleOauth implements SocialOauth {
             return "구글 로그인 요청 처리 실패";
         } catch (IOException e) {
             throw new IllegalArgumentException("알 수 없는 구글 로그인 Access Token 요청 URL 입니다 :: " + GOOGLE_SNS_TOKEN_BASE_URL);
+        }
+    }
+    public GoogleUserDto getUserInfo(String accessToken) {
+        String userInfoUrl = "https://www.googleapis.com/userinfo/v2/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<GoogleUserDto> responseEntity = restTemplate.exchange(
+                userInfoUrl,
+                HttpMethod.GET,
+                entity,
+                GoogleUserDto.class
+        );
+
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            return responseEntity.getBody();
+        } else {
+            throw new IllegalStateException("구글 사용자 정보 가져오기 실패");
         }
     }
 }

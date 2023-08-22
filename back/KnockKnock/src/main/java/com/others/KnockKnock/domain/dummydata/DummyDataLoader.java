@@ -5,11 +5,14 @@ import com.others.KnockKnock.domain.notification.repository.NotificationReposito
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
 import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.status.Status;
+import net.bytebuddy.asm.Advice;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -20,29 +23,40 @@ public class DummyDataLoader implements CommandLineRunner {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    public DummyDataLoader(ScheduleRepository scheduleRepository, NotificationRepository notificationRepository, UserRepository userRepository) {
+    private final MyPasswordEncoder mypasswordEncoder;
+
+    public DummyDataLoader(ScheduleRepository scheduleRepository, NotificationRepository notificationRepository, UserRepository userRepository, MyPasswordEncoder mypasswordEncoder) {
         this.scheduleRepository = scheduleRepository;
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
+        this.mypasswordEncoder = mypasswordEncoder;
     }
 
 
     @Override
     public void run(String... args) throws Exception {
+        String encryptedPassword1 = mypasswordEncoder.encode("ADSDSDS12!!");
+        LocalDate birth1 = LocalDate.of(1993,12,13);
         User user1 = User.builder()
                 .email("john@example.com")
-                .password("ADSDSDS12!!")
+                .password(encryptedPassword1)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
+                .birth(birth1)
+                .pushAgree(true)
                 .lastLoggedIn(LocalDateTime.now())
                 .build();
         userRepository.save(user1);
 
+        String encryptedPassword2 = mypasswordEncoder.encode("ADSDS126@@#");
+        LocalDate birth2 = LocalDate.of(1994,06,17);
         User user2 = User.builder()
-                .email("adsds126@gmail.com")
-                .password("ADSDS126@@#")
+                .email("thisissample@gmail.com")
+                .password(encryptedPassword2)
                 .status(Status.ACTIVE)
                 .emailVerified(true)
+                .birth(birth2)
+                .pushAgree(true)
                 .lastLoggedIn(LocalDateTime.now())
                 .build();
         userRepository.save(user2);
@@ -73,7 +87,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .title("WorkOut")
                 .notifyAt("2023-08-07 09:45")
                 .delivered(false)
-                .read(false)
+                .isRead(false)
                 .schedule(schedule1)
                 .user(user1)
                 .build();
@@ -83,7 +97,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .title("Study")
                 .notifyAt("2023-08-07 09:45")
                 .delivered(false)
-                .read(false)
+                .isRead(false)
                 .schedule(schedule2)
                 .user(user2)
                 .build();
