@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
@@ -42,14 +44,15 @@ public class GoogleController {
             @PathVariable(name = "socialLoginType") SocialLoginType socialLoginType,
             @RequestParam(name = "code") String code) {
         log.info(">> 소셜 로그인 API 서버로부터 받은 code :: {}", code);
-        String accessToken = oauthService.requestAccessToken(socialLoginType,code);
-        GoogleUserDto googleUserDto = googleOauth.getUserInfo(accessToken);
-        User newUser = User.builder()
-                .email(googleUserDto.getEmail())
-                .status(Status.ACTIVE)
-                .emailVerified(true)
-                .build();
-        userRepository.save(newUser);
+//        String accessToken = oauthService.requestAccessToken(socialLoginType,code);
+//        GoogleUserDto googleUserDto = googleOauth.getUserInfo(accessToken);
+//        User newUser = User.builder()
+//                .email(googleUserDto.getEmail())
+//                .status(Status.ACTIVE)
+//                .emailVerified(true)
+//                .lastLoggedIn(LocalDateTime.now())
+//                .build();
+//        userRepository.save(newUser);
         return oauthService.requestAccessToken(socialLoginType, code);
     }
 }

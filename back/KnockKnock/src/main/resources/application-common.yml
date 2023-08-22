@@ -23,7 +23,7 @@ spring:
           google:
             client-id: ${sns.google.client-id}
             client-secret: ${sns.google.client-secret}
-            scope: profile,email
+            scope: email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
