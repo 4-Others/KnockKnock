@@ -35,7 +35,7 @@ spring:
           google:
             client-id: ${sns.google.client-id}
             client-secret: ${sns.google.client-secret}
-            scope: profile,email
+            scope: email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             redirect-uri: "http://localhost:8080/auth/kakao/callback"
@@ -63,6 +63,6 @@ sns:
       id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
       secret: ${GOOGLE_SECRET}
     callback:
-      url: "http://localhost:8080/auth/google/callback"
+      url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
     token:
       url: "https://oauth2.googleapis.com/token"
