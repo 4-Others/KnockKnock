@@ -2,6 +2,7 @@ package com.others.KnockKnock.security.oauth.google;
 
 import com.others.KnockKnock.domain.user.dto.GoogleUserDto;
 import com.others.KnockKnock.domain.user.entity.User;
+import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.domain.user.status.Status;
 import com.others.KnockKnock.security.oauth.SocialLoginType;
 import com.others.KnockKnock.security.oauth.service.OAuthService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class GoogleController {
     private final OAuthService oauthService;
     private final GoogleOauth googleOauth;
+    private final UserRepository userRepository;
 
     /**
      * 사용자로부터 SNS 로그인 요청을 Social Login Type 을 받아 처리
@@ -47,6 +49,7 @@ public class GoogleController {
                 .status(Status.ACTIVE)
                 .emailVerified(true)
                 .build();
+        userRepository.save(newUser);
         return oauthService.requestAccessToken(socialLoginType, code);
     }
 }
