@@ -1,13 +1,12 @@
-import {StyleSheet, SafeAreaView, Dimensions} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import React from 'react';
-import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {ScheduleOption} from '../../components/ScheduleSelectOption';
 import {scheduleOptionStyles} from './ScheduleAdd';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {
-  const itemData = route.params.locate;
+  const itemData = route.params.item;
 
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>

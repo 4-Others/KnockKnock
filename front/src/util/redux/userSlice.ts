@@ -4,7 +4,10 @@ const initialState = {
   nickName: '',
   email: '',
   userId: '',
-  accessToken: '',
+  token: {
+    accessToken: '',
+    refreshToken: '',
+  },
 };
 
 export const userSlice = createSlice({
@@ -26,11 +29,11 @@ export const userSlice = createSlice({
     setUserId(state, action) {
       state.userId = action.payload;
     },
-    setAccessToken(state, action) {
-      state.accessToken = action.payload;
+    setToken(state, action) {
+      state.token = action.payload;
     },
   },
 });
 
-export const {setUser, setNickName, setEmail, setUserId, setAccessToken} = userSlice.actions;
+export const {setUser, setNickName, setEmail, setUserId, setToken} = userSlice.actions;
 export default userSlice;
