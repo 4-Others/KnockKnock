@@ -10,9 +10,10 @@ const ScheduleAdd = () => {
   const user = useSelector((state: any) => state.user);
   console.log(user);
   const itemData = {
-    name: '',
-    board: '',
+    title: '',
     content: '',
+    period: '',
+    board: '',
     day: '',
     startAt: '',
     endAt: '',

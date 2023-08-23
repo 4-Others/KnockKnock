@@ -2,37 +2,22 @@ import React, {useEffect} from 'react';
 import {Image} from 'react-native';
 import {AuthProps} from '../../navigations/StackNavigator';
 import LinearGradient from 'react-native-linear-gradient';
-import {storageGetValue, storageSetValue} from '../../util/authUtil';
-import axios from 'axios';
+import {storageGetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
-import {setUserId, setAccessToken} from '../../util/redux/userSlice';
+import {setUserId, setToken} from '../../util/redux/userSlice';
 
 const AuthSplashScreen: React.FC<AuthProps> = props => {
   //? 첫 실행 시 동작
   const dispatch = useDispatch();
-  const verifyTokens = async ({navigation, url}: any) => {
+  const verifyTokens = async ({navigation}: any) => {
     // 메모리에 저장된 토큰 호출
-    const tokens = await storageGetValue('tokens');
-    if (tokens) {
-      try {
-        const header = {headers: {Authorization: `Bearer ${tokens.accessToken}`}};
-        //  토큰 갱신 후 저장
-        const response = await axios.post(
-          `${url}api/v1/users/refreshToken`,
-          {refreshToken: tokens.refreshToken},
-          header,
-        );
-        const {accessToken, refreshToken, userId} = response.data;
-        await storageSetValue('tokens', {accessToken, refreshToken});
-        dispatch(setAccessToken(accessToken));
-        dispatch(setUserId(userId));
-        // 로그인 성공 후 메인탭 이동
-        navigation.navigate('MainTab');
-      } catch (error) {
-        console.log(error);
-        // 로그인 실패 -> 재로그인
-        navigation.reset({routes: [{name: 'Login'}]});
-      }
+    const user = await storageGetValue('user');
+    const {accessToken, refreshToken, userId} = user;
+    if (user) {
+      dispatch(setToken({accessToken, refreshToken}));
+      dispatch(setUserId(userId));
+      // 로그인 성공 후 메인탭 이동
+      navigation.navigate('MainTab');
     } else {
       // 로그인 실패 -> 재로그인
       navigation.reset({routes: [{name: 'Login'}]});
