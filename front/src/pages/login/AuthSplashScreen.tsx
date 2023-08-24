@@ -2,47 +2,25 @@ import React, {useEffect} from 'react';
 import {Image} from 'react-native';
 import {AuthProps} from '../../navigations/StackNavigator';
 import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const getStorageValue = async (key: string) => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      return JSON.parse(value);
-    } else {
-      return null;
-    }
-  } catch (e: any) {
-    console.log(e.message);
-  }
-};
-
-export const responseToken = (res: string[]) => {
-  const resultObject: Record<string, string> = {};
-  res.forEach(item => {
-    const [key, value] = item.split(': ');
-    resultObject[key] = value;
-  });
-  return resultObject;
-};
+import {storageGetValue} from '../../util/authUtil';
+import {useDispatch} from 'react-redux';
+import {setUserId, setToken} from '../../util/redux/userSlice';
 
 const AuthSplashScreen: React.FC<AuthProps> = props => {
   //? 첫 실행 시 동작
-  const verifyTokens = async ({navigation, url}: any) => {
-    const token = await getStorageValue('tokens');
-    const saveEmail = await getStorageValue('saveEmail');
-    //
-    if (token === null || saveEmail === null) {
+  const dispatch = useDispatch();
+  const verifyTokens = async ({navigation}: any) => {
+    // 메모리에 저장된 토큰 호출
+    const user = await storageGetValue('user');
+    const {accessToken, refreshToken, userId} = user;
+    if (user) {
+      dispatch(setToken({accessToken, refreshToken}));
+      dispatch(setUserId(userId));
+      // 로그인 성공 후 메인탭 이동
+      navigation.navigate('MainTab');
+    } else {
+      // 로그인 실패 -> 재로그인
       navigation.reset({routes: [{name: 'Login'}]});
-    }
-    // 로컬 스토리지에 Token데이터가 있으면 -> 토큰들을 헤더에 넣어 검증
-    else {
-      try {
-        navigation.navigate('MainTab');
-      } catch (error: any) {
-        console.log(error);
-        navigation.reset({routes: [{name: 'Login'}]});
-      }
     }
   };
 
@@ -50,9 +28,9 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
     const timer = setTimeout(() => {
       verifyTokens(props);
     }, 1000);
-
+    // 컴포넌트가 언마운트되면 타이머 정리
     return () => {
-      clearTimeout(timer); // 컴포넌트가 언마운트되면 타이머 정리
+      clearTimeout(timer);
     };
   }, []);
 

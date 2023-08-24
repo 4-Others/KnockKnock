@@ -1,4 +1,4 @@
-package com.others.KnockKnock.security;
+package com.others.KnockKnock.security.config;
 
 import com.others.KnockKnock.security.jwt.JwtAuthenticationEntryPoint;
 import com.others.KnockKnock.security.jwt.JwtAuthenticationFilter;

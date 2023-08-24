@@ -1,40 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
 import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
-import {isPasswordValid} from '../signUp/SignupUtil';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {responseToken, getStorageValue} from './AuthSplashScreen';
+import {isPasswordValid, storageSetValue, storageDeleteValue} from '../../util/authUtil';
+import {useDispatch} from 'react-redux';
+import {setUserId, setToken} from '../../util/redux/userSlice';
 
 const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [data, setData] = useState({email: '', password: ''});
   const {password, email} = data;
   const [masking, setMasking] = React.useState(true);
   const [autoLogin, setAutoLogin] = useState(false);
+  const dispatch = useDispatch();
 
   const loginAuth = async () => {
     if (url !== undefined) {
       try {
         const response = await axios.post(`${url}api/v1/users/login`, data);
-        const {accessToken, refreshToken} = responseToken(response.data.tokens);
-        //? 토큰 정보를 수집
-        AsyncStorage.setItem(
-          'tokens',
-          JSON.stringify({
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          }),
-        );
-        //? 자동 로그인 정보 수집
-        autoLogin
-          ? AsyncStorage.setItem('saveEmail', JSON.stringify(`${email}`))
-          : AsyncStorage.removeItem('saveEmail');
+        const {accessToken, refreshToken, userId} = response.data;
+        // 자동 로그인 정보 수집
+        if (autoLogin) {
+          await storageSetValue('user', {accessToken, refreshToken, userId});
+        } else await storageDeleteValue('user');
+        // store에 userId와 토큰 저장
+        dispatch(setUserId(userId));
+        dispatch(setToken({accessToken, refreshToken}));
+        //메인화면으로 이동
         navigation.navigate('MainTab');
       } catch (error: any) {
-        console.log(error.response.status);
+        navigation.reset({routes: [{name: 'Login'}]});
       }
     }
   };

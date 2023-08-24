@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
-import {PasswordInputArea, EmailInputArea, EmailRenderArea, CheckBtn} from './SignUpComponent';
-import {isPasswordValid, isEmaildValid} from './SignupUtil';
+import {PasswordInputArea, EmailInputArea, CheckBtn} from './SignUpComponent';
+import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
 

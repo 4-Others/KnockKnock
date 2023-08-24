@@ -1,15 +1,19 @@
-import {StyleSheet, SafeAreaView, Dimensions} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {ScheduleOption} from '../../components/ScheduleSelectOption';
+import {useSelector} from 'react-redux';
 
 //? 스케줄 추가하는 스크린
 const ScheduleAdd = () => {
+  const user = useSelector((state: any) => state.user);
+  console.log(user);
   const itemData = {
-    name: '',
-    board: '',
+    title: '',
     content: '',
+    period: '',
+    board: '',
     day: '',
     startAt: '',
     endAt: '',
