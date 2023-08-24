@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -11,112 +11,42 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {variables} from '../style/variables';
-import BottomSheetSelectBoard from './BottomSheetSelectBoard';
-import BottomSheetSelectPeriod from './BottomSheetSelectPeriod';
+import Selector from './BottomSheet';
 import {scheduleOptionStyles} from '../pages/Schedule/ScheduleAdd';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {CalendarData} from '../util/dataConvert';
 
 export interface inputProps {
+  type: string;
   state: string;
   event: () => void;
 }
 
-const SelectBoard = ({state, event}: inputProps) => {
-  return (
-    <View style={styles.contentInput}>
-      <Icon name="pricetag-outline" style={styles.icon} />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>스케줄 보드</Text>
-        <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <TextInput
-            value={state}
-            placeholder="보드를 선택하세요."
-            style={styles.contentText}
-            editable={false}
-          />
-          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+export const ScheduleOption: React.FC<{itemData?: CalendarData}> = ({itemData}) => {
+  const initialScheduleData: CalendarData = {
+    calendarId: 0,
+    name: '',
+    height: 0,
+    day: '',
+    complete: false,
+    startAt: '',
+    endAt: '',
+    content: '',
+    period: '',
+    alerts: [],
+    modifiedAt: '',
+    tag: {
+      name: '',
+      color: '',
+    },
+  };
 
-const SelectPeriod = ({state, event}: inputProps) => {
-  return (
-    <View style={styles.contentInput}>
-      <Icon name="alarm-outline" style={styles.icon} />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>알림</Text>
-        <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <TextInput
-            value={state}
-            placeholder="알림받을 시간을 선택하세요."
-            style={styles.contentText}
-            editable={false}
-          />
-          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-        </TouchableOpacity>
-      </View>
-    </View>
+  const [scheduleData, setScheduleData] = useState<CalendarData>(
+    itemData ? {...itemData} : initialScheduleData,
   );
-};
-
-const SelectStartTime = ({state, event}: inputProps) => {
-  return (
-    <View key={state} style={styles.contentInput}>
-      <Icon name="time-outline" style={styles.icon} />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>스케줄 시작</Text>
-        <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <TextInput
-            value={state.length > 1 ? state : ''}
-            placeholder="시작하는 날짜와 시간을 선택하세요."
-            style={styles.contentText}
-            editable={false}
-          />
-          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-const SelectEndTime = ({state, event}: inputProps) => {
-  return (
-    <View key={state} style={styles.contentInput}>
-      <Icon name="timer-outline" style={styles.icon} />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>스케줄 종료</Text>
-        <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <TextInput
-            value={state.length > 1 ? state : ''}
-            placeholder="종료하는 날짜와 시간을 선택하세요."
-            style={styles.contentText}
-            editable={false}
-          />
-          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-export const ScheduleOption: React.FC<any> = ({itemData}) => {
-  const [scheduleData, setScheduleData] = useState({
-    id: itemData.calendarId,
-    complete: itemData.complete || '',
-    startAt: itemData.startAt || '',
-    endAt: itemData.endAt || '',
-    name: itemData.name || '',
-    board: itemData.board || '',
-    content: itemData.content || '',
-    day: itemData.day || '',
-    period: itemData.period || '',
-    alerts: itemData.alerts || [],
-  });
   const [boardIsOpen, setBoardIsOpen] = useState(false);
-  const [periodIsOpen, setPeriodIsOpen] = useState(false);
+  const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [timeType, setTimeType] = useState('');
   const onCancel = () => {
@@ -125,38 +55,26 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
 
   const handleConfirm = (date: Date) => {
     onCancel();
-    const dateString = new Date(date);
-    const day = `${dateString.getFullYear()}-${String(dateString.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(dateString.getDate()).padStart(2, '0')}`;
-
-    const time = `${String(dateString.getHours()).padStart(2, '0')}:${String(
-      dateString.getMinutes(),
-    ).padStart(2, '0')}`;
-
+    const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
     if (timeType === 'start') {
       setScheduleData(prevData => ({
         ...prevData,
-        day: day,
-        startAt: time,
+        startAt: formattedDate,
       }));
     } else if (timeType === 'end') {
       setScheduleData(prevData => ({
         ...prevData,
-        day: day,
-        endAt: time,
+        endAt: formattedDate,
       }));
     }
   };
 
-  const toggleIsOpenStartAt = () => {
+  const toggleStartAt = () => {
     setVisible(prevState => !prevState);
-    0;
     setTimeType('start');
   };
 
-  const toggleIsOpenEndAt = () => {
+  const toggleEndAt = () => {
     setVisible(prevState => !prevState);
     setTimeType('end');
   };
@@ -180,22 +98,18 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
         style={scheduleOptionStyles.contentTitleInput}
         onChangeText={text => setScheduleData(prevData => ({...prevData, contentTitle: text}))}
       />
-      <SelectBoard
-        state={scheduleData.board}
+      <SelectComponent
+        type="보드"
+        state={scheduleData.tag.name}
         event={() => setBoardIsOpen(prevState => !prevState)}
       />
-      <SelectPeriod
-        state={scheduleData.period}
-        event={() => setPeriodIsOpen(prevState => !prevState)}
+      <SelectComponent
+        type="알림 시간"
+        state={scheduleData.alerts.join(', ')}
+        event={() => setNotificationIsOpen(prevState => !prevState)}
       />
-      <SelectStartTime
-        state={`${scheduleData.day} ${scheduleData.startAt}`}
-        event={toggleIsOpenStartAt}
-      />
-      <SelectEndTime
-        state={`${scheduleData.day} ${scheduleData.endAt}`}
-        event={toggleIsOpenEndAt}
-      />
+      <SelectComponent type="일정 시작 시간" state={scheduleData.startAt} event={toggleStartAt} />
+      <SelectComponent type="일정 종료 시간" state={scheduleData.endAt} event={toggleEndAt} />
       <KeyboardAvoidingView
         style={scheduleOptionStyles.contentInput}
         behavior={Platform.OS === 'android' ? 'padding' : 'height'}
@@ -210,15 +124,17 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
           />
         </View>
       </KeyboardAvoidingView>
-      <BottomSheetSelectBoard
+      <Selector
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
         setScheduleData={setScheduleData}
+        type="tag" // 타입을 전달
       />
-      <BottomSheetSelectPeriod
-        modalVisible={periodIsOpen}
-        setModalVisible={setPeriodIsOpen}
+      <Selector
+        modalVisible={notificationIsOpen}
+        setModalVisible={setNotificationIsOpen}
         setScheduleData={setScheduleData}
+        type="notification" // 타입을 전달
       />
       <DateTimePickerModal
         isVisible={visible}
@@ -231,108 +147,28 @@ export const ScheduleOption: React.FC<any> = ({itemData}) => {
   );
 };
 
-export const SearchOption: React.FC<any> = ({itemData}) => {
-  const [scheduleData, setScheduleData] = useState({
-    id: itemData.calendarId,
-    complete: itemData.complete || '',
-    startAt: itemData.startAt || '',
-    endAt: itemData.endAt || '',
-    name: itemData.name || '',
-    board: itemData.board || '',
-    content: itemData.content || '',
-    day: itemData.day || '',
-    period: itemData.period || '', // period 속성 추가
-    alerts: itemData.alerts || [],
-  });
-  const [isOpen, setIsOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [timeType, setTimeType] = useState('');
-  const onCancel = () => {
-    setVisible(false);
-  };
-
-  const handleConfirm = (date: Date) => {
-    onCancel();
-    const dateString = new Date(date);
-    const day = `${dateString.getFullYear()}-${String(dateString.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(dateString.getDate()).padStart(2, '0')}`;
-
-    const time = `${String(dateString.getHours()).padStart(2, '0')}:${String(
-      dateString.getMinutes(),
-    ).padStart(2, '0')}`;
-
-    if (timeType === 'start') {
-      setScheduleData(prevData => ({
-        ...prevData,
-        day: day,
-        startAt: time,
-      }));
-    } else if (timeType === 'end') {
-      setScheduleData(prevData => ({
-        ...prevData,
-        day: day,
-        endAt: time,
-      }));
-    }
-  };
-
-  const toggleIsOpen = () => {
-    setIsOpen(prevState => !prevState);
-  };
-
-  const toggleIsOpenStartAt = () => {
-    setVisible(prevState => !prevState);
-    setTimeType('start');
-  };
-
-  const toggleIsOpenEndAt = () => {
-    setVisible(prevState => !prevState);
-    setTimeType('end');
-  };
-
-  const parseDate = (dateString: any) => {
-    const [year, month, day, hours, minutes] = dateString.split(/[- :]/);
-    return new Date(year, month - 1, day, hours, minutes);
-  };
-
-  let date = new Date();
-
-  scheduleData.startAt.length !== 0 && timeType === 'start'
-    ? parseDate(scheduleData.day + scheduleData.startAt)
-    : parseDate(scheduleData.day + scheduleData.endAt);
-
+const SelectComponent = ({type, state, event}: inputProps) => {
   return (
-    <View style={scheduleOptionStyles.contentLayout}>
-      <TextInput
-        style={styles.searchBar}
-        onChangeText={text => setScheduleData(prevData => ({...prevData, contentTitle: text}))}
-        placeholder="검색어를 입력해 주세요"
-      />
-      <SelectBoard state={scheduleData.board} event={toggleIsOpen} />
-      <SelectStartTime
-        state={`${scheduleData.day} ${scheduleData.startAt}`}
-        event={toggleIsOpenStartAt}
-      />
-      <SelectEndTime
-        state={`${scheduleData.day} ${scheduleData.endAt}`}
-        event={toggleIsOpenEndAt}
-      />
-      <BottomSheetSelectBoard
-        modalVisible={isOpen}
-        setModalVisible={setIsOpen}
-        setScheduleData={setScheduleData}
-      />
-      <DateTimePickerModal
-        isVisible={visible}
-        mode={'datetime'}
-        onConfirm={handleConfirm}
-        onCancel={onCancel}
-        date={date}
-      />
+    <View style={styles.contentInput}>
+      <Icon name="pricetag-outline" style={styles.icon} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>{type}</Text>
+        <TouchableOpacity style={styles.selectContainer} onPress={event}>
+          <TextInput
+            value={state}
+            placeholder={`${type}을 선택하세요.`}
+            style={styles.contentText}
+            editable={false}
+          />
+          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
+};
+
+export const SearchOption = () => {
+  return <></>;
 };
 
 const styles = StyleSheet.create({

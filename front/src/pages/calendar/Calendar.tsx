@@ -1,33 +1,58 @@
 import React, {useState} from 'react';
 import {Agenda} from 'react-native-calendars';
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  Platform,
-  Dimensions,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
-import calendarData from './calendarData.json';
+import {StyleSheet, View, Platform, Dimensions} from 'react-native';
+import calendarData from '../../util/PracticeScheduleData.json';
 import {variables} from '../../style/variables';
-import {loadItems} from './CalendarUtil';
-import {theme, markedDates} from './style.calendar';
-import {MarkedDate, ItemsData} from './style';
 import ProfileHeader from '../../components/ProfileHeader';
-import ScheduleItemList from '../../components/ScheduleItemList';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthProps} from '../../navigations/StackNavigator';
+import ScheduleList from '../../components/ScheduleList';
+import {convertResponseData, dateFormat, CalendarData} from '../../util/dataConvert';
 
-const {width, height} = Dimensions.get('window');
+interface DayData {
+  dateString: string;
+  day: number;
+  month: number;
+  timestamp: number;
+  year: number;
+}
+
+interface MarkedDate {
+  selected: boolean;
+  selectedColor: string;
+  selectedTextColor: string;
+  marked: boolean;
+  dots: {key: string; color: string; selectedDotColor?: string}[];
+}
+
+const {width} = Dimensions.get('window');
 
 const Calendar: React.FC<AuthProps> = ({navigation}) => {
-  AsyncStorage.getItem('tokens').then(token => console.log(token));
-  const [items, setItems] = useState<ItemsData>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
-  const [selected, setSelected] = useState(() => new Date()); // 선택한 날짜 state로 저장 & 업데이트
-  const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
-    .toISOString()
-    .split('T')[0];
+  const today = dateFormat(String(new Date()));
+  const [items, setItems] = useState<{[key: string]: CalendarData[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
+  const [selected, setSelected] = useState(() => today); // 선택한 날짜 state로 저장 & 업데이트
+
+  const markedDates = (selectedDate: string, today: string) => {
+    return {
+      [selectedDate]: {
+        selected: true,
+        selectedColor: 'white',
+        selectedTextColor: variables.main,
+        customContainerStyle: {
+          borderWidth: 1,
+          borderColor: '#fff',
+        },
+      },
+      [today]: {
+        selectedColor: 'white',
+        selectedTextColor: variables.main,
+        color: 'yellow',
+        customContainerStyle: {
+          borderWidth: 1,
+          borderColor: '#fff',
+        },
+      },
+    };
+  };
 
   const multiDotProps = (): Record<string, MarkedDate> => {
     const markedDates: Record<string, MarkedDate> = {};
@@ -38,7 +63,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
 
       if (!markedDates[date]) {
         markedDates[date] = {
-          selected: selected === new Date(date),
+          selected: selected === date,
           selectedColor: 'white',
           selectedTextColor: variables.main,
           marked: true,
@@ -59,27 +84,45 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
     return markedDates;
   };
 
+  const loadItems = (day: DayData): void => {
+    const {timestamp, year, month} = day;
+    const newItems: {[key: string]: CalendarData[]} = {};
+
+    const startDate = new Date(timestamp);
+    const endDate = new Date(timestamp + 10 * 24 * 60 * 60 * 1000);
+
+    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+      const time = dateFormat(String(date));
+
+      if (!newItems[time]) {
+        newItems[time] = [];
+        const renderData = calendarData.filter((item: any) => dateFormat(item.startAt) === time);
+        renderData.forEach((item: any) => {
+          newItems[time].push(convertResponseData(item));
+        });
+      }
+    }
+
+    function formatDate(year: number, month: number) {
+      const yyyy = year.toString();
+      const mm = month < 10 ? `0${month}` : month.toString();
+      return `${yyyy}-${mm}`;
+    }
+
+    if (selected.slice(0, 7) === formatDate(year, month)) setItems(newItems);
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          AsyncStorage.clear();
-          navigation.navigate('AuthSplach');
-        }}>
-        <Text>로그아웃</Text>
-      </TouchableOpacity>
       <ProfileHeader />
       <Agenda
         style={styles.calendar}
-        onDayPress={day => {
-          setSelected(new Date(day.dateString));
-        }}
+        onDayPress={day => setSelected(day.dateString)}
         items={items}
-        renderList={items => ScheduleItemList(items, setItems)}
+        renderList={items => ScheduleList(items, setItems)}
         markingType={'multi-dot'}
-        loadItemsForMonth={day => loadItems(day, setItems, calendarData)}
-        selected={today}
-        showClosingKnob={false}
+        loadItemsForMonth={(day: DayData) => loadItems(day)}
+        selected={selected}
         showSixWeeks={true}
         theme={theme}
         markedDates={{...markedDates(selected, today), ...multiDotProps()}}
@@ -106,6 +149,7 @@ export const styles = StyleSheet.create({
   },
   calendar: {
     marginTop: 5,
+    height: 360,
   },
   scheduleListContainer: {
     flex: 1,
@@ -121,5 +165,25 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+const theme = {
+  calendarBackground: variables.main, // 캘린더 배경
+  monthTextColor: 'white',
+  textDayFontWeight: 'bold' as any, // 날짜 서체
+  dayTextColor: 'white', // 캘린더 날짜 색상
+  textDayFontSize: 14, // 캘린더 날짜 글씨 크기
+  textSectionTitleColor: 'white', // 요일 날짜 글씨 크기
+  todayTextColor: 'yellow',
+  agendaDayTextColor: variables.text_3, // 날짜 글씨 색상
+  agendaDayNumColor: variables.text_4, // 요일 글씨 색상
+  agendaTodayColor: variables.main, // 당일 글씨 색상
+  agendaKnobColor: '#ffffff60', // Knob => 문고리 / 캘린더 접었다폈다 하는 아이콘 색상
+  indicatorColor: 'red',
+  selectedDayBackgroundColor: 'white',
+  selectedDayTextColor: variables.main,
+  'stylesheet.calendar.header': {
+    week: {marginTop: 0, flexDirection: 'row', justifyContent: 'space-between'},
+  },
+};
 
 export default Calendar;

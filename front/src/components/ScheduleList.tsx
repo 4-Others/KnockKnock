@@ -1,16 +1,57 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, Image, Platform} from 'react-native';
+import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
+import {CalendarData} from '../util/dataConvert';
+
+const ScheduleList = (
+  {items}: any,
+  setItems: React.Dispatch<React.SetStateAction<{[key: string]: CalendarData[]}>>,
+) => {
+  const itemsKeyArray = Object.keys(items)
+    .filter((date: string) => items[date].length > 0) // 빈 배열을 제거하는 필터링 추가
+    .sort();
+
+  const handleToggleComplete = (day: string, itemId: number) => {
+    setItems(prevItems => {
+      const updatedItems = prevItems[day].map(item => {
+        console.log(item, itemId);
+        if (item.calendarId === itemId) {
+          return {...item, complete: !item.complete};
+        }
+        return item;
+      });
+      return {...prevItems, [day]: updatedItems};
+    });
+  };
+
+  return (
+    <ScrollView style={styles.scheduleListContainer}>
+      {itemsKeyArray.map((date, i) => {
+        const renderDateItem = items[date];
+        return (
+          <View key={i}>
+            <Text style={styles.listDateTitle}>{date.replace(/-/g, '.')}</Text>
+            {renderDateItem.map((item: any, j: number) => (
+              <ScheduleItem
+                item={item}
+                key={j}
+                onPress={() => handleToggleComplete(date, item.calendarId)}
+              />
+            ))}
+          </View>
+        );
+      })}
+    </ScrollView>
+  );
+};
 
 const ScheduleItem = ({item, onPress}: any) => {
   const navigation = useNavigation();
-
   const goToScheduleEdit = () => {
-    navigation.dispatch(StackActions.push('ScheduleEdit', {locate: item}));
+    navigation.dispatch(StackActions.push('ScheduleEdit', {item}));
   };
-
   return (
     <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
       <Shadow
@@ -20,12 +61,14 @@ const ScheduleItem = ({item, onPress}: any) => {
         endColor={'#ffffff05'}
         offset={[0, 1]}>
         <View style={styles.content}>
-          <View style={[styles.colorChip, {backgroundColor: item.color}]}></View>
+          <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View>
           <View>
             <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
               {item.name}
             </Text>
-            <Text style={styles.time}>{`${item.startAt} ~ ${item.endAt}`}</Text>
+            <Text style={styles.time}>{`${item.startAt.split(' ')[1]} ~ ${
+              item.endAt.split(' ')[1]
+            }`}</Text>
           </View>
         </View>
         <TouchableOpacity
@@ -38,9 +81,23 @@ const ScheduleItem = ({item, onPress}: any) => {
   );
 };
 
-export default ScheduleItem;
+export default ScheduleList;
 
 export const styles = StyleSheet.create({
+  scheduleListContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingBottom: 24,
+  },
+  listDateTitle: {
+    fontFamily: variables.font_3,
+    color: variables.text_5,
+    fontSize: 14,
+    marginTop: 20,
+    marginBottom: 20,
+  },
   item: {marginBottom: 10},
   todo: {
     width: '100%',

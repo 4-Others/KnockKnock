@@ -11,41 +11,42 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {variables} from '../style/variables';
+import {VariablesKeys} from '../style/variables';
+import BoardData from '../pages/ScheduleBoard/BoardItems/boardData.json';
+import {CalendarData} from '../util/dataConvert';
 
-type BottomSheetProps = {
+type SelectorProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setScheduleData: React.Dispatch<
-    React.SetStateAction<{
-      id: number;
-      complete: string;
-      startAt: string;
-      endAt: string;
-      name: string;
-      board: string;
-      content: string;
-      day: string;
-      period: string;
-      alerts: [];
-    }>
-  >;
+  setScheduleData: React.Dispatch<React.SetStateAction<CalendarData>>;
+  type: 'tag' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
+};
+
+type BoardData = {
+  boardId: number;
+  type: string;
+  title: string;
+  number: number;
+  color: string;
 };
 
 //? modalBottomSheet 레이아웃
-const BottomSheetSelectPeriod: React.FC<BottomSheetProps> = props => {
-  const {modalVisible, setModalVisible, setScheduleData} = props;
+const Selector: React.FC<SelectorProps> = props => {
+  const {
+    modalVisible,
+    setModalVisible,
+    setScheduleData,
+    type, // 타입을 받아옴
+  } = props;
 
-  const periodData = ['삼십 분 전', '한 시간 전', '두 시간 전'];
+  const periodData = [30, 60, 90, 120, 1440];
 
   const screenHeight = Dimensions.get('screen').height;
-
   const panY = useRef(new Animated.Value(screenHeight)).current;
-
   const translateY = panY.interpolate({
     inputRange: [-1, 0, 1],
     outputRange: [0, 0, 1],
   });
-
   const resetBottomSheet = Animated.timing(panY, {
     toValue: 0,
     duration: 300,
@@ -57,13 +58,6 @@ const BottomSheetSelectPeriod: React.FC<BottomSheetProps> = props => {
     duration: 300,
     useNativeDriver: true,
   });
-
-  const handleAlSelect = (value: string) => {
-    setScheduleData(prevData => ({
-      ...prevData,
-      board: value,
-    }));
-  };
 
   const panResponders = useRef(
     PanResponder.create({
@@ -81,6 +75,62 @@ const BottomSheetSelectPeriod: React.FC<BottomSheetProps> = props => {
       },
     }),
   ).current;
+
+  const RenderTagList = (tag: BoardData[]) => {
+    const onTagState = (value: {color: string; name: string}) => {
+      setScheduleData(prevData => ({
+        ...prevData,
+        tag: value,
+      }));
+    };
+
+    return tag.map(data => {
+      let colorValue: any = data.color;
+      if (colorValue.startsWith('variables.')) {
+        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+        colorValue = variables[colorKey];
+      }
+      const newTag = {color: data.color, name: data.title};
+      return (
+        <TouchableOpacity
+          style={styles.itemSelectMenu}
+          key={data.boardId}
+          onPress={() => {
+            setModalVisible(false);
+            onTagState(newTag);
+          }}>
+          <View style={[styles.colorChip, {backgroundColor: colorValue}]}></View>
+          <Text style={styles.menuText}>{data.title}</Text>
+        </TouchableOpacity>
+      );
+    });
+  };
+
+  const RenderNotificationList = () => {
+    const onNotificationState = (value: number) => {
+      setScheduleData(prevData => {
+        const updatedAlerts = prevData.alerts.includes(value)
+          ? prevData.alerts.filter(item => item !== value)
+          : [...prevData.alerts, value];
+
+        return {
+          ...prevData,
+          alerts: updatedAlerts,
+        };
+      });
+    };
+
+    return periodData.map((data, index) => {
+      return (
+        <TouchableOpacity
+          style={styles.itemSelectMenu}
+          key={index}
+          onPress={() => onNotificationState(data)}>
+          <Text>{`${data}분 전`}</Text>
+        </TouchableOpacity>
+      );
+    });
+  };
 
   useEffect(() => {
     if (props.modalVisible) {
@@ -103,20 +153,15 @@ const BottomSheetSelectPeriod: React.FC<BottomSheetProps> = props => {
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {periodData.map((data, index) => {
-            return (
-              <TouchableOpacity style={styles.itemSelectMenu} key={index}>
-                <Text>{data}</Text>
-              </TouchableOpacity>
-            );
-          })}
+          {type === 'tag' // 타입에 따라 다른 데이터 표시
+            ? RenderTagList(BoardData)
+            : RenderNotificationList()}
         </Animated.View>
       </View>
     </Modal>
   );
 };
-
-export default BottomSheetSelectPeriod;
+export default Selector;
 
 const styles = StyleSheet.create({
   overlay: {

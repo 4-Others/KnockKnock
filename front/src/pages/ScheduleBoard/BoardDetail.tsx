@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
-import ScheduleItemlList from '../../components/ScheduleItemList';
+import ScheduleItemlList from '../../components/ScheduleList';
 import detailData from './detailData.json';
 import {format} from 'date-fns';
 import {variables} from '../../style/variables';
@@ -85,11 +85,7 @@ const BoardDetail = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="스케줄 보드"
-        type="edit"
-        nextNavigation={() => navigation.navigate('BoardEdit')}
-      />
+      <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
       <ScrollView style={styles.ScheduleItemList}>
         <Shadow
           style={styles.shadow}
