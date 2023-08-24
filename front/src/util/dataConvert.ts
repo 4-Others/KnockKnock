@@ -15,7 +15,7 @@ export interface ApiResponseData {
   };
 }
 
-export interface CalendarData {
+export interface ScheduleData {
   calendarId: number;
   name: string;
   height: number;
@@ -66,7 +66,7 @@ const convertResponseData = (resData: ApiResponseData) => {
     tag,
   } = resData;
 
-  const calendarData: CalendarData = {
+  const calendarData: ScheduleData = {
     calendarId,
     name: title,
     height: 0,

@@ -15,7 +15,7 @@ import Selector from './BottomSheet';
 import {scheduleOptionStyles} from '../pages/Schedule/ScheduleAdd';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {CalendarData} from '../util/dataConvert';
+import {ScheduleData} from '../util/dataConvert';
 
 export interface inputProps {
   type: string;
@@ -23,8 +23,8 @@ export interface inputProps {
   event: () => void;
 }
 
-export const ScheduleOption: React.FC<{itemData?: CalendarData}> = ({itemData}) => {
-  const initialScheduleData: CalendarData = {
+export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) => {
+  const initialScheduleData: ScheduleData = {
     calendarId: 0,
     name: '',
     height: 0,
@@ -42,7 +42,7 @@ export const ScheduleOption: React.FC<{itemData?: CalendarData}> = ({itemData}) 
     },
   };
 
-  const [scheduleData, setScheduleData] = useState<CalendarData>(
+  const [scheduleData, setScheduleData] = useState<ScheduleData>(
     itemData ? {...itemData} : initialScheduleData,
   );
   const [boardIsOpen, setBoardIsOpen] = useState(false);

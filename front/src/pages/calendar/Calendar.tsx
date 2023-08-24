@@ -6,7 +6,7 @@ import {variables} from '../../style/variables';
 import ProfileHeader from '../../components/ProfileHeader';
 import {AuthProps} from '../../navigations/StackNavigator';
 import ScheduleList from '../../components/ScheduleList';
-import {convertResponseData, dateFormat, CalendarData} from '../../util/dataConvert';
+import {convertResponseData, dateFormat, ScheduleData} from '../../util/dataConvert';
 
 interface DayData {
   dateString: string;
@@ -28,7 +28,7 @@ const {width} = Dimensions.get('window');
 
 const Calendar: React.FC<AuthProps> = ({navigation}) => {
   const today = dateFormat(String(new Date()));
-  const [items, setItems] = useState<{[key: string]: CalendarData[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
+  const [items, setItems] = useState<{[key: string]: ScheduleData[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
   const [selected, setSelected] = useState(() => today); // 선택한 날짜 state로 저장 & 업데이트
 
   const markedDates = (selectedDate: string, today: string) => {
@@ -86,7 +86,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
 
   const loadItems = (day: DayData): void => {
     const {timestamp, year, month} = day;
-    const newItems: {[key: string]: CalendarData[]} = {};
+    const newItems: {[key: string]: ScheduleData[]} = {};
 
     const startDate = new Date(timestamp);
     const endDate = new Date(timestamp + 10 * 24 * 60 * 60 * 1000);

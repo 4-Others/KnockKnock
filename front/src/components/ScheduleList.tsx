@@ -3,11 +3,11 @@ import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
-import {CalendarData} from '../util/dataConvert';
+import {ScheduleData} from '../util/dataConvert';
 
 const ScheduleList = (
   {items}: any,
-  setItems: React.Dispatch<React.SetStateAction<{[key: string]: CalendarData[]}>>,
+  setItems: React.Dispatch<React.SetStateAction<{[key: string]: ScheduleData[]}>>,
 ) => {
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0) // 빈 배열을 제거하는 필터링 추가

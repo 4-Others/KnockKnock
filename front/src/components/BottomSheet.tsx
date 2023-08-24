@@ -13,12 +13,12 @@ import {
 import {variables} from '../style/variables';
 import {VariablesKeys} from '../style/variables';
 import BoardData from '../pages/ScheduleBoard/BoardItems/boardData.json';
-import {CalendarData} from '../util/dataConvert';
+import {ScheduleData} from '../util/dataConvert';
 
 type SelectorProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setScheduleData: React.Dispatch<React.SetStateAction<CalendarData>>;
+  setScheduleData: React.Dispatch<React.SetStateAction<ScheduleData>>;
   type: 'tag' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
 };
 
