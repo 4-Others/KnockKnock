@@ -7,7 +7,6 @@ import {scheduleOptionStyles} from './ScheduleAdd';
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {
   const itemData = route.params.item;
-
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>
       <Header title="스케줄 편집" />
