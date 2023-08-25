@@ -1,29 +1,41 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import {ScheduleData} from '../util/dataConvert';
+import {Swipeable} from 'react-native-gesture-handler';
 
 const ScheduleList = (
   {items}: any,
-  setItems: React.Dispatch<React.SetStateAction<{[key: string]: ScheduleData[]}>>,
+  setItems: (newItems: {[key: string]: ScheduleData[]}) => void,
 ) => {
+  // 빈 배열을 제거하는 함수
   const itemsKeyArray = Object.keys(items)
-    .filter((date: string) => items[date].length > 0) // 빈 배열을 제거하는 필터링 추가
+    .filter((date: string) => items[date].length > 0)
     .sort();
-
+  // 일정 완료 체크 토글 함수
   const handleToggleComplete = (day: string, itemId: number) => {
-    setItems(prevItems => {
-      const updatedItems = prevItems[day].map(item => {
-        console.log(item, itemId);
-        if (item.calendarId === itemId) {
-          return {...item, complete: !item.complete};
-        }
-        return item;
-      });
-      return {...prevItems, [day]: updatedItems};
+    const updatedItems = items[day].map((item: ScheduleData) => {
+      console.log(item, itemId);
+      if (item.calendarId === itemId) {
+        return {...item, complete: !item.complete};
+      }
+      return item;
     });
+    setItems({...items, [day]: updatedItems});
+  };
+
+  // 아이템 삭제 함수
+  const handleDelete = (itemId: number) => {
+    const updatedItems = {...items};
+
+    for (const day of itemsKeyArray) {
+      updatedItems[day] = updatedItems[day].filter(
+        (item: ScheduleData) => item.calendarId !== itemId,
+      );
+    }
+    setItems(updatedItems);
   };
 
   return (
@@ -38,6 +50,7 @@ const ScheduleList = (
                 item={item}
                 key={j}
                 onPress={() => handleToggleComplete(date, item.calendarId)}
+                onDelete={handleDelete}
               />
             ))}
           </View>
@@ -47,37 +60,56 @@ const ScheduleList = (
   );
 };
 
-const ScheduleItem = ({item, onPress}: any) => {
+const ScheduleItem = ({item, onPress, onDelete}: any) => {
+  const swipeableRef = useRef<Swipeable | null>(null);
+  const resetSwipeable = () => {
+    if (swipeableRef.current) {
+      swipeableRef.current.close();
+    }
+  };
   const navigation = useNavigation();
   const goToScheduleEdit = () => {
     navigation.dispatch(StackActions.push('ScheduleEdit', {item}));
   };
-  return (
-    <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
-      <Shadow
-        style={styles.todo}
-        distance={8}
-        startColor={'#00000010'}
-        endColor={'#ffffff05'}
-        offset={[0, 1]}>
-        <View style={styles.content}>
-          <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View>
-          <View>
-            <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-              {item.name}
-            </Text>
-            <Text style={styles.time}>{`${item.startAt.split(' ')[1]} ~ ${
-              item.endAt.split(' ')[1]
-            }`}</Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={item.complete ? styles.checkState : styles.unCheckState}
-          onPress={onPress}>
-          <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-        </TouchableOpacity>
-      </Shadow>
+  const renderRightActions = () => (
+    <TouchableOpacity
+      style={styles.deleteArea}
+      onPress={() => {
+        onDelete(item.calendarId);
+        resetSwipeable();
+      }}>
+      <Text style={styles.deleteText}>Delete</Text>
     </TouchableOpacity>
+  );
+
+  return (
+    <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
+      <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
+        <Shadow
+          style={styles.todo}
+          distance={8}
+          startColor={'#00000010'}
+          endColor={'#ffffff05'}
+          offset={[0, 1]}>
+          <View style={styles.content}>
+            <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View>
+            <View>
+              <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
+                {item.name}
+              </Text>
+              <Text style={styles.time}>{`${item.startAt.split(' ')[1]} ~ ${
+                item.endAt.split(' ')[1]
+              }`}</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={item.complete ? styles.checkState : styles.unCheckState}
+            onPress={onPress}>
+            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
+          </TouchableOpacity>
+        </Shadow>
+      </TouchableOpacity>
+    </Swipeable>
   );
 };
 
@@ -89,7 +121,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingLeft: 24,
     paddingRight: 24,
-    paddingBottom: 24,
+    marginBottom: 30,
   },
   listDateTitle: {
     fontFamily: variables.font_3,
@@ -158,5 +190,18 @@ export const styles = StyleSheet.create({
   checkIcon: {
     width: 10,
     height: 6,
+  },
+  deleteArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: variables.Mater_14,
+    padding: 14,
+    marginBottom: 10,
+    marginLeft: 20,
+    borderRadius: 6,
+  },
+  deleteText: {
+    color: 'white',
+    fontFamily: variables.font_4,
   },
 });

@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {Agenda} from 'react-native-calendars';
 import {StyleSheet, View, Platform, Dimensions} from 'react-native';
-import calendarData from '../../util/PracticeScheduleData.json';
+import scheduleData from '../../util/PracticeScheduleData.json';
 import {variables} from '../../style/variables';
 import ProfileHeader from '../../components/ProfileHeader';
 import {AuthProps} from '../../navigations/StackNavigator';
 import ScheduleList from '../../components/ScheduleList';
 import {convertResponseData, dateFormat, ScheduleData} from '../../util/dataConvert';
+import {useSelector, useDispatch} from 'react-redux';
+import {setScheduleItems} from '../../util/redux/scheduleSlice';
 
 interface DayData {
   dateString: string;
@@ -27,8 +29,13 @@ interface MarkedDate {
 const {width} = Dimensions.get('window');
 
 const Calendar: React.FC<AuthProps> = ({navigation}) => {
+  const items = useSelector((state: any) => state.schedule.items);
+  console.log(items);
+  const dispatch = useDispatch();
+  const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
+    dispatch(setScheduleItems(newItems));
+  };
   const today = dateFormat(String(new Date()));
-  const [items, setItems] = useState<{[key: string]: ScheduleData[]}>({}); // 랜더링 할 아이템 state로 저장 & 업데이트
   const [selected, setSelected] = useState(() => today); // 선택한 날짜 state로 저장 & 업데이트
 
   const markedDates = (selectedDate: string, today: string) => {
@@ -57,7 +64,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
   const multiDotProps = (): Record<string, MarkedDate> => {
     const markedDates: Record<string, MarkedDate> = {};
 
-    calendarData.forEach((data, index) => {
+    scheduleData.forEach((data, index) => {
       const date = data.startAt.split(' ')[0];
       const tag = data.tag;
 
@@ -96,7 +103,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
 
       if (!newItems[time]) {
         newItems[time] = [];
-        const renderData = calendarData.filter((item: any) => dateFormat(item.startAt) === time);
+        const renderData = scheduleData.filter((item: any) => dateFormat(item.startAt) === time);
         renderData.forEach((item: any) => {
           newItems[time].push(convertResponseData(item));
         });
