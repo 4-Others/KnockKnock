@@ -9,19 +9,10 @@ import {useSelector} from 'react-redux';
 const ScheduleAdd = () => {
   const user = useSelector((state: any) => state.user);
   console.log(user);
-  const itemData = {
-    title: '',
-    content: '',
-    period: '',
-    board: '',
-    day: '',
-    startAt: '',
-    endAt: '',
-  };
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>
       <Header title="스케줄 등록" />
-      <ScheduleOption itemData={itemData} />
+      <ScheduleOption />
     </SafeAreaView>
   );
 };
