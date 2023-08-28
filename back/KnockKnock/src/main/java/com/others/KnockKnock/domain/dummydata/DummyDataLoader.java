@@ -9,7 +9,7 @@ import com.others.KnockKnock.domain.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +31,6 @@ public class DummyDataLoader implements CommandLineRunner {
     }
 
 
-    @Transactional
     @Override
     public void run(String... args) throws Exception {
         String encryptedPassword1 = passwordEncoder.encode("ADSDSDS12!!");
