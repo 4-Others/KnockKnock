@@ -12,7 +12,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
