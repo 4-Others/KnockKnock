@@ -34,6 +34,8 @@ public class DummyDataLoader implements CommandLineRunner {
         String encryptedPassword1 = passwordEncoder.encode("ADSDSDS12!!");
         LocalDate birth1 = LocalDate.of(1993,12,13);
         User user1 = User.builder()
+                .id("tester123")
+                .username("tester")
                 .email("john@example.com")
                 .password(encryptedPassword1)
                 .emailVerifiedYn("Y")
@@ -47,6 +49,8 @@ public class DummyDataLoader implements CommandLineRunner {
         String encryptedPassword2 = passwordEncoder.encode("ADSDS126@@#");
         LocalDate birth2 = LocalDate.of(1994,06,17);
         User user2 = User.builder()
+                .id("tester1234")
+                .username("tester")
                 .email("thisissample@gmail.com")
                 .password(encryptedPassword2)
                 .emailVerifiedYn("Y")
