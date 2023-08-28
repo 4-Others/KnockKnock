@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  items: [], // 초기 상태
+  items: {}, // 초기 상태
 };
 
 const scheduleSlice = createSlice({

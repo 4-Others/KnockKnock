@@ -25,7 +25,6 @@ type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
 const BoardDetail = () => {
   const items = useSelector((state: any) => state.schedule.items);
-  console.log(items);
   const dispatch = useDispatch();
   const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
     dispatch(setScheduleItems(newItems));
@@ -78,9 +77,7 @@ const BoardDetail = () => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>
-          <ScheduleItemlList items={items} setItems={setItems} />
-        </View>
+        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems, 'board')}</View>
       </ScrollView>
     </SafeAreaView>
   );

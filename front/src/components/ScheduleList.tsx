@@ -7,17 +7,20 @@ import {ScheduleData} from '../util/dataConvert';
 import {Swipeable} from 'react-native-gesture-handler';
 
 const ScheduleList = (
-  {items}: any,
+  items: any,
   setItems: (newItems: {[key: string]: ScheduleData[]}) => void,
+  type: string,
 ) => {
   // 빈 배열을 제거하는 함수
+  type === 'calendar' ? (items = items.items) : items;
+
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
     .sort();
+
   // 일정 완료 체크 토글 함수
   const handleToggleComplete = (day: string, itemId: number) => {
     const updatedItems = items[day].map((item: ScheduleData) => {
-      console.log(item, itemId);
       if (item.calendarId === itemId) {
         return {...item, complete: !item.complete};
       }

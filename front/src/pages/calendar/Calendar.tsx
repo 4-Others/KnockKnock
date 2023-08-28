@@ -30,7 +30,6 @@ const {width} = Dimensions.get('window');
 
 const Calendar: React.FC<AuthProps> = ({navigation}) => {
   const items = useSelector((state: any) => state.schedule.items);
-  console.log(items);
   const dispatch = useDispatch();
   const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
     dispatch(setScheduleItems(newItems));
@@ -126,7 +125,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
         style={styles.calendar}
         onDayPress={day => setSelected(day.dateString)}
         items={items}
-        renderList={items => ScheduleList(items, setItems)}
+        renderList={items => ScheduleList(items, setItems, 'calendar')}
         markingType={'multi-dot'}
         loadItemsForMonth={(day: DayData) => loadItems(day)}
         selected={selected}
