@@ -1,5 +1,5 @@
 package com.others.KnockKnock.domain.user.entity;
-
+/*
 import com.others.KnockKnock.domain.user.status.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,3 +46,5 @@ public class UserStatusHistory {
         this.timestamp = timestamp;
     }
 }
+
+ */

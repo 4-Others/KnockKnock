@@ -1,5 +1,5 @@
 package com.others.KnockKnock.security.jwt;
-
+/*
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,3 +58,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return token;
     }
 }
+
+ */
