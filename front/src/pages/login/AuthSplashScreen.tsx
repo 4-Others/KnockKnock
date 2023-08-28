@@ -12,8 +12,8 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
   const verifyTokens = async ({navigation}: any) => {
     // 메모리에 저장된 토큰 호출
     const user = await storageGetValue('user');
-    const {accessToken, refreshToken, userId} = user;
     if (user) {
+      const {accessToken, refreshToken, userId} = user;
       dispatch(setToken({accessToken, refreshToken}));
       dispatch(setUserId(userId));
       // 로그인 성공 후 메인탭 이동

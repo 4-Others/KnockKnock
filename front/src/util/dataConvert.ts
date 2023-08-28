@@ -5,7 +5,7 @@ export interface ApiResponseData {
   period: string;
   startAt: string;
   endAt: string;
-  alerts: [];
+  alerts: number[];
   createdAt: string;
   modifiedAt: string;
   complete: boolean;
@@ -32,6 +32,14 @@ export interface ScheduleData {
     color: string;
   };
 }
+
+type DayData = {
+  dateString: string;
+  day: number;
+  month: number;
+  timestamp: number;
+  year: number;
+};
 
 const dateCache: {[key: string]: string} = {}; // 날짜 포맷 결과를 저장할 캐시 객체
 
