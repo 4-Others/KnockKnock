@@ -9,6 +9,9 @@ RUN gradle build -x test --parallel --continue > /dev/null 2>&1 || true
 COPY . /build
 RUN gradle build -x test --parallel
 
+# 여기서 Gradle 클린 빌드를 추가
+RUN gradle clean build -x test --parallel
+
 # APP
 FROM openjdk:11.0-slim
 WORKDIR /app
