@@ -12,7 +12,6 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
   const verifyTokens = async ({navigation}: any) => {
     // 메모리에 저장된 토큰 호출
     const user = await storageGetValue('user');
-    console.log(user);
     if (user) {
       const {accessToken, refreshToken, userId} = user;
       dispatch(setToken({accessToken, refreshToken}));

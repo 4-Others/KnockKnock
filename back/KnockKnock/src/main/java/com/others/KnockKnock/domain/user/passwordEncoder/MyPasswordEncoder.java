@@ -1,4 +1,5 @@
 package com.others.KnockKnock.domain.user.passwordEncoder;
+/*
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,3 +24,5 @@ public class MyPasswordEncoder implements PasswordEncoder {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }
+
+ */

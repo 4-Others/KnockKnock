@@ -13,11 +13,9 @@ import javax.mail.MessagingException;
 @RequestMapping("/api/v1/emails")
 public class EmailController {
     private final EmailService emailService;
-    private final UserService userService;
 
-    public EmailController(EmailService emailService, UserService userService) {
+    public EmailController(EmailService emailService) {
         this.emailService = emailService;
-        this.userService = userService;
     }
 
     @PostMapping("/send")

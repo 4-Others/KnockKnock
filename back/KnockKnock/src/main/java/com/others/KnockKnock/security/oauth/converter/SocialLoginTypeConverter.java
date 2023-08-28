@@ -1,5 +1,5 @@
 package com.others.KnockKnock.security.oauth.converter;
-
+/*
 import com.others.KnockKnock.security.oauth.SocialLoginType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -11,3 +11,5 @@ public class SocialLoginTypeConverter implements Converter<String, SocialLoginTy
         return SocialLoginType.valueOf(s.toUpperCase());
     }
 }
+
+ */
