@@ -11,7 +11,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   batch:
     initialize-schema: always
     table-prefix: BATCH_
@@ -38,7 +38,7 @@ spring:
             scope: email
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://localhost:8080/auth/kakao/callback"
+            redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
@@ -66,3 +66,15 @@ sns:
       url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
     token:
       url: "https://oauth2.googleapis.com/token"
+cors:
+  allowed-origins: 'http://www.knockknockofficial.shop:8080'
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: '*'
+  max-age: 3600
+app:
+  auth:
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenExpiry: 1800000
+    refreshTokenExpiry: 604800000
+  oauth2:
+    authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect

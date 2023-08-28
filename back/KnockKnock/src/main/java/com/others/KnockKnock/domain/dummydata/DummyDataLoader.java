@@ -32,7 +32,7 @@ public class DummyDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String encryptedPassword1 = passwordEncoder.encode("ADSDSDS12!!");
-        LocalDate birth1 = LocalDate.of(1993,12,13);
+        LocalDate birth1 = LocalDate.of(1996,12,13);
         User user1 = User.builder()
                 .id("tester123")
                 .username("tester")
