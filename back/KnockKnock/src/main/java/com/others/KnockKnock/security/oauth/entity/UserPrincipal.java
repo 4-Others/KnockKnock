@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
     private final String password;
     private final ProviderType providerType;
     private final RoleType roleType;
+    private final LocalDate birth;
+    private final String emailVerifiedYn;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
@@ -92,6 +95,8 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
                 user.getPassword(),
                 user.getProviderType(),
                 RoleType.USER,
+                user.getBirth(),
+                user.getEmailVerifiedYn(),
                 Collections.singletonList(new SimpleGrantedAuthority(RoleType.USER.getCode()))
         );
     }
