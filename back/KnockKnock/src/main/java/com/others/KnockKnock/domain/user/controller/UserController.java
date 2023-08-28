@@ -134,7 +134,7 @@ public class UserController {
 //            //throw new IllegalArgumentException("아이디나 비밀번호가 잘못되었습니다.");
 //             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", new String[]{"패스워드가 틀렸어요!"}));
 //        }
-//        //userService.updateUserLastLoggedIn(user);
+//
 //        String accessToken = jwtTokenProvider.generateAccessToken(email);
 //        String refreshToken = jwtTokenProvider.generateRefreshToken(email);
 //        if (accessToken == null || refreshToken == null) {

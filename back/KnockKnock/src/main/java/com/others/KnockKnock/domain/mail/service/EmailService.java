@@ -139,10 +139,4 @@ public class EmailService {
             throw new RuntimeException("Failed to process email template.", e);
         }
     }
-    public void updateEmailVerificationStatus(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setEmailVerifiedYn("Y");
-        userRepository.save(user);
-    }
 }
