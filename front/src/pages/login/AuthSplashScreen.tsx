@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react';
-import {Image, Text} from 'react-native';
+import {Image} from 'react-native';
 import {AuthProps} from '../../navigations/StackNavigator';
 import LinearGradient from 'react-native-linear-gradient';
 import {storageGetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
 import {setUserId, setToken} from '../../util/redux/userSlice';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AuthSplashScreen: React.FC<AuthProps> = props => {
   //? 첫 실행 시 동작
@@ -13,8 +12,8 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
   const verifyTokens = async ({navigation}: any) => {
     // 메모리에 저장된 토큰 호출
     const user = await storageGetValue('user');
-    const {accessToken, refreshToken, userId} = user;
     if (user) {
+      const {accessToken, refreshToken, userId} = user;
       dispatch(setToken({accessToken, refreshToken}));
       dispatch(setUserId(userId));
       // 로그인 성공 후 메인탭 이동
@@ -49,9 +48,6 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
           marginBottom: 30,
         }}
       />
-      <TouchableOpacity>
-        <Text>Logout</Text>
-      </TouchableOpacity>
     </LinearGradient>
   );
 };
