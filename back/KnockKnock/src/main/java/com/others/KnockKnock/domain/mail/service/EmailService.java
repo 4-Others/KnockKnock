@@ -4,7 +4,6 @@ import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
 import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;

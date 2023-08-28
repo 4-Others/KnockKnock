@@ -2,11 +2,9 @@ package com.others.KnockKnock.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.others.KnockKnock.domain.user.status.Status;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -14,9 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "USERS")
@@ -113,19 +109,3 @@ public class User{
     public User(String id, String name, String email, LocalDate birth, Boolean pushAgree, ProviderType providerType, RoleType user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
     }
 }
-
-//    @Column(name = "last_logged_in")
-//    private LocalDateTime lastLoggedIn; // 휴면계정 전환 기준 : 1년
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<UserStatusHistory> statusHistory;
-//    @Builder
-//    public User(String email,String password){
-//        this.email = email;
-//        this.password = password;
-//        this.statusHistory = new ArrayList<>();
-//    }
-//    public void addStatusHistory(Status status, LocalDateTime timestamp) {
-//        UserStatusHistory history = new UserStatusHistory(this, status, timestamp);
-//        statusHistory.add(history);
-//    }
