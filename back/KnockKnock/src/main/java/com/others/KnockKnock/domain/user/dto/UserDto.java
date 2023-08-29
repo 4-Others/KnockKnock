@@ -1,23 +1,14 @@
 package com.others.KnockKnock.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.others.KnockKnock.custom.Password;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Generated;
 import lombok.Getter;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 public class UserDto {

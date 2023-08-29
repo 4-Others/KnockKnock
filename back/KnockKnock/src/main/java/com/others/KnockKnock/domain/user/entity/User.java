@@ -6,7 +6,6 @@ import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

@@ -47,24 +47,21 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: update
-  batch:
-    initialize-schema: always
-    table-prefix: BATCH_
-  quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
-    properties:
-      org:
-        quartz:
-          scheduler:
-            instanceName: MyScheduler
-          jobStore:
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            dataSource: myDataSource
-            tablePrefix: QRTZ_
-            isClustered: false
-            useProperties: false
+#  quartz:
+#    job-store-type: jdbc
+#    jdbc:
+#      initialize-schema: always
+#    properties:
+#      org:
+#        quartz:
+#          scheduler:
+#            instanceName: MyScheduler
+#          jobStore:
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+#            dataSource: myDataSource
+#            tablePrefix: QRTZ_
+#            isClustered: false
+#            useProperties: false
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
