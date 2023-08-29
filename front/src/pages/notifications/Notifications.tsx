@@ -13,29 +13,37 @@ import {Shadow} from 'react-native-shadow-2';
 import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
+import {storageGetValue} from '../../util/authUtil';
 
 const {width, height} = Dimensions.get('window');
 
 const Notifications = () => {
   const [datas, setDatas] = useState([]);
   const url = Config.API_APP_KEY;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${url}api/v1/notification/stream`, {
-          headers: {
-            Authorization: `TOKEN_HERE`,
-          },
-        });
-        setDatas(response.data);
-        console.log(response.data);
+        const token = await storageGetValue('user');
+        if (token) {
+          const response = await axios.get(`${url}api/v1/notification/stream`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setDatas(response.data);
+          console.log(response.data);
+        } else {
+          console.error('No token found.');
+        }
       } catch (error) {
-        console.error('Error fetching data from server:', error);
+        console.error('Error:', error);
       }
     };
 
     fetchData();
   }, []);
+
   return (
     <SafeAreaView>
       <Header title="알림" type="alarm" />

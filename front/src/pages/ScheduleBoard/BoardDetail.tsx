@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
-import ScheduleItemlList from '../../components/ScheduleList';
+import ScheduleList from '../../components/ScheduleList';
 import scheduleData from '../../util/PracticeScheduleData.json';
 import {format} from 'date-fns';
 import {variables} from '../../style/variables';
@@ -77,7 +77,7 @@ const BoardDetail = () => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems, 'board')}</View>
+        <View style={styles.listContainer}>{ScheduleList(items, setItems, 'board')}</View>
       </ScrollView>
     </SafeAreaView>
   );

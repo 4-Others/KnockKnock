@@ -1,12 +1,14 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {variables} from '../style/variables';
+import {StyleProp, ViewStyle} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface ComponentType {
   text: string;
   onPress?: () => any;
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 const GradientButton_S: React.FC<ComponentType> = ({text, onPress}) => {
@@ -23,11 +25,11 @@ const GradientButton_S: React.FC<ComponentType> = ({text, onPress}) => {
   );
 };
 
-const GradientButton_L: React.FC<ComponentType> = ({text, onPress, disabled}) => {
+const GradientButton_L: React.FC<ComponentType> = ({text, onPress, disabled, style}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={styles.container}
+      style={[styles.container, style]}
       onPress={onPress}
       disabled={disabled}>
       <LinearGradient
