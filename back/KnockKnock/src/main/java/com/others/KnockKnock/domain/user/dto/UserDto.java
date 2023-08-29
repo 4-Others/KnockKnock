@@ -25,6 +25,9 @@ public class UserDto {
     @Builder
     @AllArgsConstructor
     public static class Signup{
+        @NotNull
+        private String id;
+
         @NotBlank
         @NotNull
         @Email
@@ -35,6 +38,8 @@ public class UserDto {
         @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",
                 message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
         private String password;
+
+        private String username;
 
         @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birth;
@@ -47,7 +52,7 @@ public class UserDto {
     public static class Login{
         @NotBlank
         @NotNull
-        private String email;
+        private String id;
 
         @NotNull
         @NotBlank
@@ -65,16 +70,6 @@ public class UserDto {
     @Builder
     @AllArgsConstructor
     public static class PasswordUpdate {
-        @NotBlank
-        @NotNull
-        private String email;
-
-        @NotNull
-        @NotBlank
-        @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",
-                message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
-        private String currentPassword;
-
         @NotNull
         @NotBlank
         @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",

@@ -7,7 +7,7 @@ import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} f
 import axios from 'axios';
 import {isPasswordValid, storageSetValue, storageDeleteValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
-import {setUserId, setAccessToken} from '../../util/redux/userSlice';
+import {setUserId, setToken} from '../../util/redux/userSlice';
 
 const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [data, setData] = useState({email: '', password: ''});
@@ -23,11 +23,11 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
         const {accessToken, refreshToken, userId} = response.data;
         // 자동 로그인 정보 수집
         if (autoLogin) {
-          await storageSetValue('tokens', {accessToken, refreshToken});
-        } else await storageDeleteValue('tokens');
+          await storageSetValue('user', {accessToken, refreshToken, userId});
+        } else await storageDeleteValue('user');
         // store에 userId와 토큰 저장
         dispatch(setUserId(userId));
-        dispatch(setAccessToken(accessToken));
+        dispatch(setToken({accessToken, refreshToken}));
         //메인화면으로 이동
         navigation.navigate('MainTab');
       } catch (error: any) {

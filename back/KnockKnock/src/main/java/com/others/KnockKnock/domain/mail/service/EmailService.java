@@ -3,17 +3,15 @@ package com.others.KnockKnock.domain.mail.service;
 import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
 import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
-import com.others.KnockKnock.domain.user.passwordEncoder.MyPasswordEncoder;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
@@ -25,13 +23,13 @@ public class EmailService {
     private final UserRepository userRepository;
     private final EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository;
     private final TemplateEngine templateEngine;
-    private final MyPasswordEncoder myPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository, MyPasswordEncoder myPasswordEncoder) {
+    public EmailService(JavaMailSender javaMailSender, UserRepository userRepository, EmailConfirmRandomKeyRepository emailConfirmRandomKeyRepository, PasswordEncoder passwordEncoder) {
         this.javaMailSender = javaMailSender;
         this.userRepository = userRepository;
         this.emailConfirmRandomKeyRepository = emailConfirmRandomKeyRepository;
-        this.myPasswordEncoder = myPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
 
 
         // Create and configure the template engine
@@ -111,16 +109,15 @@ public class EmailService {
         if (existingUser.isPresent()) {
             // 기존 사용자의 정보 업데이트
             User user = existingUser.get();
-            user.setPassword(myPasswordEncoder.encode(password));
-            user.setEmailVerified(true); // 이메일 인증 완료로 설정
-            user.setStatus(Status.ACTIVE);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setEmailVerifiedYn("Y"); // 이메일 인증 완료로 설정
             userRepository.save(user);
         } else {
             // 새로운 사용자 등록
             User user = User.builder()
                     .email(email)
-                    .password(myPasswordEncoder.encode(password))
-                    .emailVerified(true) // 이메일 인증 완료로 설정
+                    .password(passwordEncoder.encode(password))
+                    .emailVerifiedYn("Y") // 이메일 인증 완료로 설정
                     .build();
             userRepository.save(user);
         }
@@ -141,11 +138,5 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to process email template.", e);
         }
-    }
-    public void updateEmailVerificationStatus(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setEmailVerified(true);
-        userRepository.save(user);
     }
 }

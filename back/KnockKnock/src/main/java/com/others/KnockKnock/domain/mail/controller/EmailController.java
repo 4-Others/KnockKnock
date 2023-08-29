@@ -2,7 +2,6 @@ package com.others.KnockKnock.domain.mail.controller;
 
 import com.others.KnockKnock.domain.mail.dto.VerifyDto;
 import com.others.KnockKnock.domain.mail.service.EmailService;
-import com.others.KnockKnock.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,11 +12,9 @@ import javax.mail.MessagingException;
 @RequestMapping("/api/v1/emails")
 public class EmailController {
     private final EmailService emailService;
-    private final UserService userService;
 
-    public EmailController(EmailService emailService, UserService userService) {
+    public EmailController(EmailService emailService) {
         this.emailService = emailService;
-        this.userService = userService;
     }
 
     @PostMapping("/send")

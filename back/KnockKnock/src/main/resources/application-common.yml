@@ -23,20 +23,20 @@ spring:
           google:
             client-id: ${sns.google.client-id}
             client-secret: ${sns.google.client-secret}
-            scope: email
+            scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
-            client-authentication-method: POST
+            client-authentication-method: post
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
             client-name: Kakao
         provider:
           kakao:
-            authorization_uri: https://kauth.kakao.com/oauth/authorize
-            token_uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user_name_attribute: id
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userNameAttribute: id
   datasource:
     url: jdbc:mysql://knockknockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -46,7 +46,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   batch:
     initialize-schema: always
     table-prefix: BATCH_
@@ -78,3 +78,15 @@ spring:
           starttls:
             enable: true
     protocol: smtp
+cors:
+  allowed-origins: 'http://www.knockknockofficial.shop:8080'
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: '*'
+  max-age: 3600
+app:
+  auth:
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenExpiry: 1800000
+    refreshTokenExpiry: 604800000
+  oauth2:
+    authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect

@@ -3,11 +3,14 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
-import ScheduleItemlList from '../../components/ScheduleItemList';
-import detailData from './detailData.json';
+import ScheduleItemlList from '../../components/ScheduleList';
+import scheduleData from '../../util/PracticeScheduleData.json';
 import {format} from 'date-fns';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
+import {useSelector, useDispatch} from 'react-redux';
+import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {ScheduleData, convertResponseData} from '../../util/dataConvert';
 
 const {width, height} = Dimensions.get('window');
 
@@ -20,53 +23,26 @@ type RootStackParamList = {
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
-type ConvertProps = {
-  [key: string]: Array<{
-    scheduleId: number;
-    title: string;
-    content: string;
-    period: string;
-    startAt: string;
-    endAt: string;
-    alerts: never[];
-    createdAt: string;
-    modifiedAt: string;
-    complete: boolean;
-    tag: {
-      name: string;
-      color: string;
-    };
-  }>;
-};
-
 const BoardDetail = () => {
-  const [items, setItems] = useState<ConvertProps>({});
+  const items = useSelector((state: any) => state.schedule.items);
+  const dispatch = useDispatch();
+  const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
+    dispatch(setScheduleItems(newItems));
+  };
   const [itemCount, setItemCount] = useState<number>(0);
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const {title, color} = route.params;
 
   const loadItems = () => {
-    const newItems: any = {};
+    const newItems: any = [];
 
-    detailData.forEach(schedule => {
+    scheduleData.forEach(schedule => {
       const dateKey = format(new Date(schedule.startAt), 'yyyy-MM-dd');
       if (!newItems[dateKey]) {
         newItems[dateKey] = [];
       }
-      newItems[dateKey].push({
-        name: schedule.title,
-        day: schedule.createdAt,
-        complete: schedule.complete,
-        color: schedule.tag.color,
-        startAt: schedule.startAt.split(' ')[1].slice(0, 5),
-        endAt: schedule.endAt.split(' ')[1].slice(0, 5),
-        board: schedule.tag.name,
-        content: schedule.content,
-        period: schedule.period,
-        alerts: schedule.alerts,
-        tag: {},
-      });
+      newItems[dateKey].push(convertResponseData(schedule));
     });
     setItems(newItems);
   };
@@ -85,11 +61,7 @@ const BoardDetail = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="스케줄 보드"
-        type="edit"
-        nextNavigation={() => navigation.navigate('BoardEdit')}
-      />
+      <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
       <ScrollView style={styles.ScheduleItemList}>
         <Shadow
           style={styles.shadow}
@@ -105,9 +77,7 @@ const BoardDetail = () => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>
-          <ScheduleItemlList items={items} setItems={setItems} />
-        </View>
+        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems, 'board')}</View>
       </ScrollView>
     </SafeAreaView>
   );

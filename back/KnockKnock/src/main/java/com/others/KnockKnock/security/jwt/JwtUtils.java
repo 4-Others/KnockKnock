@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/*
+JWT 생성, 검증하는 유틸리티
+ */
 @Component
 public class JwtUtils {
     @Value("${jwt.secret}")
@@ -20,12 +23,12 @@ public class JwtUtils {
      * @param userId 사용자 식별자
      * @return 생성된 JWT 토큰
      */
-    public String generateToken(Long userId) {
+    public String generateToken(String userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(Long.toString(userId))
+                .setSubject(userId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
