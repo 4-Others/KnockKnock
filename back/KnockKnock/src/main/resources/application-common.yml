@@ -37,16 +37,9 @@ spring:
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
             userNameAttribute: id
-  datasource:
-    url: jdbc:mysql://knockknockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: ${RDS_PW}
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate:
-      ddl-auto: update
+#  batch:
+#    initialize-schema: always
+#    table-prefix: BATCH_
 #  quartz:
 #    job-store-type: jdbc
 #    jdbc:
