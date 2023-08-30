@@ -39,8 +39,8 @@ public class DummyDataLoader implements CommandLineRunner {
         LocalDate birth1 = LocalDate.of(1996, 12, 13);
         User user1 = User.builder()
                          .id("tester123")
-                         .username("tester")
-                         .email("john@example.com")
+                         .username("tester1")
+                         .email("john11@example.com")
                          .password(encryptedPassword1)
                          .emailVerifiedYn("Y")
                          .birth(birth1)
@@ -56,7 +56,7 @@ public class DummyDataLoader implements CommandLineRunner {
         LocalDate birth2 = LocalDate.of(1994, 06, 17);
         User user2 = User.builder()
                          .id("tester1234")
-                         .username("tester")
+                         .username("tester2")
                          .email("thisissample@gmail.com")
                          .password(encryptedPassword2)
                          .emailVerifiedYn("Y")
