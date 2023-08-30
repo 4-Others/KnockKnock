@@ -5,8 +5,8 @@ if [ -d "/home/ssm-user/KnockKnock/back/KnockKnock/build" ]; then
     rm -rf /home/ubuntu/action/back/KnockKnock/build
 fi
 # 이전 배포에서 생성된 도커 컨테이너를 이미지 이름으로 찾아 중지하고 삭제합니다.
-CONTAINER_NAME="knockknockcon"  # 여기에 해당하는 도커 컨테이너이름을 입력하세요.
-IMAGE_NAME="knockknock"
+CONTAINER_NAME="kkcon"  # 여기에 해당하는 도커 컨테이너이름을 입력하세요.
+IMAGE_NAME="kk"
 # 도커 컨테이너 중지
 if docker ps -a | grep -q $CONTAINER_NAME; then
     docker stop $CONTAINER_NAME
