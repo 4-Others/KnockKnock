@@ -36,11 +36,11 @@ public class DummyDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String encryptedPassword1 = passwordEncoder.encode("ADSDSDS12!!");
-        LocalDate birth1 = LocalDate.of(1996, 12, 13);
+        LocalDate birth1 = LocalDate.of(1996, 12, 12);
         User user1 = User.builder()
                          .id("tester123")
-                         .username("tester1")
-                         .email("john11@example.com")
+                         .username("tester")
+                         .email("john@example.com")
                          .password(encryptedPassword1)
                          .emailVerifiedYn("Y")
                          .birth(birth1)
@@ -53,10 +53,10 @@ public class DummyDataLoader implements CommandLineRunner {
         userRepository.save(user1);
 
         String encryptedPassword2 = passwordEncoder.encode("ADSDS126@@#");
-        LocalDate birth2 = LocalDate.of(1994, 06, 17);
+        LocalDate birth2 = LocalDate.of(1994, 06, 16);
         User user2 = User.builder()
                          .id("tester1234")
-                         .username("tester2")
+                         .username("tester")
                          .email("thisissample@gmail.com")
                          .password(encryptedPassword2)
                          .emailVerifiedYn("Y")
