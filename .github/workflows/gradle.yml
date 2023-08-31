@@ -21,9 +21,13 @@ env:
 
 jobs:
   build:
-
+    name : Backend CI/CD
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        shell: bash
+        working-directory: back/KnockKnock
+    
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -32,9 +36,7 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     - name: Build with Gradle
-      run: |
-        cd back/KnockKnock
-        ./gradlew clean build -Pprofile=dev
+      run: ./gradlew clean build -Pprofile=dev
 #       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
 #       with:
 #         arguments: build
