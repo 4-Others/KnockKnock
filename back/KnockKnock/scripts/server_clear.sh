@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 이전 배포에서 생성된 파일들을 삭제합니다.
-if [ -d "/home/ubuntu/action/" ]; then
-    rm -rf /home/ubuntu/action/
+if [ -d "/home/ubuntu/action" ]; then
+    rm -rf /home/ubuntu/action
 fi
 # 이전 배포에서 생성된 도커 컨테이너를 이미지 이름으로 찾아 중지하고 삭제합니다.
 CONTAINER_NAME="kkcon"  # 여기에 해당하는 도커 컨테이너이름을 입력하세요.
@@ -22,7 +22,4 @@ if docker images | grep -q $IMAGE_NAME; then
 else
     echo "Image $IMAGE_NAME not found, skipping removal"
 fi
-#docker build -f /home/ubuntu/action/dockerfile -t $IMAGE_NAME .
-docker build -t $IMAGE_NAME .
-
-
+docker build -f /home/ubuntu/action/dockerfile -t $IMAGE_NAME .
