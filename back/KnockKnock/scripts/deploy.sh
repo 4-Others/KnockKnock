@@ -9,7 +9,7 @@ echo "> 현재 시간: $(date)" >> "$LOG_FILE"
 echo "> build 파일명: $JAR_NAME" >> "$LOG_FILE"
 
 echo "> build 파일 복사" >> "$LOG_FILE"
-DEPLOY_PATH="/home/ssm-user/KnockKnock/"
+DEPLOY_PATH="/home/ubuntu/action"
 cp $BUILD_JAR $DEPLOY_PATH
 
 echo "> 현재 실행중인 애플리케이션 컨테이너 확인" >> "$LOG_FILE"
