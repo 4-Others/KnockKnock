@@ -5,5 +5,5 @@ chmod +x /home/ubuntu/action/**
 
 #docker build -t knockknock /home/ubuntu/action/back/KnockKnock
 
-LOG_FILE="/home/ubuntu/action/back/KnockKnock/scripts/deploy.log"
-echo "> 초기화 작업이 완료되었습니다." >> "$LOG_FILE"
+#LOG_FILE="/home/ubuntu/action/back/KnockKnock/scripts/deploy.log"
+#echo "> 초기화 작업이 완료되었습니다." >> "$LOG_FILE"
