@@ -26,6 +26,6 @@
 
 IMAGE_NAME="kki"
 #echo "> DEPLOY_JAR 배포" >> "$LOG_FILE"
-docker build -f /home/ubuntu/action/dockerfile -t $IMAGE_NAME
+
 
 docker run -d -p 8080:8080 --env-file /home/ubuntu/app.env --name kkcon kki
