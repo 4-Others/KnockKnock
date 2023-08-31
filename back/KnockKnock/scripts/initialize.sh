@@ -5,7 +5,8 @@ chmod +x /home/ubuntu/action/**
 
 IMAGE_NAME="kki"
 
-docker build -f /home/ubuntu/action/dockerfile -t $IMAGE_NAME .
+#docker build -f /home/ubuntu/action/dockerfile -t $IMAGE_NAME .
+docker build -t $IMAGE_NAME /home/ubuntu/action/dockerfile
 #docker build -t knockknock /home/ubuntu/action/back/KnockKnock
 
 #LOG_FILE="/home/ubuntu/action/back/KnockKnock/scripts/deploy.log"
