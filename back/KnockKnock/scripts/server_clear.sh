@@ -22,5 +22,5 @@ if docker images | grep -q $IMAGE_NAME; then
 else
     echo "Image $IMAGE_NAME not found, skipping removal"
 fi
-docker build -f ../dockerfile -t $IMAGE_NAME .
+
 
