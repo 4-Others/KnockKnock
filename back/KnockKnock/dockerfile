@@ -20,7 +20,7 @@ WORKDIR /app
 #COPY app.env /app/app.env
 
 # 빌더 이미지에서 jar 파일만 복사
-COPY ../build/libs/KnockKnock-0.0.1-SNAPSHOT.jar app.jar
+COPY /build/libs/KnockKnock-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
