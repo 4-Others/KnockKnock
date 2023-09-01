@@ -125,7 +125,7 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
         style={styles.calendar}
         onDayPress={day => setSelected(day.dateString)}
         items={items}
-        renderList={items => ScheduleList(items, setItems, 'calendar')}
+        renderList={items => ScheduleList(items.items, setItems)}
         markingType={'multi-dot'}
         loadItemsForMonth={(day: DayData) => loadItems(day)}
         selected={selected}

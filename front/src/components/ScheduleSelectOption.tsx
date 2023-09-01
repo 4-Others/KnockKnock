@@ -90,6 +90,26 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
     ? parseDate(scheduleData.day + scheduleData.startAt)
     : parseDate(scheduleData.day + scheduleData.endAt);
 
+  const onTagState = (value: {color: string; name: string}) => {
+    setScheduleData(prevData => ({
+      ...prevData,
+      tag: value,
+    }));
+  };
+
+  const onNotificationState = (value: number) => {
+    setScheduleData(prevData => {
+      const updatedAlerts = prevData.alerts.includes(value)
+        ? prevData.alerts.filter(item => item !== value)
+        : [...prevData.alerts, value];
+
+      return {
+        ...prevData,
+        alerts: updatedAlerts,
+      };
+    });
+  };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={scheduleOptionStyles.contentLayout}>
       <TextInput
@@ -127,13 +147,13 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
       <Selector
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
-        setScheduleData={setScheduleData}
+        onData={onTagState}
         type="tag" // 타입을 전달
       />
       <Selector
         modalVisible={notificationIsOpen}
         setModalVisible={setNotificationIsOpen}
-        setScheduleData={setScheduleData}
+        onData={onNotificationState}
         type="notification" // 타입을 전달
       />
       <DateTimePickerModal
@@ -147,7 +167,7 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
   );
 };
 
-const SelectComponent = ({type, state, event}: inputProps) => {
+export const SelectComponent = ({type, state, event}: inputProps) => {
   return (
     <View style={styles.contentInput}>
       <Icon name="pricetag-outline" style={styles.icon} />
@@ -165,10 +185,6 @@ const SelectComponent = ({type, state, event}: inputProps) => {
       </View>
     </View>
   );
-};
-
-export const SearchOption = () => {
-  return <></>;
 };
 
 const styles = StyleSheet.create({

@@ -77,7 +77,7 @@ const BoardDetail = () => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems, 'board')}</View>
+        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems)}</View>
       </ScrollView>
     </SafeAreaView>
   );

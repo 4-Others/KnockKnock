@@ -20,7 +20,8 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
       navigation.navigate('MainTab');
     } else {
       // 로그인 실패 -> 재로그인
-      navigation.reset({routes: [{name: 'Login'}]});
+      // navigation.reset({routes: [{name: 'Login'}]});
+      navigation.navigate('MainTab');
     }
   };
 

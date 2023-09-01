@@ -9,11 +9,8 @@ import {Swipeable} from 'react-native-gesture-handler';
 const ScheduleList = (
   items: any,
   setItems: (newItems: {[key: string]: ScheduleData[]}) => void,
-  type: string,
 ) => {
   // 빈 배열을 제거하는 함수
-  type === 'calendar' ? (items = items.items) : items;
-
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
     .sort();
