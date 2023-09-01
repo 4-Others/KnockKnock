@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -36,6 +37,7 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private  final PasswordEncoder passwordEncoder;
 
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
@@ -56,45 +58,52 @@ public class AuthController {
             return ApiResponse.unAuthorized();
         }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authReqModel.getId(),
-                        authReqModel.getPassword()
-                )
-        );
+        User user = userOptional.get();
+        String enteredPassword = authReqModel.getPassword();
 
-        String userId = authReqModel.getId();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(passwordEncoder.matches(enteredPassword, user.getPassword())) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authReqModel.getId(),
+                            authReqModel.getPassword()
+                    )
+            );
 
-        Date now = new Date();
-        AuthToken accessToken = tokenProvider.createAuthToken(
-                userId,
-                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
+            String userId = authReqModel.getId();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-        AuthToken refreshToken = tokenProvider.createAuthToken(
-                appProperties.getAuth().getTokenSecret(),
-                new Date(now.getTime() + refreshTokenExpiry)
-        );
+            Date now = new Date();
+            AuthToken accessToken = tokenProvider.createAuthToken(
+                    userId,
+                    ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+            );
 
-        // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
-        if (userRefreshToken == null) {
-            // 없는 경우 새로 등록
-            userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
-            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-        } else {
-            // DB에 refresh 토큰 업데이트
-            userRefreshToken.setRefreshToken(refreshToken.getToken());
+            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+            AuthToken refreshToken = tokenProvider.createAuthToken(
+                    appProperties.getAuth().getTokenSecret(),
+                    new Date(now.getTime() + refreshTokenExpiry)
+            );
+
+            // userId refresh token 으로 DB 확인
+            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+            if (userRefreshToken == null) {
+                // 없는 경우 새로 등록
+                userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
+                userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+            } else {
+                // DB에 refresh 토큰 업데이트
+                userRefreshToken.setRefreshToken(refreshToken.getToken());
+            }
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+            return ApiResponse.success("token", accessToken.getToken());
+        }else{
+            return ApiResponse.unAuthorized();
         }
-
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-        return ApiResponse.success("token", accessToken.getToken());
     }
 
     @GetMapping("/refresh")
