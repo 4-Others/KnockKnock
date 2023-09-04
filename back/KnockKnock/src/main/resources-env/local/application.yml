@@ -1,6 +1,8 @@
 logging:
   level:
-    org.springframework.data.redis: trace
+    org.springframework:
+      data.redis: trace
+      security: DEBUG
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 

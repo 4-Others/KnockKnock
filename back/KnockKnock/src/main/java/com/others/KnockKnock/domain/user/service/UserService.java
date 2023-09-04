@@ -47,6 +47,9 @@ public class UserService {
     public Optional<User> getUser(String id) {
         return userRepository.findById(id);
     }
+    public User getAUser(String id){
+        return userRepository.findUserById(id);
+    }
 
     public void updateUserPassword(Long userId, User user) {
         User verifiedUser = findUserByUserId(userId);

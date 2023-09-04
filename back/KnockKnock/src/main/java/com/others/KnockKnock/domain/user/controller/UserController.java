@@ -9,8 +9,11 @@ import com.others.KnockKnock.security.oauth.entity.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -27,12 +30,12 @@ public class UserController {
     /*
     유저 정보 불러오기 api
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ApiResponse getUser() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Optional<User> user = userService.getUser(principal.getUsername());
-
+        com.others.KnockKnock.domain.user.entity.User user = userService.getAUser(principal.getUsername());
         return ApiResponse.success("user", user);
     }
     /*
@@ -57,14 +60,13 @@ public class UserController {
                 userPrincipal.getUserId(),
                 userMapper.userDtoPasswordToUser(requestBody)
         );
-
         return ResponseEntity.ok().body(ApiResponse.success("업데이트 완료", requestBody));
     }
     /*
     회원 탈퇴 api
      */
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         userService.deleteUser(userPrincipal.getId());
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
