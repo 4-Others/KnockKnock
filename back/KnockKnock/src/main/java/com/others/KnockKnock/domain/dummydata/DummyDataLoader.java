@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-@Component
+//@Component
 public class DummyDataLoader implements CommandLineRunner {
 
     private final ScheduleRepository scheduleRepository;
