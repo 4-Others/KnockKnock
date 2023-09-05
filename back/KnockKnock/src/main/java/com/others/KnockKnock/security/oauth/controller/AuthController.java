@@ -107,7 +107,9 @@ public class AuthController {
             return ApiResponse.unAuthorized();
         }
     }
-
+    /*
+    사용자 액세스 토큰을 반환하는 api
+     */
     @GetMapping("/refresh")
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인

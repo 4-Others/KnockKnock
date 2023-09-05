@@ -1,6 +1,8 @@
 package com.others.KnockKnock.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.others.KnockKnock.security.oauth.entity.ProviderType;
+import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 public class UserDto {
@@ -56,8 +59,16 @@ public class UserDto {
     @AllArgsConstructor
     public static class Response{
         private Long userId;
+        private String id;
         private String email;
-        private String password;
+        private String username;
+        private LocalDate birth;
+        private Boolean pushAgree;
+        private String emailVerifiedYn;
+        private ProviderType providerType;
+        private RoleType roleType;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
     @Getter
     @Builder

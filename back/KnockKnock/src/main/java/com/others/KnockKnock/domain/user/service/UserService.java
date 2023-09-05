@@ -7,6 +7,9 @@ import com.others.KnockKnock.exception.BusinessLogicException;
 import com.others.KnockKnock.exception.ExceptionCode;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
+import com.others.KnockKnock.security.oauth.entity.UserPrincipal;
+import com.others.KnockKnock.security.oauth.token.AuthToken;
+import com.others.KnockKnock.security.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthTokenProvider authTokenProvider;
 
     public User signup(User user){
         //중복 이메일,Id 체크
@@ -62,14 +66,36 @@ public class UserService {
         userRepository.save(verifiedUser);
     }
 
-    public void deleteUser(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    @Transactional
+    public void deleteUserByAccessToken(String accessToken) {
+        // Access Token을 사용하여 사용자를 식별
+        AuthToken authToken = authTokenProvider.convertAuthToken(accessToken);
+        if (!authToken.validate()) {
+            // Access Token이 유효하지 않은 경우 예외 처리
+            throw new IllegalArgumentException("유효하지 않은 Access Token입니다.");
+        }
 
-        if (optionalUser.isEmpty()) {
+        // Access Token에서 사용자 ID 추출
+        String id = authToken.getTokenClaims().getSubject();
+
+        // 사용자를 ID로 DB에서 찾아 삭제
+        User user = userRepository.findUserById(id);
+        if (user != null) {
+            userRepository.delete(user);
+        } else {
+            // 사용자를 찾을 수 없는 경우 예외 처리
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
-        User user = optionalUser.get();
-        userRepository.delete(user);
+    }
+
+    public void deleteUser(String id) {
+        User optionalUser = userRepository.findUserById(id);
+
+        if (optionalUser==null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        userRepository.delete(optionalUser);
     }
 
     @Transactional(readOnly = true)

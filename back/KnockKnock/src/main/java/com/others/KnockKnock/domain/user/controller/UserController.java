@@ -6,18 +6,16 @@ import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.mapper.UserMapper;
 import com.others.KnockKnock.domain.user.service.UserService;
 import com.others.KnockKnock.security.oauth.entity.UserPrincipal;
+import com.others.KnockKnock.utils.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,18 +24,26 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-
     /*
     유저 정보 불러오기 api
      */
-    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ApiResponse getUser() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
 
-        com.others.KnockKnock.domain.user.entity.User user = userService.getAUser(principal.getUsername());
-        return ApiResponse.success("user", user);
+        User user = userService.findUserByUserId(userPrincipal.getUserId());
+
+        UserDto.Response response = userMapper.userToUserDtoResponse(user);
+
+        return ResponseEntity.ok().body(ApiResponse.success("data", response));
     }
+    //    @GetMapping
+//    public ApiResponse getUser() {
+//        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        com.others.KnockKnock.domain.user.entity.User user = userService.getAUser(principal.getUsername());
+//        return ApiResponse.success("user", user);
+//    }
     /*
     회원 가입 api : Local
      */
@@ -67,8 +73,8 @@ public class UserController {
      */
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        userService.deleteUser(userPrincipal.getId());
+    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+        String accessToken = HeaderUtil.getAccessToken(request);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
     }
 }
