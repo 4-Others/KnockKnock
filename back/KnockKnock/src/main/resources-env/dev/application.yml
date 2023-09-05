@@ -42,15 +42,16 @@ spring:
       client:
         registration:
           google:
-            client-id: ${sns.google.client-id}
-            client-secret: ${sns.google.client-secret}
-            scope: email
+            client-id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
+            client-secret: ${GOOGLE_SECRET}
+            scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
+            client-secret: ${KAKAO_SECRET}
+            redirect-uri: "http://www.knockknockofficial.shop:8080/login/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
-            scope: profile_image, account_email
+            scope: profile_nickname, profile_image, account_email
             client-name: Kakao
         provider:
           kakao:
@@ -65,16 +66,6 @@ token:
   expiration:
     access: 86400000
     refresh: 31536000000
-sns:
-  google:
-    url: "https://accounts.google.com/o/oauth2/v2/auth"
-    client:
-      id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
-      secret: ${GOOGLE_SECRET}
-    callback:
-      url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
-    token:
-      url: "https://oauth2.googleapis.com/token"
 cors:
   allowed-origins: 'http://www.knockknockofficial.shop:8080'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
