@@ -19,7 +19,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const loginAuth = async () => {
     if (url !== undefined) {
       try {
-        const response = await axios.post(`${url}api/v1/users/login`, data);
+        const response = await axios.post(`${url}api/v1/auth/login`, data);
         const {accessToken, refreshToken, userId} = response.data;
         // 자동 로그인 정보 수집
         if (autoLogin) {

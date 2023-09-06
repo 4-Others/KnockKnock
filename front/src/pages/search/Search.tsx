@@ -1,24 +1,21 @@
-import {StyleSheet, SafeAreaView, Dimensions, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, SafeAreaView, View, Text} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {SelectComponent} from '../../components/ScheduleSelectOption';
 import Selector from '../../components/BottomSheet';
-import {scheduleOptionStyles} from '../Schedule/ScheduleAdd';
-
-const {width, height} = Dimensions.get('window');
 
 const Search = () => {
   let date = new Date();
   const formattedDate = (date: Date) => date.toISOString().slice(0, 7);
   const [startAt, setStartAt] = useState(formattedDate(date));
-  console.log(startAt);
   const [board, setBoard] = useState<{
     name: string;
     color: string;
   }>({name: '', color: ''});
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isContentVisible, setContentVisible] = useState(false);
 
   const toggleStartAt = () => {
     setVisible(prevState => !prevState);
@@ -33,17 +30,26 @@ const Search = () => {
     setStartAt(formattedDate(date));
   };
 
+  const toggleContent = () => {
+    setContentVisible(prevVisible => !prevVisible);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="검색" type="search" />
-      <View style={styles.contentLayout}>
-        <SelectComponent
-          type="보드"
-          state={board.name}
-          event={() => setBoardIsOpen(prevState => !prevState)}
-        />
-        <SelectComponent type="일정 시작 시간" state={startAt} event={toggleStartAt} />
-      </View>
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleContent}>
+        <Text style={styles.toggleButtonText}>{isContentVisible ? '폴드' : '펼치기'}</Text>
+      </TouchableOpacity>
+      {isContentVisible && (
+        <View style={styles.contentLayout}>
+          <SelectComponent
+            type="보드"
+            state={board.name}
+            event={() => setBoardIsOpen(prevState => !prevState)}
+          />
+          <SelectComponent type="일정 시작 시간" state={startAt} event={toggleStartAt} />
+        </View>
+      )}
       <Selector
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
@@ -68,6 +74,16 @@ const styles = StyleSheet.create({
   contentLayout: {
     marginRight: 24,
     marginLeft: 24,
+  },
+  toggleButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'blue', // 원하는 색상으로 변경하세요.
   },
 });
 

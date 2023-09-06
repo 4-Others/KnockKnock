@@ -7,17 +7,30 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  TextInput,
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
-import {PasswordInputArea, EmailInputArea, CheckBtn} from './SignUpComponent';
+import {InputArea, PasswordInputArea, EmailInputArea, CheckBtn} from './SignUpComponent';
 import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
 
-type inputValue = {email: string; password: string};
+type inputValue = {
+  id: string;
+  password: string;
+  comparePassword: string;
+};
 
-type sendDataValue = {email: string; password: string; tokenOrKey: string};
+type sendDataValue = {
+  id: string;
+  password: string;
+  username: string;
+  email: string;
+  birth: string;
+  pushAgree: boolean;
+  certify: string;
+};
 
 type AgreeScreenProps = {
   route: RouteProp<ParamListBase, 'SignAgree'>;
@@ -30,13 +43,14 @@ type DataPostScreenProps = {
   url?: string;
 };
 
-// 약관동의 스크린
+//! step1: 약관동의 스크린
 const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   const [allAgree, setAllAgree] = useState(false);
   const [eachAgree, seteachAgree] = useState([
     {text: '[필수] 만 14세 이상입니다.', link: 'https//www.m.naver.com', on: false},
     {text: '[필수] 이용약관 동의', link: 'https//www.m.naver.com', on: false},
     {text: '[필수] 개인정보 수집 및 이용 동의', link: 'https//www.m.naver.com', on: false},
+    {text: '[선택] 푸쉬 알림 동의', on: false},
   ]);
 
   const handleAllAgreePress = () => {
@@ -54,20 +68,19 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   };
 
   const handleNextPage = () => {
-    navigation.navigate('SignUserInfo');
+    navigation.navigate('SignUserInfo', {pushAgree: eachAgree[eachAgree.length - 1].on});
   };
 
   useEffect(() => {
-    const allAgreeNow = eachAgree.filter(item => item.on === false).length;
+    const allAgreeNow = eachAgree.slice(0, -1).filter(item => item.on === false).length;
     allAgreeNow === 0 ? setAllAgree(true) : setAllAgree(false);
   }, [eachAgree]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.screenContainer}>
       <View>
         <View style={styles.title}>
-          <Text style={styles.text}>서비스 이용약관에</Text>
-          <Text style={styles.text}>동의해 주세요.</Text>
+          <Text style={styles.text}>{'서비스 이용약관에\n동의해 주세요.'}</Text>
         </View>
         <View style={styles.allAgree}>
           <TouchableOpacity style={styles.checkbox} onPress={handleAllAgreePress}>
@@ -105,105 +118,78 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   );
 };
 
-const SignUserInfo: React.FC<DataPostScreenProps> = ({navigation, url}) => {
-  const [inputValue, setInputValue] = useState<inputValue>({email: '', password: ''});
-  const [error, setError] = useState(false);
-  const {password, email} = inputValue;
+//! step2: 회원정보 입력
+const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation}) => {
+  const pushAgree = route.params.pushAgree;
 
-  // 이메일 & 비밀번호 입력 api
-  const handleNextPage = async () => {
-    try {
-      const response = await axios.post(`${url}api/v1/users/signup`, inputValue);
-      console.log(response);
-      if (response.status === 200) navigation.navigate('SignEmailAuth', inputValue);
-    } catch (error: any) {
-      console.log(error);
-      // 에러 처리
-      setError(error => !error);
-    }
-  };
+  const [inputValue, setInputValue] = useState<inputValue>({
+    id: '',
+    password: '',
+    comparePassword: '',
+  });
 
-  const handleChangePassword = (text: string) => {
+  const {id, password, comparePassword} = inputValue;
+
+  const handleChangeValue = (type: string, text: string) => {
     setInputValue({
       ...inputValue,
-      password: text,
+      [type]: text,
     });
   };
 
-  const handleChangeEmail = (text: string) => {
-    setInputValue({
-      ...inputValue,
-      email: text,
-    });
+  const nextValue = {id, password, pushAgree};
+  const handleNextPage = () => {
+    navigation.navigate('SignEmailAuth', nextValue);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.screenContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.title}>
-            <Text style={styles.text}>사용하실 회원 정보를</Text>
-            <Text style={styles.text}>입력해 주세요.</Text>
-          </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="이메일 입력"
-              btnText="메일 발송"
-              setInput={handleChangeEmail}
-              input={email}
-            />
-            {!isEmaildValid(email) && email.length > 0 ? (
-              <Text style={styles.alertText}>올바른 이메일 주소를 입력하세요.</Text>
-            ) : null}
-            {error ? <Text style={styles.alertText}>다른 이메일 주소를 입력해 주세요.</Text> : null}
-          </View>
-          <View style={styles.InputTextArea}>
-            <PasswordInputArea
-              text="비밀번호 입력"
-              input={password}
-              setInput={handleChangePassword}
-            />
-            {!isPasswordValid(password) && password.length > 0 ? (
-              <Text style={styles.alertText}>
-                8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
-              </Text>
-            ) : null}
-          </View>
+        <View style={styles.title}>
+          <Text style={styles.text}>{`새로운 아이디와 비밀번호를\n입력해 주세요.`}</Text>
         </View>
+        <InputArea type="아이디" input={id} setInput={text => handleChangeValue('id', text)} />
+        <PasswordInputArea
+          text="비밀번호 입력"
+          input={password}
+          setInput={text => handleChangeValue('password', text)}
+        />
+        <PasswordInputArea
+          text="비밀번호 재확인"
+          input={comparePassword}
+          setInput={text => handleChangeValue('comparePassword', text)}
+          compare={password}
+        />
       </ScrollView>
       <View style={styles.bottomButton}>
         <GradientButton_L
           text="다음"
           onPress={handleNextPage}
-          disabled={!isPasswordValid(password) || !isEmaildValid(email)}
+          disabled={!isPasswordValid(password) || password !== comparePassword}
         />
       </View>
     </SafeAreaView>
   );
 };
 
+//! step3: 개인정보 입력 및 이메일 인증
 const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
-  const initialEmail = route.params?.email;
-  const initialPassword = route.params?.password;
   const [complete, setComplete] = useState(false);
   const [inputValue, setInputValue] = useState<sendDataValue>({
-    email: '',
+    id: '',
     password: '',
-    tokenOrKey: '',
+    username: '',
+    email: '',
+    birth: '',
+    pushAgree: false,
+    certify: '',
   });
-  const {email, tokenOrKey} = inputValue;
+  const {username, birth, email, certify} = inputValue;
 
-  const changeEmailKey = (text: string) => {
+  const handleChangeValue = (type: string, text: string) => {
     setInputValue({
       ...inputValue,
-      tokenOrKey: text,
-    });
-  };
-
-  const changeCertifyEmail = (text: string) => {
-    setInputValue({
-      ...inputValue,
-      email: text,
+      [type]: text,
     });
   };
 
@@ -241,48 +227,47 @@ const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) 
     }
   };
 
-  // inputvalue 초기값 설정
+  console.log(inputValue);
+
   useEffect(() => {
-    setInputValue({
-      ...inputValue,
-      email: initialEmail || '',
-      password: initialPassword || '',
-    });
-  }, [initialEmail, initialPassword]);
+    setInputValue({...inputValue, ...route.params});
+  }, [route.params]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.screenContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.title}>
-            <Text style={styles.text}>입력하신 이메일 인증을</Text>
-            <Text style={styles.text}>진행해 주세요.</Text>
+            <Text style={styles.text}>{`이름과 생일, 이메일을\n입력해 주세요.`}</Text>
           </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="인증하실 이메일을 확인해 주세요"
-              btnText="메일발송"
-              setInput={changeCertifyEmail}
-              input={email}
-              func={certifyEmailPost}
-              disabled={!isEmaildValid(email)}
-              defaultValue={initialEmail}
-            />
-          </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="전달받은 인증번호를 입력하세요"
-              btnText="인증하기"
-              setInput={changeEmailKey}
-              input={tokenOrKey}
-              func={SignupKeyPost}
-              disabled={!(tokenOrKey.length >= 6)}
-              defaultValue={initialEmail}
-            />
-            {!isEmaildValid(email) && email.length > 0 ? (
-              <Text style={styles.alertText}>올바른 이메일 주소를 입력하세요.</Text>
-            ) : null}
-          </View>
+          <InputArea
+            type="이름"
+            input={username}
+            setInput={text => handleChangeValue('username', text)}
+          />
+          <InputArea
+            type="생년월일"
+            input={username}
+            setInput={text => handleChangeValue('birth', text)}
+          />
+          <EmailInputArea
+            text="인증하실 이메일을 확인해 주세요"
+            setInput={text => handleChangeValue('email', text)}
+            input={email}
+            btnText="메일발송"
+            func={certifyEmailPost}
+            disabled={!isEmaildValid(email)}
+            defaultValue={email}
+          />
+          <EmailInputArea
+            text="전달받은 인증번호를 입력하세요"
+            setInput={text => handleChangeValue('certify', text)}
+            input={certify}
+            btnText="인증하기"
+            func={SignupKeyPost}
+            disabled={!(certify.length >= 6)}
+            defaultValue={email}
+          />
         </View>
       </ScrollView>
       <View style={styles.bottomButton}>
@@ -306,7 +291,7 @@ const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.inputContainer}>
       <Image
         source={require('front/assets/animations/signup.gif')}
         style={{width: '100%', height: '50%'}}
@@ -326,7 +311,7 @@ const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
 export {SignUserInfo, SignEmailAuth, SignAgree, SignSuccess};
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
     marginTop: 30,
     marginLeft: 20,
@@ -334,6 +319,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 24,
+    textAlign: 'auto',
   },
   text: {
     color: variables.text_1,
@@ -342,10 +328,19 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginBottom: 5,
   },
-  InputTextArea: {
+  inputContainer: {
     display: 'flex',
     flexDirection: 'column',
     marginBottom: 20,
+  },
+  inputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderColor: '#eeeeee',
+    paddingBottom: 10,
+    marginBottom: 10,
   },
   bottomButton: {
     marginTop: 'auto',
@@ -393,7 +388,7 @@ const styles = StyleSheet.create({
   },
   essentials: {
     borderTopColor: variables.line_1,
-    borderTopWidth: 1,
+    borderTopasswordidth: 1,
     paddingTop: 16,
   },
   essential: {
