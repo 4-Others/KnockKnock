@@ -42,7 +42,7 @@ spring:
       client:
         registration:
           google:
-            client-id: 340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com
+            client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_SECRET}
             scope: email, profile
           kakao:

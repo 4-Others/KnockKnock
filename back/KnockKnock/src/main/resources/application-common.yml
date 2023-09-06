@@ -5,24 +5,14 @@ token:
   expiration:
     access: 86400000
     refresh: 31536000000
-sns:
-  google:
-    url: "https://accounts.google.com/o/oauth2/v2/auth"
-    client:
-      id: ${GOOGLE_CLIENT_ID}
-      secret: ${GOOGLE_SECRET}
-    callback:
-      url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
-    token:
-      url: "https://oauth2.googleapis.com/token"
 spring:
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${sns.google.client-id}
-            client-secret: ${sns.google.client-secret}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_SECRET}
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
