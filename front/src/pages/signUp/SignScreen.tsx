@@ -7,29 +7,31 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
-import {InputArea, PasswordInputArea, EmailInputArea, CheckBtn} from './SignUpComponent';
+import {InputArea, CheckBtn} from './SignUpComponent';
 import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
 
-type inputValue = {
+type InputValue = {
   id: string;
   password: string;
   comparePassword: string;
-};
-
-type sendDataValue = {
-  id: string;
-  password: string;
   username: string;
   email: string;
   birth: string;
   pushAgree: boolean;
-  certify: string;
+  verifyKey: string;
+};
+
+type Complete = {
+  usersAPI: boolean;
+  emailAPI: boolean;
+  verifyKeyAPI: boolean;
+  all: boolean;
 };
 
 type AgreeScreenProps = {
@@ -79,9 +81,7 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.screenContainer}>
       <View>
-        <View style={styles.title}>
-          <Text style={styles.text}>{'서비스 이용약관에\n동의해 주세요.'}</Text>
-        </View>
+        <Text style={styles.title}>{'서비스 이용약관에\n동의해 주세요.'}</Text>
         <View style={styles.allAgree}>
           <TouchableOpacity style={styles.checkbox} onPress={handleAllAgreePress}>
             <Image
@@ -119,165 +119,150 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
 };
 
 //! step2: 회원정보 입력
-const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation}) => {
+const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
   const pushAgree = route.params.pushAgree;
 
-  const [inputValue, setInputValue] = useState<inputValue>({
+  const [complete, setComplete] = useState<Complete>({
+    usersAPI: false,
+    emailAPI: false,
+    verifyKeyAPI: false,
+    all: false,
+  });
+
+  console.log(complete);
+
+  const [inputValue, setInputValue] = useState<InputValue>({
     id: '',
     password: '',
     comparePassword: '',
-  });
-
-  const {id, password, comparePassword} = inputValue;
-
-  const handleChangeValue = (type: string, text: string) => {
-    setInputValue({
-      ...inputValue,
-      [type]: text,
-    });
-  };
-
-  const nextValue = {id, password, pushAgree};
-  const handleNextPage = () => {
-    navigation.navigate('SignEmailAuth', nextValue);
-  };
-
-  return (
-    <SafeAreaView style={styles.screenContainer}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.title}>
-          <Text style={styles.text}>{`새로운 아이디와 비밀번호를\n입력해 주세요.`}</Text>
-        </View>
-        <InputArea type="아이디" input={id} setInput={text => handleChangeValue('id', text)} />
-        <PasswordInputArea
-          text="비밀번호 입력"
-          input={password}
-          setInput={text => handleChangeValue('password', text)}
-        />
-        <PasswordInputArea
-          text="비밀번호 재확인"
-          input={comparePassword}
-          setInput={text => handleChangeValue('comparePassword', text)}
-          compare={password}
-        />
-      </ScrollView>
-      <View style={styles.bottomButton}>
-        <GradientButton_L
-          text="다음"
-          onPress={handleNextPage}
-          disabled={!isPasswordValid(password) || password !== comparePassword}
-        />
-      </View>
-    </SafeAreaView>
-  );
-};
-
-//! step3: 개인정보 입력 및 이메일 인증
-const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
-  const [complete, setComplete] = useState(false);
-  const [inputValue, setInputValue] = useState<sendDataValue>({
-    id: '',
-    password: '',
     username: '',
     email: '',
     birth: '',
     pushAgree: false,
-    certify: '',
+    verifyKey: '',
   });
-  const {username, birth, email, certify} = inputValue;
 
-  const handleChangeValue = (type: string, text: string) => {
+  const {id, password, comparePassword, username, email, birth, verifyKey} = inputValue;
+
+  const changeInputText = (type: string, text: string) => {
     setInputValue({
       ...inputValue,
       [type]: text,
     });
   };
 
-  // 회원가입 인증 메일 발송 api
-  const certifyEmailPost = async () => {
-    const formData = new FormData();
-    formData.append('recipientEmail', email);
-    formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      transformRequest: [
-        function () {
-          return formData;
-        },
-      ],
-    };
+  const changeComplete = (type: string, value: boolean) => {
+    setComplete({
+      ...complete,
+      [type]: value,
+    });
+  };
+
+  const handleNextPage = () => {
+    complete && navigation.navigate('SignSuccess');
+  };
+
+  const userInfoThenEmailPost = async () => {
+    const userData = {id, email, password, username, birth, pushAgree};
+    console.log(userData);
     try {
-      const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
-      console.log('인증메일발송', response.status);
+      const response = await axios.post(`${url}api/v1/users/signup`, userData);
+      if (response.status === 200) {
+        console.log('usersAPI 성공');
+        changeComplete('usersAPI', true);
+      }
     } catch (error: any) {
-      console.log('인증메일발송', error.request);
+      console.log('usersAPI', error.request);
+    }
+    if (complete.usersAPI === true) {
+      const formData = new FormData();
+      formData.append('recipientEmail', email);
+      formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
+      const headers = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        transformRequest: [
+          function () {
+            return formData;
+          },
+        ],
+      };
+      try {
+        const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
+        if (response.status === 200) {
+          console.log('emailAPI 성공');
+          changeComplete('emailAPI', true);
+        }
+      } catch (error: any) {
+        console.log('emailAPI', error.request);
+      }
     }
   };
 
   // 최종 회원가입 인증 api
-  const SignupKeyPost = async () => {
+  const verifyKeyPost = async () => {
     try {
       const response = await axios.post(`${url}api/v1/emails/verify`, inputValue);
-      console.log('인증키발송', response.status);
-      if (response.status === 200) setComplete(boolean => !boolean);
+      if (response.status === 200) {
+        console.log('verifyKeyAPI 성공');
+        changeComplete('verifyKeyAPI', true);
+      }
     } catch (error: any) {
-      console.log('인증키발송', error.request);
+      console.log('verifyKeyAPI', error.request);
     }
   };
 
-  console.log(inputValue);
-
-  useEffect(() => {
-    setInputValue({...inputValue, ...route.params});
-  }, [route.params]);
-
   return (
-    <SafeAreaView style={styles.screenContainer}>
+    <View style={styles.screenContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.title}>
-            <Text style={styles.text}>{`이름과 생일, 이메일을\n입력해 주세요.`}</Text>
-          </View>
+        <Text style={styles.title}>{`회원정보를\n입력해 주세요.`}</Text>
+        <InputArea type="아이디" input={id} setInput={text => changeInputText('id', text)} />
+        <InputArea
+          type="비밀번호"
+          input={password}
+          setInput={text => changeInputText('password', text)}
+        />
+        <InputArea
+          type="비밀번호 다시"
+          input={comparePassword}
+          setInput={text => changeInputText('comparePassword', text)}
+          compare={password}
+        />
+        <InputArea
+          type="이름"
+          input={username}
+          setInput={text => changeInputText('username', text)}
+        />
+        <InputArea
+          type="생년월일"
+          input={birth}
+          setInput={text => changeInputText('birth', text)}
+          keyType="numeric"
+        />
+        <InputArea
+          type="이메일"
+          setInput={text => changeInputText('email', text)}
+          input={email}
+          btnText="메일발송"
+          func={userInfoThenEmailPost}
+          disabled={!isEmaildValid(email)}
+        />
+        {complete.emailAPI && isEmaildValid(email) && (
           <InputArea
-            type="이름"
-            input={username}
-            setInput={text => handleChangeValue('username', text)}
-          />
-          <InputArea
-            type="생년월일"
-            input={username}
-            setInput={text => handleChangeValue('birth', text)}
-          />
-          <EmailInputArea
-            text="인증하실 이메일을 확인해 주세요"
-            setInput={text => handleChangeValue('email', text)}
-            input={email}
-            btnText="메일발송"
-            func={certifyEmailPost}
-            disabled={!isEmaildValid(email)}
-            defaultValue={email}
-          />
-          <EmailInputArea
-            text="전달받은 인증번호를 입력하세요"
-            setInput={text => handleChangeValue('certify', text)}
-            input={certify}
+            type="인증번호"
+            setInput={text => changeInputText('verifyKey', text)}
+            input={verifyKey}
             btnText="인증하기"
-            func={SignupKeyPost}
-            disabled={!(certify.length >= 6)}
-            defaultValue={email}
+            func={verifyKeyPost}
+            disabled={!(verifyKey.length >= 6)}
           />
-        </View>
+        )}
       </ScrollView>
       <View style={styles.bottomButton}>
-        <GradientButton_L
-          text="다음"
-          onPress={() => navigation.navigate('SignSuccess')}
-          disabled={!complete}
-        />
+        <GradientButton_L text="다음" onPress={handleNextPage} disabled={!complete.all} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -308,7 +293,7 @@ const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
   );
 };
 
-export {SignUserInfo, SignEmailAuth, SignAgree, SignSuccess};
+export {SignUserInfo, SignAgree, SignSuccess};
 
 const styles = StyleSheet.create({
   screenContainer: {
@@ -316,17 +301,15 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
+    marginBottom: 60,
   },
   title: {
-    marginBottom: 24,
-    textAlign: 'auto',
-  },
-  text: {
+    marginBottom: 30,
     color: variables.text_1,
     fontFamily: variables.font_4,
     fontSize: 24,
     textAlign: 'left',
-    marginBottom: 5,
+    lineHeight: 34,
   },
   inputContainer: {
     display: 'flex',
@@ -344,7 +327,6 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     marginTop: 'auto',
-    marginBottom: 60,
   },
   alertText: {
     fontFamily: variables.font_4,
@@ -388,7 +370,7 @@ const styles = StyleSheet.create({
   },
   essentials: {
     borderTopColor: variables.line_1,
-    borderTopasswordidth: 1,
+    borderTopWidth: 1,
     paddingTop: 16,
   },
   essential: {
