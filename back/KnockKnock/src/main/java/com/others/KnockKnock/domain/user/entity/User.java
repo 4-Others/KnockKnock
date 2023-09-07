@@ -32,7 +32,6 @@ public class User{
     private String id;
 
     @Column(name = "USERNAME", length = 100)
-    @NotNull
     @Size(max = 100)
     private String username;
 
@@ -50,7 +49,6 @@ public class User{
     private LocalDate birth;
 
     @Column(name = "PUSH_AGREE")
-    @NotNull
     private Boolean pushAgree;
 
     @Column(name = "EMAIL_VERIFIED_YN", length = 1)
@@ -78,16 +76,16 @@ public class User{
 
 
     public User(
-            @NotNull Long userId,
-            @NotNull @Size(max = 64) String id,
-            @NotNull @Size(max = 512) String email,
-            @NotNull @Size(max = 1) String emailVerifiedYn,
-            @NotNull LocalDate birth,
-            @NotNull Boolean pushAgree,
-            @NotNull ProviderType providerType,
-            @NotNull RoleType roleType,
-            @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime modifiedAt
+             Long userId,
+             @Size(max = 64) String id,
+             @Size(max = 512) String email,
+             @Size(max = 1) String emailVerifiedYn,
+             LocalDate birth,
+             Boolean pushAgree,
+             ProviderType providerType,
+             RoleType roleType,
+             LocalDateTime createdAt,
+             LocalDateTime modifiedAt
     ) {
         this.userId = userId;
         this.id = id;
@@ -105,6 +103,4 @@ public class User{
     public User(String subject, String s, Collection<? extends GrantedAuthority> authorities) {
     }
 
-    public User(String id, String name, String email, LocalDate birth, Boolean pushAgree, ProviderType providerType, RoleType user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-    }
 }

@@ -16,4 +16,6 @@ public interface UserMapper {
             @Mapping(target = "password", source = "newPassword")
     })
     User userDtoPasswordToUser(UserDto.PasswordUpdate requestBody);
+
+    User userDtoUpdateProfileToUser(UserDto.UpdateProfile requestBody);
 }

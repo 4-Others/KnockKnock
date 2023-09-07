@@ -16,7 +16,7 @@ spring:
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: post
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
@@ -27,24 +27,6 @@ spring:
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
             userNameAttribute: id
-#  batch:
-#    initialize-schema: always
-#    table-prefix: BATCH_
-#  quartz:
-#    job-store-type: jdbc
-#    jdbc:
-#      initialize-schema: always
-#    properties:
-#      org:
-#        quartz:
-#          scheduler:
-#            instanceName: MyScheduler
-#          jobStore:
-#            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-#            dataSource: myDataSource
-#            tablePrefix: QRTZ_
-#            isClustered: false
-#            useProperties: false
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
@@ -69,4 +51,5 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect
+    authorizedRedirectUris: http://localhost:8080
+    #프론트 페이지만들어지면 여기다가 넣기

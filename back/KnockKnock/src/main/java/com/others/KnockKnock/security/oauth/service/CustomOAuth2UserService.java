@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -65,11 +67,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
         LocalDateTime now = LocalDateTime.now();
         User user = new User(
+                null,
                 userInfo.getId(),
-                userInfo.getName(),
                 userInfo.getEmail(),
-                userInfo.getBirth(),
-                userInfo.getPushAgree(),
+                "Y",
+                null,
+                null,
                 providerType,
                 RoleType.USER,
                 now,

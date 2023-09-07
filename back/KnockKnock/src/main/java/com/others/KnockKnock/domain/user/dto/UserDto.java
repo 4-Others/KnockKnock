@@ -81,4 +81,14 @@ public class UserDto {
                 message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
         private String newPassword;
     }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateProfile {
+        private String username;
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private LocalDate birth;
+        private Boolean pushAgree;
+    }
 }

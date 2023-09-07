@@ -48,7 +48,7 @@ spring:
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: "http://www.knockknockofficial.shop:8080/login/oauth2/code/kakao"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
@@ -78,3 +78,4 @@ app:
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect
+    #프론트 페이지만들어지면 여기다가 넣기
