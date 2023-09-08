@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Agenda} from 'react-native-calendars';
-import {StyleSheet, View, Platform, Dimensions} from 'react-native';
+import {StyleSheet, View, Platform, Dimensions, TouchableOpacity, Text} from 'react-native';
 import scheduleData from '../../util/PracticeScheduleData.json';
 import {variables} from '../../style/variables';
 import ProfileHeader from '../../components/ProfileHeader';
@@ -9,6 +9,7 @@ import ScheduleList from '../../components/ScheduleList';
 import {convertResponseData, dateFormat, ScheduleData} from '../../util/dataConvert';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {storageResetValue} from '../../util/authUtil';
 
 interface DayData {
   dateString: string;
@@ -120,12 +121,19 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          storageResetValue();
+          navigation.navigate('AuthSplach');
+        }}>
+        <Text>로그아웃</Text>
+      </TouchableOpacity>
       <ProfileHeader />
       <Agenda
         style={styles.calendar}
         onDayPress={day => setSelected(day.dateString)}
         items={items}
-        renderList={items => ScheduleList(items, setItems, 'calendar')}
+        renderList={items => ScheduleList(items.items, setItems)}
         markingType={'multi-dot'}
         loadItemsForMonth={(day: DayData) => loadItems(day)}
         selected={selected}

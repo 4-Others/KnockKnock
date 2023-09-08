@@ -1,98 +1,42 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Linking} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Linking,
+  KeyboardTypeOptions,
+} from 'react-native';
 import {variables} from '../../style/variables';
+import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 
-interface PasswordInputAreaProps {
-  text: string;
+interface InputAreaProps {
+  type: string;
   input: string;
   setInput: (text: string) => void;
-}
-
-interface EmailInputAreaProps {
-  text: string;
-  btnText: string;
-  setInput: (text: string) => void;
-  input: string;
+  btnText?: string;
+  compare?: string;
   func?: () => void;
   disabled?: boolean;
-  defaultValue?: string;
+  errorMessage?: string;
+  keyType?: KeyboardTypeOptions;
+}
+
+interface PasswordVisibleIcon {
+  masking: boolean;
+  setMasking: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface CheckBtnProps {
   text: string;
-  link: string;
   on: boolean;
   onPress: () => void;
+  link?: string;
 }
 
-const PasswordInputArea: React.FC<PasswordInputAreaProps> = ({text, input, setInput}) => {
-  const [masking, setMasking] = React.useState(true);
-
-  return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.inputContainer}
-        placeholder={text}
-        value={input}
-        onChangeText={setInput}
-        keyboardType="ascii-capable"
-        secureTextEntry={masking}
-      />
-      <TouchableOpacity onPress={() => setMasking(open => !open)}>
-        <Image
-          style={styles.swmIcon}
-          source={
-            masking
-              ? require('front/assets/image/swm_close_btn.png')
-              : require('front/assets/image/swm_open_btn.png')
-          }
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const EmailInputArea: React.FC<EmailInputAreaProps> = ({
-  text,
-  btnText,
-  func,
-  setInput,
-  input,
-  disabled,
-  defaultValue,
-}) => {
-  return (
-    <View style={styles.container}>
-      <TextInput
-        value={input}
-        onChangeText={setInput}
-        style={styles.inputContainer}
-        placeholder={text}
-        keyboardType={'email-address'}
-        defaultValue={defaultValue}
-      />
-      {func ? (
-        <TouchableOpacity
-          style={disabled ? styles.disableInputBtn : styles.inputBtn}
-          onPress={func}
-          disabled={disabled}>
-          <Text style={disabled ? styles.disableBtnInnerText : styles.BtnInnerText}>{btnText}</Text>
-        </TouchableOpacity>
-      ) : null}
-    </View>
-  );
-};
-interface EmailRenderAreaProps {
-  value: string;
-}
-const EmailRenderArea: React.FC<EmailRenderAreaProps> = ({value}) => {
-  return (
-    <View style={[styles.container, styles.marginBottomAdd]}>
-      <Text style={styles.renderEmailText}>{value}</Text>
-    </View>
-  );
-};
-
+// 체크박스 UI
 const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
   return (
     <TouchableOpacity style={styles.essential} onPress={onPress}>
@@ -101,17 +45,91 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
         source={require('front/assets/image/check.png')}
       />
       <Text style={styles.unCheckText}>{text}</Text>
-      <Text style={styles.linkText} onPress={() => Linking.openURL(link)}>
-        보기
-      </Text>
+      {link ? (
+        <Text style={styles.linkText} onPress={() => Linking.openURL(link)}>
+          보기
+        </Text>
+      ) : null}
     </TouchableOpacity>
   );
 };
 
-export {PasswordInputArea, EmailInputArea, EmailRenderArea, CheckBtn};
+const InputArea: React.FC<InputAreaProps> = props => {
+  const [masking, setMasking] = useState(true);
+  const {type, input, setInput, compare, errorMessage, keyType} = props;
+  const isPasswordInput = type.includes('비밀번호');
+
+  const ErrorMessage = (value: string) => {
+    if (value.length > 0) {
+      if (type === '비밀번호' && !isPasswordValid(value)) {
+        return (
+          <Text style={styles.alertText}>
+            8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
+          </Text>
+        );
+      }
+      if (type === '비밀번호 다시' && compare !== value) {
+        return <Text style={styles.alertText}>비밀번호가 일치하지 않습니다.</Text>;
+      }
+    }
+  };
+
+  return (
+    <View style={styles.inputContainer}>
+      <View style={styles.inputBoxLayout}>
+        <TextInput
+          style={styles.inputBoxStyle}
+          value={input}
+          placeholder={`${type} 입력`}
+          onChangeText={setInput}
+          secureTextEntry={isPasswordInput ? masking : false}
+          keyboardType={keyType}
+        />
+        <RenderBtn {...{...props, masking, setMasking}} />
+      </View>
+      <Text style={styles.alertText}>{errorMessage}</Text>
+    </View>
+  );
+};
+
+const RenderBtn: React.FC<InputAreaProps & PasswordVisibleIcon> = props => {
+  if (props.func) {
+    return (
+      <TouchableOpacity
+        style={props.disabled === true ? styles.disableInputBtn : styles.inputBtn}
+        onPress={props.func}
+        disabled={props.disabled}>
+        <Text style={props.disabled ? styles.disableBtnInnerText : styles.BtnInnerText}>
+          {props.btnText}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+  // 비번 눈 아이콘
+  else if (props.type.includes('비밀번호')) {
+    return (
+      <TouchableOpacity onPress={() => props.setMasking(open => !open)}>
+        <Image
+          style={styles.swmIcon}
+          source={
+            props.masking
+              ? require('front/assets/image/swm_close_btn.png')
+              : require('front/assets/image/swm_open_btn.png')
+          }
+        />
+      </TouchableOpacity>
+    );
+  }
+};
+
+export {InputArea, CheckBtn};
 
 const styles = StyleSheet.create({
-  container: {
+  inputContainer: {
+    flexDirection: 'column',
+    marginBottom: 20,
+  },
+  inputBoxLayout: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -123,7 +141,7 @@ const styles = StyleSheet.create({
   marginBottomAdd: {
     marginTop: 10,
   },
-  inputContainer: {
+  inputBoxStyle: {
     fontFamily: variables.font_4,
     fontSize: 14,
     color: variables.text_3,
@@ -143,7 +161,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   inputBtn: {
-    backgroundColor: variables.line_2,
+    backgroundColor: variables.line_1,
     borderWidth: 1,
     borderColor: variables.line_2,
     padding: 6,
