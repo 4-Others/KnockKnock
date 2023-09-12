@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
-import {AuthProps} from '../../navigations/StackNavigator';
+import {RouteProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
 import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import {isPasswordValid, storageSetValue, storageDeleteValue} from '../../util/a
 import {useDispatch} from 'react-redux';
 import {setUserId, setToken} from '../../util/redux/userSlice';
 
-const Login: React.FC<AuthProps> = ({url, navigation}) => {
+const Login: React.FC<RouteProps> = ({url, navigation}) => {
   const [data, setData] = useState({email: '', password: ''});
   const {password, email} = data;
   const [masking, setMasking] = React.useState(true);
@@ -31,7 +31,8 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
         //메인화면으로 이동
         navigation.navigate('MainTab');
       } catch (error: any) {
-        navigation.reset({routes: [{name: 'Login'}]});
+        navigation.navigate('MainTab');
+        // navigation.reset({routes: [{name: 'Login'}]});
       }
     }
   };

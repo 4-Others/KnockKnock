@@ -15,7 +15,7 @@ import ProfileEdit from '../pages/profile/ProfileEdit';
 import SignUpTab from '../pages/signUp/SignUpTab';
 import TabNavigator from './TabNavigator';
 
-export interface AuthProps {
+export interface RouteProps {
   route: any;
   navigation: any;
   url?: string;
@@ -41,14 +41,16 @@ const AuthStack: React.FC = () => {
   );
 };
 
-const StackSchedule = () => {
+const StackSchedule: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ScheduleBoard" component={ScheduleBoard} options={{headerShown: false}} />
       <Stack.Screen name="BoardDetail" component={BoardDetail} options={{headerShown: false}} />
       <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
-      <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
+        {props => <ScheduleAdd {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
       <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}} />
       <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
@@ -56,13 +58,15 @@ const StackSchedule = () => {
   );
 };
 
-const StackCalendar = () => {
+const StackCalendar: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Calendar" options={{headerShown: false}}>
         {props => <Calendar {...props} />}
       </Stack.Screen>
-      <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
+        {props => <ScheduleAdd {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
   );
