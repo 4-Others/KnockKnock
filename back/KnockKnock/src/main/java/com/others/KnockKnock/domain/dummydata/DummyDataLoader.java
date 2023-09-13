@@ -4,6 +4,7 @@ import com.others.KnockKnock.domain.notification.entity.Notification;
 import com.others.KnockKnock.domain.notification.repository.NotificationRepository;
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
+import com.others.KnockKnock.domain.tag.entity.Tag;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 
-//@Component
+@Component
 public class DummyDataLoader implements CommandLineRunner {
 
     private final ScheduleRepository scheduleRepository;
@@ -58,7 +60,7 @@ public class DummyDataLoader implements CommandLineRunner {
                          .username("tester")
                          .email("thisissample@gmail.com")
                          .password(encryptedPassword2)
-                         .emailVerifiedYn("N")
+                         .emailVerifiedYn("Y")
                          .birth(birth2)
                          .pushAgree(true)
                          .createdAt(LocalDateTime.now())
@@ -76,6 +78,7 @@ public class DummyDataLoader implements CommandLineRunner {
                                  .complete(false)
                                  .alerts(Arrays.asList(15, 30, 60))
                                  .user(user1)
+                                 .tag(Collections.singletonList(new Tag()))
                                  .build();
         scheduleRepository.save(schedule1);
 
@@ -87,6 +90,7 @@ public class DummyDataLoader implements CommandLineRunner {
                                  .complete(false)
                                  .alerts(Arrays.asList(15, 30, 60))
                                  .user(user2)
+                                 .tag(Collections.singletonList(new Tag()))
                                  .build();
         scheduleRepository.save(schedule2);
 
