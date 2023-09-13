@@ -11,7 +11,6 @@ import com.others.KnockKnock.security.oauth.entity.RoleType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-// import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,7 +58,7 @@ public class DummyDataLoader implements CommandLineRunner {
                          .username("tester")
                          .email("thisissample@gmail.com")
                          .password(encryptedPassword2)
-                         .emailVerifiedYn("Y")
+                         .emailVerifiedYn("N")
                          .birth(birth2)
                          .pushAgree(true)
                          .createdAt(LocalDateTime.now())

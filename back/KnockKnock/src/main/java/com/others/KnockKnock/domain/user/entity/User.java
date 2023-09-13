@@ -100,7 +100,4 @@ public class User{
         this.modifiedAt = modifiedAt;
     }
 
-    public User(String subject, String s, Collection<? extends GrantedAuthority> authorities) {
-    }
-
 }
