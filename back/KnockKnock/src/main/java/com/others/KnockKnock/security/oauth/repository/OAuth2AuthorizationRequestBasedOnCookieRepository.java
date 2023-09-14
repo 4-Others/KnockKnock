@@ -4,7 +4,6 @@ import com.nimbusds.oauth2.sdk.util.StringUtils;
 import com.others.KnockKnock.utils.CookieUtil;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

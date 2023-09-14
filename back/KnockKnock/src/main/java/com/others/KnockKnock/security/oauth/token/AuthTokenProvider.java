@@ -1,23 +1,14 @@
 package com.others.KnockKnock.security.oauth.token;
 
 import com.others.KnockKnock.security.oauth.exception.TokenValidFailedException;
-import com.others.KnockKnock.security.oauth.service.CustomUserDetailsService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 /*
 JWT 토큰 생성하고 변환하고, 유효성 검증함

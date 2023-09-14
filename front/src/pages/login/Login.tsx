@@ -22,11 +22,12 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
     try {
       const res = await axios.post(`${url}api/v1/auth/login`, data);
       const token = res.data.body.token;
-      if (autoLogin === true) storageSetValue('token', res.data.body.token);
+      if (autoLogin === true) storageSetValue('user', {id, token});
       dispatch(setLogin({id, token}));
       navigation.navigate('MainTab');
       // 자동 로그인 정보 수집
     } catch (error: any) {
+      console.log(error);
       setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
     }
   };

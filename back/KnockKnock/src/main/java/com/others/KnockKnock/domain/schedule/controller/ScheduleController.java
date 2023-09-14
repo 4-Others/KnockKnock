@@ -46,9 +46,9 @@ public class ScheduleController {
     public ResponseEntity<?> findAllSchedule(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Long userId = 1L;
+        //Long userId = 1L;
 
-        List<ScheduleDto.TagGroup> responses = scheduleService.findAllSchedule(userId);
+        List<ScheduleDto.TagGroup> responses = scheduleService.findAllSchedule(userPrincipal.getUserId());
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }

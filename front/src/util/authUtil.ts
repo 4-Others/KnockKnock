@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//! 아이디 유효성 검사
+const isIdValid = (text: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+
 //! 비밀번호 유효성 검사
 const isPasswordValid = (text: string) =>
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]:;'"<>,.?/\\|]).{8,}$/.test(text);
@@ -56,6 +59,7 @@ const storageResetValue = async () => {
 };
 
 export {
+  isIdValid,
   isPasswordValid,
   isEmaildValid,
   storageGetValue,

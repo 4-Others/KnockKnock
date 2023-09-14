@@ -7,7 +7,6 @@ import com.others.KnockKnock.exception.BusinessLogicException;
 import com.others.KnockKnock.exception.ExceptionCode;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
-import com.others.KnockKnock.security.oauth.entity.UserPrincipal;
 import com.others.KnockKnock.security.oauth.token.AuthToken;
 import com.others.KnockKnock.security.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;

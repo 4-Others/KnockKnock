@@ -7,12 +7,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
 import {InputArea, CheckBtn} from './SignUpComponent';
-import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
+import {isEmaildValid} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
 
@@ -28,10 +27,8 @@ type InputValue = {
 };
 
 type Complete = {
-  usersAPI: boolean;
   emailAPI: boolean;
   verifyKeyAPI: boolean;
-  all: boolean;
 };
 
 type AgreeScreenProps = {
@@ -123,13 +120,9 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
   const pushAgree = route.params.pushAgree;
 
   const [complete, setComplete] = useState<Complete>({
-    usersAPI: false,
     emailAPI: false,
     verifyKeyAPI: false,
-    all: false,
   });
-
-  console.log(complete);
 
   const [inputValue, setInputValue] = useState<InputValue>({
     id: '',
@@ -164,46 +157,43 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
 
   const userInfoThenEmailPost = async () => {
     const userData = {id, email, password, username, birth, pushAgree};
-    console.log(userData);
     try {
       const response = await axios.post(`${url}api/v1/users/signup`, userData);
       if (response.status === 200) {
         console.log('usersAPI 성공');
-        changeComplete('usersAPI', true);
+        const formData = new FormData();
+        formData.append('recipientEmail', email);
+        formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
+        const headers = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          transformRequest: [
+            function () {
+              return formData;
+            },
+          ],
+        };
+        try {
+          const emailResponse = await axios.post(`${url}api/v1/emails/send`, formData, headers);
+          if (emailResponse.status === 200) {
+            console.log('emailAPI 성공');
+            changeComplete('emailAPI', true);
+          }
+        } catch (emailError: any) {
+          console.log('emailAPI', emailError.request);
+        }
       }
     } catch (error: any) {
       console.log('usersAPI', error.request);
-    }
-    if (complete.usersAPI === true) {
-      const formData = new FormData();
-      formData.append('recipientEmail', email);
-      formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
-      const headers = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        transformRequest: [
-          function () {
-            return formData;
-          },
-        ],
-      };
-      try {
-        const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
-        if (response.status === 200) {
-          console.log('emailAPI 성공');
-          changeComplete('emailAPI', true);
-        }
-      } catch (error: any) {
-        console.log('emailAPI', error.request);
-      }
     }
   };
 
   // 최종 회원가입 인증 api
   const verifyKeyPost = async () => {
     try {
-      const response = await axios.post(`${url}api/v1/emails/verify`, inputValue);
+      const key = {tokenOrKey: verifyKey, email, password};
+      const response = await axios.post(`${url}api/v1/emails/verify`, key);
       if (response.status === 200) {
         console.log('verifyKeyAPI 성공');
         changeComplete('verifyKeyAPI', true);
@@ -260,7 +250,7 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
         )}
       </ScrollView>
       <View style={styles.bottomButton}>
-        <GradientButton_L text="다음" onPress={handleNextPage} disabled={!complete.all} />
+        <GradientButton_L text="다음" onPress={handleNextPage} disabled={!complete.verifyKeyAPI} />
       </View>
     </View>
   );

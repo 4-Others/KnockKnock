@@ -15,7 +15,6 @@ import com.others.KnockKnock.utils.CookieUtil;
 import com.others.KnockKnock.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,9 +54,9 @@ public class AuthController {
         //email 인증 안된경우 api 호출 불가능
         Optional<User> userOptional = userRepository.findById(authReqModel.getId());
 
-//        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
-//            return ApiResponse.unAuthorized();
-//        }
+        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
+            return ApiResponse.unAuthorized();
+        }
 
         User user = userOptional.get();
         String enteredPassword = authReqModel.getPassword();
@@ -174,70 +173,3 @@ public class AuthController {
         return ApiResponse.success("token", newAccessToken.getToken());
     }
 }
-
-/*
-지난 로그인 api
- */
-
-//    @PostMapping("/login")
-//    public ApiResponse login(
-//            HttpServletRequest request,
-//            HttpServletResponse response,
-//            @RequestBody AuthReqModel authReqModel
-//    ) {
-//        //email인증 안된경우 api호출 불가능
-//        Optional<User> userOptional = userRepository.findById(authReqModel.getId());
-//
-//        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
-//            return ApiResponse.unAuthorized();
-//        }
-//
-//        User user = userOptional.get();
-//        String enteredPassword = passwordEncoder.encode(authReqModel.getPassword());
-//
-//        if(passwordEncoder.matches(enteredPassword, user.getPassword())) {
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(
-//                            authReqModel.getId(),
-//                            authReqModel.getPassword()
-//                    )
-//            );
-//
-//            String userId = authReqModel.getId();
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//            //accessToken, refreshToken , Expiry 생성
-//            Date now = new Date();
-//            AuthToken accessToken = tokenProvider.createAuthToken(
-//                    userId,
-//                    ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
-//                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-//            );
-//
-//            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-//            AuthToken refreshToken = tokenProvider.createAuthToken(
-//                    appProperties.getAuth().getTokenSecret(),
-//                    new Date(now.getTime() + refreshTokenExpiry)
-//            );
-//
-//            // userId refresh token 으로 DB 확인
-//            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
-//            if (userRefreshToken == null) {
-//                // 없는 경우 새로 등록
-//                userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
-//                userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-//            } else {
-//                // DB에 refresh 토큰 업데이트
-//                userRefreshToken.setRefreshToken(refreshToken.getToken());
-//            }
-//
-//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-//            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-//            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-//
-//            return ApiResponse.success("token", accessToken.getToken());
-//        }else{
-//            System.out.println("패스워드 or 아이디를 확인해주세요");
-//            return ApiResponse.unAuthorized();
-//        }
-//    }
