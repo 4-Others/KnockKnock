@@ -15,7 +15,7 @@ import Selector from './BottomSheet';
 import {scheduleOptionStyles} from '../pages/Schedule/ScheduleAdd';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {ScheduleData} from '../util/dataConvert';
+import {SetScheduleData} from '../util/dataConvert';
 
 export interface inputProps {
   type: string;
@@ -24,8 +24,8 @@ export interface inputProps {
 }
 
 interface ScheduleOptionProps {
-  scheduleWillAdd: ScheduleData;
-  setScheduleWillAdd: React.Dispatch<React.SetStateAction<ScheduleData>>;
+  scheduleWillAdd: SetScheduleData;
+  setScheduleWillAdd: React.Dispatch<React.SetStateAction<SetScheduleData>>;
 }
 
 export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
@@ -74,8 +74,8 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   let date = new Date();
 
   scheduleWillAdd.startAt.length !== 0 && timeType === 'start'
-    ? parseDate(scheduleWillAdd.day + scheduleWillAdd.startAt)
-    : parseDate(scheduleWillAdd.day + scheduleWillAdd.endAt);
+    ? parseDate(scheduleWillAdd.startAt)
+    : parseDate(scheduleWillAdd.endAt);
 
   const onTagState = (value: {color: string; name: string}) => {
     setScheduleWillAdd(prevData => ({
@@ -85,7 +85,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const onNotificationState = (value: number) => {
-    setScheduleWillAdd((prevData: ScheduleData) => {
+    setScheduleWillAdd((prevData: SetScheduleData) => {
       const updatedAlerts = prevData.alerts.includes(value)
         ? prevData.alerts.filter(item => item !== value)
         : [...prevData.alerts, value];
@@ -100,10 +100,10 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={scheduleOptionStyles.contentLayout}>
       <TextInput
-        defaultValue={scheduleWillAdd.name}
+        defaultValue={scheduleWillAdd.title}
         placeholder="스케줄을 입력해 주세요."
         style={scheduleOptionStyles.contentTitleInput}
-        onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, name: text}))}
+        onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, title: text}))}
       />
       <SelectComponent
         type="보드"
