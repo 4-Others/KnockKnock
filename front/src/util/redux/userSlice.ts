@@ -26,6 +26,7 @@ export const userSlice = createSlice({
       state.username = action.payload.username;
       state.birth = action.payload.birth;
       state.pushAgree = action.payload.pushAgree;
+      state.token = action.payload.token;
     },
     updateProfile(state, action) {
       state.id = action.payload.id;
