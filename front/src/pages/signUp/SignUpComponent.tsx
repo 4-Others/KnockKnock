@@ -53,13 +53,12 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
     </TouchableOpacity>
   );
 };
-
 const InputArea: React.FC<InputAreaProps> = props => {
   const [masking, setMasking] = useState(true);
   const {type, input, setInput, compare, errorMessage, keyType} = props;
   const isPasswordInput = type.includes('비밀번호');
 
-  const ErrorMessage = (value: string) => {
+  const validationError = (value: string) => {
     if (value.length > 0) {
       if (type === '비밀번호' && !isPasswordValid(value)) {
         return (
@@ -73,6 +72,8 @@ const InputArea: React.FC<InputAreaProps> = props => {
       }
     }
   };
+
+  const ErrorMessage = (value: string) => {};
 
   return (
     <View style={styles.inputContainer}>
