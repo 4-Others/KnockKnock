@@ -1,21 +1,73 @@
-import {StyleSheet, SafeAreaView} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import {StyleSheet, SafeAreaView, Alert} from 'react-native';
+import axios from 'axios';
 import {variables} from '../../style/variables';
-import Header from '../../components/Header';
+import {useDispatch, useSelector} from 'react-redux';
+import {addScheduleItem} from '../../util/redux/scheduleSlice';
+import {AuthProps} from '../../navigations/StackNavigator';
 import {ScheduleOption} from '../../components/ScheduleSelectOption';
-import {useSelector} from 'react-redux';
+import {ScheduleData} from '../../util/dataConvert';
+import Header from '../../components/Header';
 
 //? 스케줄 추가하는 스크린
-const ScheduleAdd = () => {
+const ScheduleAdd: React.FC<AuthProps> = ({url}) => {
   const user = useSelector((state: any) => state.user);
-  console.log(user);
+  const dispatch = useDispatch();
+  const initialScheduleData: ScheduleData = {
+    calendarId: 0,
+    name: '',
+    height: 0,
+    day: '',
+    complete: false,
+    startAt: '',
+    endAt: '',
+    content: '',
+    period: 'ALL_DAY',
+    alerts: [],
+    modifiedAt: '',
+    tag: {
+      name: '',
+      color: '',
+    },
+  };
+  const [scheduleWillAdd, setScheduleWillAdd] = useState(initialScheduleData);
+
+  const handleAddSchedule = async () => {
+    if (scheduleWillAdd !== initialScheduleData) {
+      try {
+        console.log(scheduleWillAdd);
+        const response = await axios.post(
+          `${url}api/v1/schedule`,
+          {
+            schedule: scheduleWillAdd,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          },
+        );
+        if (response.status === 200 || response.status === 201) {
+          dispatch(addScheduleItem(response.data));
+          console.log('Success', '스케줄 등록에 성공했습니다.');
+        }
+      } catch (error: any) {
+        console.error('Error saving data', error);
+        Alert.alert('Error', '스케줄 등록에 실패했습니다.');
+      }
+    } else {
+      Alert.alert('Warning', '스케줄 정보를 입력해주세요.');
+    }
+  };
+
   return (
     <SafeAreaView style={scheduleOptionStyles.container}>
-      <Header title="스케줄 등록" />
-      <ScheduleOption />
+      <Header title="스케줄 등록" nextFunc={handleAddSchedule} />
+      <ScheduleOption scheduleWillAdd={scheduleWillAdd} setScheduleWillAdd={setScheduleWillAdd} />
     </SafeAreaView>
   );
 };
+export default ScheduleAdd;
 
 export const scheduleOptionStyles = StyleSheet.create({
   container: {
@@ -60,5 +112,3 @@ export const scheduleOptionStyles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-export default ScheduleAdd;

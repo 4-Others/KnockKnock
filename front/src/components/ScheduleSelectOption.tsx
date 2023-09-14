@@ -23,28 +23,15 @@ export interface inputProps {
   event: () => void;
 }
 
-export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) => {
-  const initialScheduleData: ScheduleData = {
-    calendarId: 0,
-    name: '',
-    height: 0,
-    day: '',
-    complete: false,
-    startAt: '',
-    endAt: '',
-    content: '',
-    period: '',
-    alerts: [],
-    modifiedAt: '',
-    tag: {
-      name: '',
-      color: '',
-    },
-  };
+interface ScheduleOptionProps {
+  scheduleWillAdd: ScheduleData;
+  setScheduleWillAdd: React.Dispatch<React.SetStateAction<ScheduleData>>;
+}
 
-  const [scheduleData, setScheduleData] = useState<ScheduleData>(
-    itemData ? {...itemData} : initialScheduleData,
-  );
+export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
+  scheduleWillAdd,
+  setScheduleWillAdd,
+}) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -57,12 +44,12 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
     onCancel();
     const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
     if (timeType === 'start') {
-      setScheduleData(prevData => ({
+      setScheduleWillAdd(prevData => ({
         ...prevData,
         startAt: formattedDate,
       }));
     } else if (timeType === 'end') {
-      setScheduleData(prevData => ({
+      setScheduleWillAdd(prevData => ({
         ...prevData,
         endAt: formattedDate,
       }));
@@ -79,26 +66,26 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
     setTimeType('end');
   };
 
-  const parseDate = (dateString: any) => {
-    const [year, month, day, hours, minutes] = dateString.split(/[- :]/);
+  const parseDate = (dateString: string) => {
+    const [year, month, day, hours, minutes] = dateString.split(/[- :]/).map(Number);
     return new Date(year, month - 1, day, hours, minutes);
   };
 
   let date = new Date();
 
-  scheduleData.startAt.length !== 0 && timeType === 'start'
-    ? parseDate(scheduleData.day + scheduleData.startAt)
-    : parseDate(scheduleData.day + scheduleData.endAt);
+  scheduleWillAdd.startAt.length !== 0 && timeType === 'start'
+    ? parseDate(scheduleWillAdd.day + scheduleWillAdd.startAt)
+    : parseDate(scheduleWillAdd.day + scheduleWillAdd.endAt);
 
   const onTagState = (value: {color: string; name: string}) => {
-    setScheduleData(prevData => ({
+    setScheduleWillAdd(prevData => ({
       ...prevData,
       tag: value,
     }));
   };
 
   const onNotificationState = (value: number) => {
-    setScheduleData(prevData => {
+    setScheduleWillAdd((prevData: ScheduleData) => {
       const updatedAlerts = prevData.alerts.includes(value)
         ? prevData.alerts.filter(item => item !== value)
         : [...prevData.alerts, value];
@@ -113,23 +100,27 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={scheduleOptionStyles.contentLayout}>
       <TextInput
-        defaultValue={scheduleData.name}
+        defaultValue={scheduleWillAdd.name}
         placeholder="스케줄을 입력해 주세요."
         style={scheduleOptionStyles.contentTitleInput}
-        onChangeText={text => setScheduleData(prevData => ({...prevData, contentTitle: text}))}
+        onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, name: text}))}
       />
       <SelectComponent
         type="보드"
-        state={scheduleData.tag.name}
+        state={scheduleWillAdd.tag.name}
         event={() => setBoardIsOpen(prevState => !prevState)}
       />
       <SelectComponent
         type="알림 시간"
-        state={scheduleData.alerts.join(', ')}
+        state={scheduleWillAdd.alerts.join(', ')}
         event={() => setNotificationIsOpen(prevState => !prevState)}
       />
-      <SelectComponent type="일정 시작 시간" state={scheduleData.startAt} event={toggleStartAt} />
-      <SelectComponent type="일정 종료 시간" state={scheduleData.endAt} event={toggleEndAt} />
+      <SelectComponent
+        type="일정 시작 시간"
+        state={scheduleWillAdd.startAt}
+        event={toggleStartAt}
+      />
+      <SelectComponent type="일정 종료 시간" state={scheduleWillAdd.endAt} event={toggleEndAt} />
       <KeyboardAvoidingView
         style={scheduleOptionStyles.contentInput}
         behavior={Platform.OS === 'android' ? 'padding' : 'height'}
@@ -138,9 +129,9 @@ export const ScheduleOption: React.FC<{itemData?: ScheduleData}> = ({itemData}) 
         <View style={scheduleOptionStyles.inputContainer}>
           <Text style={scheduleOptionStyles.inputTitle}>메모</Text>
           <TextInput
-            defaultValue={scheduleData.content}
+            defaultValue={scheduleWillAdd.content}
             placeholder="메모를 입력하세요"
-            onChangeText={text => setScheduleData(prevData => ({...prevData, contentText: text}))}
+            onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, content: text}))}
           />
         </View>
       </KeyboardAvoidingView>

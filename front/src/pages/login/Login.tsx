@@ -105,7 +105,11 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
           <Text style={styles.signBtn}>가입하기</Text>
         </TouchableOpacity>
       </View>
-      <Oauth2 />
+      <Oauth2
+        onLogin={function (loginState: boolean): void {
+          throw new Error('Error!');
+        }}
+      />
     </View>
   );
 };

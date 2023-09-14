@@ -25,7 +25,7 @@ interface BoardItemProps {
 const deviceWidth = Dimensions.get('window').width;
 
 const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
-  const [allowNavigation, setAllowNavigation] = useState(false);
+  // const [allowNavigation, setAllowNavigation] = useState(false);
   const swipeRef = useRef<Swipeable>(null);
 
   useEffect(() => {
@@ -33,23 +33,24 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
   }, [active]);
 
   const navigation = useNavigation<any>();
+
   const handleEditPress = () => {
-    if (allowNavigation) {
-      navigation.navigate('BoardEdit');
-    }
+    // if (allowNavigation) {
+    navigation.navigate('BoardEdit');
+    // }
   };
 
   const handleBoardPress = () => {
     navigation.navigate('BoardDetail', {title, color});
   };
 
-  const handleSwipeableRightOpen = () => {
-    setAllowNavigation(true);
-  };
+  // const handleSwipeableRightOpen = () => {
+  //   setAllowNavigation(true);
+  // };
 
-  const handleSwipeableRightClose = () => {
-    setAllowNavigation(false);
-  };
+  // const handleSwipeableRightClose = () => {
+  //   setAllowNavigation(false);
+  // };
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
@@ -78,8 +79,9 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
         rightThreshold={10}
         overshootRight={false}
         renderRightActions={renderRightActions}
-        onSwipeableRightOpen={handleSwipeableRightOpen}
-        onSwipeableClose={handleSwipeableRightClose}>
+        // onSwipeableRightOpen={handleSwipeableRightOpen}
+        // onSwipeableClose={handleSwipeableRightClose}
+      >
         <TouchableOpacity onPress={handleBoardPress}>
           <ImageBackground
             source={require('../../../../assets/image/card_graphic.png')}

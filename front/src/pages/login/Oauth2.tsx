@@ -1,8 +1,29 @@
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-const Oauth2 = () => {
+GoogleSignin.configure({
+  webClientId: '340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com',
+  offlineAccess: true,
+});
+
+interface onLoginProps {
+  onLogin: (loginState: boolean) => void;
+}
+
+const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
+  const GoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('Google Sign-In Success:', userInfo);
+      onLogin(true);
+    } catch (error) {
+      console.log('Google Sign-In Error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -11,7 +32,7 @@ const Oauth2 = () => {
         <View style={styles.partition} />
       </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={GoogleSignIn}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
         <TouchableOpacity>

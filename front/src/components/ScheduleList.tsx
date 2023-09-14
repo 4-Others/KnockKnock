@@ -4,12 +4,10 @@ import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import {ScheduleData} from '../util/dataConvert';
+import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {Swipeable} from 'react-native-gesture-handler';
 
-const ScheduleList = (
-  items: any,
-  setItems: (newItems: {[key: string]: ScheduleData[]}) => void,
-) => {
+const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) => {
   // 빈 배열을 제거하는 함수
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)

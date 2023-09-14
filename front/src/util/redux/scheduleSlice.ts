@@ -1,18 +1,29 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {ScheduleData} from '../dataConvert';
 
-const initialState = {
-  items: {}, // 초기 상태
+export type ScheduleItems = Record<number, ScheduleData>;
+
+type ScheduleState = {
+  items: ScheduleItems;
 };
 
-const scheduleSlice = createSlice({
+const initialState: ScheduleState = {
+  items: {},
+};
+console.log('Inside scheduleSlice');
+export const scheduleSlice = createSlice({
   name: 'schedule',
   initialState,
   reducers: {
-    setScheduleItems: (state, action) => {
-      state.items = action.payload; // items 상태 업데이트
+    setScheduleItems: (state, action: PayloadAction<ScheduleItems>) => {
+      state.items = action.payload;
+    },
+    addScheduleItem: (state, action: PayloadAction<ScheduleData>) => {
+      const newItem = action.payload;
+      state.items[newItem.calendarId] = newItem;
     },
   },
 });
 
-export const {setScheduleItems} = scheduleSlice.actions;
-export default scheduleSlice;
+export const {setScheduleItems, addScheduleItem} = scheduleSlice.actions;
+export default scheduleSlice.reducer;

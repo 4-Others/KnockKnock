@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
 import {
   StyleSheet,
   View,
@@ -9,22 +10,40 @@ import {
   Dimensions,
 } from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
+import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
+import {storageGetValue} from '../../util/authUtil';
 
 const {width, height} = Dimensions.get('window');
 
 const Notifications = () => {
-  const datas = [
-    {
-      date: '2023-07-13',
-      key: 1,
-      contents: [
-        {content: '🎉 오늘 등록한 모든 일정을 완수하셨습니다! 내일도 화이팅~~!', time: '1시간 전'},
-        {content: '‘하체 조지는 날’ 일정이 곧 시작됩니다.', time: '5시간 전'},
-      ],
-    },
-  ];
+  const [datas, setDatas] = useState([]);
+  const url = Config.API_APP_KEY;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await storageGetValue('user');
+        if (token) {
+          const response = await axios.get(`${url}api/v1/notification/stream`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setDatas(response.data);
+          console.log(response.data);
+        } else {
+          console.error('No token found.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <SafeAreaView>
       <Header title="알림" type="alarm" />
@@ -32,7 +51,7 @@ const Notifications = () => {
         {datas.map((data, i) => {
           return (
             <View key={i}>
-              <Text style={styles.listDateTitle}>{data.date.replace(/-/g, '.')}</Text>
+              {/* <Text style={styles.listDateTitle}>{data.date.replace(/-/g, '.')}</Text>
               {data.contents.map((item, key) => (
                 <TouchableOpacity style={styles.item} key={key}>
                   <Shadow
@@ -42,12 +61,12 @@ const Notifications = () => {
                     endColor={'#ffffff05'}
                     offset={[0, 0.2]}>
                     <View style={styles.content}>
-                      <Text style={styles.text}>{item.content}</Text>
-                      <Text style={styles.time}>{item.time}</Text>
+                      <Text style={styles.text}>{item.title}</Text>
+                      <Text style={styles.time}>{item.notifyAt}</Text>
                     </View>
                   </Shadow>
                 </TouchableOpacity>
-              ))}
+              ))} */}
             </View>
           );
         })}

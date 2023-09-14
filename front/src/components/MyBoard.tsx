@@ -5,7 +5,21 @@ import {Shadow} from 'react-native-shadow-2';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {variables} from '../style/variables';
 
-const ScheduleBoard = () => {
+type BoardData = {
+  boardId: number;
+  type: string;
+  title: string;
+  number: number;
+  color: string;
+};
+
+type MyBoardProps = {
+  data: BoardData;
+};
+
+const MyBoard: React.FC<MyBoardProps> = ({data}) => {
+  const {title, number, color} = data;
+
   return (
     <Shadow
       style={styles.shadow}
@@ -13,13 +27,13 @@ const ScheduleBoard = () => {
       startColor={'#00000010'}
       endColor={'#ffffff05'}
       offset={[0, 0.5]}>
-      <View style={styles.colorChip} />
+      <View style={[styles.colorChip, {backgroundColor: color}]} />
       <View style={styles.container}>
         <View style={styles.containerInfo}>
-          <Text style={styles.title}>전체</Text>
+          <Text style={styles.title}>{title}</Text>
         </View>
         <TouchableOpacity style={styles.containerNav}>
-          <Text style={styles.scheduleNum}>62</Text>
+          <Text style={styles.scheduleNum}>{number}</Text>
           <Icon name="chevron-right" style={styles.icon} />
         </TouchableOpacity>
       </View>
@@ -27,7 +41,7 @@ const ScheduleBoard = () => {
   );
 };
 
-export default ScheduleBoard;
+export default MyBoard;
 
 const styles = StyleSheet.create({
   shadow: {
@@ -43,7 +57,6 @@ const styles = StyleSheet.create({
   colorChip: {
     width: 10,
     height: '100%',
-    backgroundColor: variables.Mater_15,
     borderTopLeftRadius: 6,
     borderBottomLeftRadius: 6,
   },

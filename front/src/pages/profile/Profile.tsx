@@ -15,6 +15,7 @@ import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import MyBoard from '../../components/MyBoard';
 import {GradientButton_L} from '../../components/GradientButton';
+import boardData from '../ScheduleBoard/BoardItems/boardData.json';
 
 const {width, height} = Dimensions.get('window');
 
@@ -29,11 +30,7 @@ const Profile = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="내 프로필"
-        type="edit"
-        nextNavigation={() => navigation.navigate('ProfileEdit')}
-      />
+      <Header title="내 프로필" type="edit" navigation={() => navigation.navigate('ProfileEdit')} />
       <View style={styles.contentLayout}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.contentContainer}>
@@ -47,13 +44,10 @@ const Profile = () => {
             <Text style={styles.profileMail}>myMail@gmail.com</Text>
           </View>
           <View style={styles.myBoardContainer}>
-            <Text style={styles.boardInfo}>내 스케줄 보드 (6)</Text>
-            <MyBoard />
-            <MyBoard />
-            <MyBoard />
-            <MyBoard />
-            <MyBoard />
-            <MyBoard />
+            <Text style={styles.boardInfo}>내 스케줄 보드 ({boardData.length})</Text>
+            {boardData.map(data => (
+              <MyBoard key={data.boardId} data={data} />
+            ))}
           </View>
         </ScrollView>
         <GradientButton_L text="로그아웃" style={styles.buttonLogout} />

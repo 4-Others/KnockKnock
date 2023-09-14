@@ -1,20 +1,22 @@
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import axios from 'axios';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleItemlList from '../../components/ScheduleList';
-import scheduleData from '../../util/PracticeScheduleData.json';
 import {format} from 'date-fns';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
-import {useSelector, useDispatch} from 'react-redux';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
 import {ScheduleData, convertResponseData} from '../../util/dataConvert';
+import {AuthProps} from '../../navigations/StackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
 type navigationProp = StackNavigationProp<RootStackParamList, 'BoardEdit'>;
+type ScheduleItems = Record<number, ScheduleData>;
 
 type RootStackParamList = {
   BoardEdit: undefined;
@@ -23,10 +25,11 @@ type RootStackParamList = {
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
-const BoardDetail = () => {
+const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const items = useSelector((state: any) => state.schedule.items);
+  const token = useSelector((state: any) => state.user.token);
   const dispatch = useDispatch();
-  const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
+  const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
   const [itemCount, setItemCount] = useState<number>(0);
@@ -34,29 +37,52 @@ const BoardDetail = () => {
   const route = useRoute<BoardDetailRouteProp>();
   const {title, color} = route.params;
 
-  const loadItems = () => {
-    const newItems: any = [];
+  // const loadItems = () => {
+  //   const newItems: any = [];
 
-    scheduleData.forEach(schedule => {
-      const dateKey = format(new Date(schedule.startAt), 'yyyy-MM-dd');
-      if (!newItems[dateKey]) {
-        newItems[dateKey] = [];
-      }
-      newItems[dateKey].push(convertResponseData(schedule));
-    });
-    setItems(newItems);
-  };
+  //   scheduleData.forEach(schedule => {
+  //     const dateKey = format(new Date(schedule.startAt), 'yyyy-MM-dd');
+  //     if (!newItems[dateKey]) {
+  //       newItems[dateKey] = [];
+  //     }
+  //     newItems[dateKey].push(convertResponseData(schedule));
+  //   });
+  //   setItems(newItems);
+  // };
 
   useEffect(() => {
     let count = 0;
-    for (let key in items) {
-      count += items[key].length;
+    if (items) {
+      for (let key in items) {
+        count += items[key].length;
+      }
+      setItemCount(count);
     }
-    setItemCount(count);
   }, [items]);
 
+  const loadScheduleItems = async () => {
+    try {
+      const response = await axios.get(`${url}api/v1/schedule`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const fetchedData = response.data;
+      const newItems: ScheduleItems = {};
+
+      fetchedData.forEach((item: any) => {
+        const convertedData: ScheduleData = convertResponseData(item);
+        newItems[convertedData.calendarId] = convertedData;
+      });
+
+      dispatch(setScheduleItems(newItems));
+    } catch (error) {
+      console.error('Failed to load schedules:', error);
+    }
+  };
+
   useEffect(() => {
-    loadItems();
+    loadScheduleItems();
   }, []);
 
   return (
