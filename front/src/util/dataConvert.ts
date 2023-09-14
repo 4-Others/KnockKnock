@@ -33,6 +33,20 @@ export interface ScheduleData {
   };
 }
 
+export interface SetScheduleData {
+  title: string;
+  content: string;
+  period: string;
+  startAt: string;
+  endAt: string;
+  alerts: number[];
+  complete: boolean;
+  tag: {
+    name: string;
+    color: string;
+  };
+}
+
 type DayData = {
   dateString: string;
   day: number;

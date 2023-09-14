@@ -1,9 +1,10 @@
-import {StyleSheet, TouchableOpacity, SafeAreaView, View, Text} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {SelectComponent} from '../../components/ScheduleSelectOption';
 import Selector from '../../components/BottomSheet';
+import {variables} from '../../style/variables';
 
 const Search = () => {
   let date = new Date();
@@ -15,7 +16,6 @@ const Search = () => {
   }>({name: '', color: ''});
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [isContentVisible, setContentVisible] = useState(false);
 
   const toggleStartAt = () => {
     setVisible(prevState => !prevState);
@@ -30,17 +30,10 @@ const Search = () => {
     setStartAt(formattedDate(date));
   };
 
-  const toggleContent = () => {
-    setContentVisible(prevVisible => !prevVisible);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <Header title="검색" type="search" />
-      <TouchableOpacity style={styles.toggleButton} onPress={toggleContent}>
-        <Text style={styles.toggleButtonText}>{isContentVisible ? '폴드' : '펼치기'}</Text>
-      </TouchableOpacity>
-      {isContentVisible && (
+      {
         <View style={styles.contentLayout}>
           <SelectComponent
             type="보드"
@@ -49,7 +42,7 @@ const Search = () => {
           />
           <SelectComponent type="일정 시작 시간" state={startAt} event={toggleStartAt} />
         </View>
-      )}
+      }
       <Selector
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
@@ -84,6 +77,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'blue', // 원하는 색상으로 변경하세요.
+  },
+  icon: {
+    fontSize: 24,
+    marginRight: 30,
+    color: variables.main,
   },
 });
 

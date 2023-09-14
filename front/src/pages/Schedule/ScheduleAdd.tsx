@@ -6,57 +6,45 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addScheduleItem} from '../../util/redux/scheduleSlice';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {ScheduleOption} from '../../components/ScheduleSelectOption';
-import {ScheduleData} from '../../util/dataConvert';
+import {SetScheduleData} from '../../util/dataConvert';
 import Header from '../../components/Header';
+import Config from 'react-native-config';
 
 //? 스케줄 추가하는 스크린
-const ScheduleAdd: React.FC<AuthProps> = ({url}) => {
+const ScheduleAdd: React.FC<AuthProps> = () => {
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
-  const initialScheduleData: ScheduleData = {
-    calendarId: 0,
-    name: '',
-    height: 0,
-    day: '',
-    complete: false,
-    startAt: '',
-    endAt: '',
+  const url = Config.API_APP_KEY;
+  const data: SetScheduleData = {
+    title: '',
     content: '',
     period: 'ALL_DAY',
+    startAt: '',
+    endAt: '',
     alerts: [],
-    modifiedAt: '',
+    complete: false,
     tag: {
       name: '',
       color: '',
     },
   };
-  const [scheduleWillAdd, setScheduleWillAdd] = useState(initialScheduleData);
-
+  console.log(user);
+  const [scheduleWillAdd, setScheduleWillAdd] = useState(data);
   const handleAddSchedule = async () => {
-    if (scheduleWillAdd !== initialScheduleData) {
+    if (url) {
       try {
-        console.log(scheduleWillAdd);
-        const response = await axios.post(
-          `${url}api/v1/schedule`,
-          {
-            schedule: scheduleWillAdd,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          },
-        );
+        console.log(`${url}api/v1/schedule`, scheduleWillAdd);
+        const response = await axios.post(`${url}api/v1/schedule`, scheduleWillAdd, {
+          headers: {Authorization: `Bearer ${user.token}`},
+        });
+
         if (response.status === 200 || response.status === 201) {
           dispatch(addScheduleItem(response.data));
           console.log('Success', '스케줄 등록에 성공했습니다.');
         }
       } catch (error: any) {
-        console.error('Error saving data', error);
-        Alert.alert('Error', '스케줄 등록에 실패했습니다.');
+        console.error('Error saving data', error.request);
       }
-    } else {
-      Alert.alert('Warning', '스케줄 정보를 입력해주세요.');
     }
   };
 
