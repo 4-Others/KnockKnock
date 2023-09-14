@@ -31,7 +31,8 @@ public class ScheduleService {
     private final TagService tagService;
 
     public ScheduleDto.Response createSchedule(Long userId, ScheduleDto.Post requestBody) {
-        Optional<User> byEmail = userRepository.findByEmail("tester@tester.com");
+        //Optional<User> byEmail = userRepository.findByEmail("tester@tester.com");
+        Optional<User> byEmail = userRepository.findByUserId(userId);
         User user = byEmail.get();
 
         Schedule createSchedule = builder()

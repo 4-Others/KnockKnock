@@ -30,8 +30,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         try {
             return this.process(userRequest, user);
-//        } catch (AuthenticationException ex) {
-//            throw ex;
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());

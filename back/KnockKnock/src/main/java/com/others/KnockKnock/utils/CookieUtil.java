@@ -9,7 +9,7 @@ import java.util.Base64;
 import java.util.Optional;
 
 /*
-웽앱에서 쿠키관리하고 조작하는 유틸리티
+웹앱에서 쿠키관리하고 조작하는 유틸리티
  */
 public class CookieUtil {
     /*
@@ -74,4 +74,3 @@ public class CookieUtil {
     }
 
 }
-

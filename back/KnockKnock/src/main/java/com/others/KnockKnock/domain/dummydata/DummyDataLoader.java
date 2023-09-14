@@ -74,23 +74,23 @@ public class DummyDataLoader implements CommandLineRunner {
                          .build();
         userRepository.save(user2);
 
-        Tag tag1 = Tag.builder()
-                .name("Tag1")
-                .color("red")
-                .build();
-        tagRepository.save(tag1);
-
-        Tag tag2 = Tag.builder()
-                .name("Tag2")
-                .color("yellow")
-                .build();
-        tagRepository.save(tag2);
-
-        Tag tag3 = Tag.builder()
-                .name("Tag3")
-                .color("blue")
-                .build();
-        tagRepository.save(tag3);
+//        Tag tag1 = Tag.builder()
+//                .name("Tag1")
+//                .color("red")
+//                .build();
+//        tagRepository.save(tag1);
+//
+//        Tag tag2 = Tag.builder()
+//                .name("Tag2")
+//                .color("yellow")
+//                .build();
+//        tagRepository.save(tag2);
+//
+//        Tag tag3 = Tag.builder()
+//                .name("Tag3")
+//                .color("blue")
+//                .build();
+//        tagRepository.save(tag3);
 
 
         Schedule schedule1 = Schedule.builder().title("Meeting")
@@ -101,7 +101,6 @@ public class DummyDataLoader implements CommandLineRunner {
                                  .complete(false)
                                  .alerts(Arrays.asList(15, 30, 60))
                                  .user(user1)
-                                 .tag(Arrays.asList(tag1,tag2))
                                  .build();
         scheduleRepository.save(schedule1);
 
@@ -113,7 +112,6 @@ public class DummyDataLoader implements CommandLineRunner {
                                  .complete(false)
                                  .alerts(Arrays.asList(15, 30, 60))
                                  .user(user2)
-                                 .tag(Arrays.asList(tag3))
                                  .build();
         scheduleRepository.save(schedule2);
 
