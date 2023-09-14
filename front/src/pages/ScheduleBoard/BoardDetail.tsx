@@ -1,5 +1,5 @@
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
@@ -10,13 +10,13 @@ import ScheduleItemlList from '../../components/ScheduleList';
 import {format} from 'date-fns';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
-import {ScheduleData, convertResponseData} from '../../util/dataConvert';
+import {ScheduleData, convertResponseData, ApiResponseData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
 type navigationProp = StackNavigationProp<RootStackParamList, 'BoardEdit'>;
-type ScheduleItems = Record<number, ScheduleData>;
+type ScheduleItems = Record<string, ScheduleData[]>;
 
 type RootStackParamList = {
   BoardEdit: undefined;
@@ -26,55 +26,40 @@ type RootStackParamList = {
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
 const BoardDetail: React.FC<AuthProps> = ({url}) => {
+  const navigation = useNavigation<navigationProp>();
+  const route = useRoute<BoardDetailRouteProp>();
+  const {title, color} = route.params;
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
   const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
-  const [itemCount, setItemCount] = useState<number>(0);
-  const navigation = useNavigation<navigationProp>();
-  const route = useRoute<BoardDetailRouteProp>();
-  const {title, color} = route.params;
-
-  // const loadItems = () => {
-  //   const newItems: any = [];
-
-  //   scheduleData.forEach(schedule => {
-  //     const dateKey = format(new Date(schedule.startAt), 'yyyy-MM-dd');
-  //     if (!newItems[dateKey]) {
-  //       newItems[dateKey] = [];
-  //     }
-  //     newItems[dateKey].push(convertResponseData(schedule));
-  //   });
-  //   setItems(newItems);
-  // };
-
-  useEffect(() => {
-    let count = 0;
-    if (items) {
-      for (let key in items) {
-        count += items[key].length;
-      }
-      setItemCount(count);
-    }
-  }, [items]);
+  const [scheduleCount, setScheduleCount] = useState(0);
 
   const loadScheduleItems = async () => {
     try {
-      const response = await axios.get(`${url}api/v1/schedule`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get(`${url}api/v1/schedule/tag?tagName=전체`, {
+        headers: {Authorization: `Bearer ${token}`},
       });
-      const fetchedData = response.data;
-      const newItems: ScheduleItems = {};
+      const fetchedData = response.data.body.data;
+      const newItems: Record<string, ScheduleData[]> = {};
 
-      fetchedData.forEach((item: any) => {
+      fetchedData.forEach((item: ApiResponseData) => {
         const convertedData: ScheduleData = convertResponseData(item);
-        newItems[convertedData.calendarId] = convertedData;
+        const dateKey = format(new Date(convertedData.startAt), 'yyyy-MM-dd');
+        if (!newItems[dateKey]) {
+          newItems[dateKey] = [];
+        }
+        newItems[dateKey].push(convertedData);
       });
 
+      let count = 0;
+      Object.keys(newItems).forEach(key => {
+        count += newItems[key].length;
+      });
+
+      setScheduleCount(count);
       dispatch(setScheduleItems(newItems));
     } catch (error) {
       console.error('Failed to load schedules:', error);
@@ -99,7 +84,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
             <Text style={styles.title}>{title}</Text>
             <View style={styles.itemNumContainer}>
               <Text style={styles.textMemo}>total memo:</Text>
-              <Text style={styles.textNum}> {itemCount}</Text>
+              <Text style={styles.textNum}> {scheduleCount}</Text>
             </View>
           </View>
         </Shadow>
