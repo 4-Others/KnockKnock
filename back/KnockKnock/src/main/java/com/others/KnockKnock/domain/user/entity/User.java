@@ -2,21 +2,16 @@ package com.others.KnockKnock.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.others.KnockKnock.domain.user.status.Status;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "USERS")
@@ -37,7 +32,6 @@ public class User{
     private String id;
 
     @Column(name = "USERNAME", length = 100)
-    @NotNull
     @Size(max = 100)
     private String username;
 
@@ -55,7 +49,6 @@ public class User{
     private LocalDate birth;
 
     @Column(name = "PUSH_AGREE")
-    @NotNull
     private Boolean pushAgree;
 
     @Column(name = "EMAIL_VERIFIED_YN", length = 1)
@@ -83,16 +76,16 @@ public class User{
 
 
     public User(
-            @NotNull Long userId,
-            @NotNull @Size(max = 64) String id,
-            @NotNull @Size(max = 512) String email,
-            @NotNull @Size(max = 1) String emailVerifiedYn,
-            @NotNull LocalDate birth,
-            @NotNull Boolean pushAgree,
-            @NotNull ProviderType providerType,
-            @NotNull RoleType roleType,
-            @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime modifiedAt
+             Long userId,
+             @Size(max = 64) String id,
+             @Size(max = 512) String email,
+             @Size(max = 1) String emailVerifiedYn,
+             LocalDate birth,
+             Boolean pushAgree,
+             ProviderType providerType,
+             RoleType roleType,
+             LocalDateTime createdAt,
+             LocalDateTime modifiedAt
     ) {
         this.userId = userId;
         this.id = id;
@@ -110,22 +103,4 @@ public class User{
     public User(String subject, String s, Collection<? extends GrantedAuthority> authorities) {
     }
 
-    public User(String id, String name, String email, LocalDate birth, Boolean pushAgree, ProviderType providerType, RoleType user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-    }
 }
-
-//    @Column(name = "last_logged_in")
-//    private LocalDateTime lastLoggedIn; // 휴면계정 전환 기준 : 1년
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<UserStatusHistory> statusHistory;
-//    @Builder
-//    public User(String email,String password){
-//        this.email = email;
-//        this.password = password;
-//        this.statusHistory = new ArrayList<>();
-//    }
-//    public void addStatusHistory(Status status, LocalDateTime timestamp) {
-//        UserStatusHistory history = new UserStatusHistory(this, status, timestamp);
-//        statusHistory.add(history);
-//    }

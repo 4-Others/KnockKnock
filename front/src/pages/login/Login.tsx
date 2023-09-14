@@ -1,39 +1,33 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
-import {RouteProps} from '../../navigations/StackNavigator';
+import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
 import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import axios from 'axios';
-import {isPasswordValid, storageSetValue, storageDeleteValue} from '../../util/authUtil';
+import {isPasswordValid} from '../../util/authUtil';
+import {storageSetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
-import {setUserId, setToken} from '../../util/redux/userSlice';
+import {setLogin} from '../../util/redux/userSlice';
 
-const Login: React.FC<RouteProps> = ({url, navigation}) => {
-  const [data, setData] = useState({email: '', password: ''});
-  const {password, email} = data;
+const Login: React.FC<AuthProps> = ({url, navigation}) => {
+  const [data, setData] = useState({id: '', password: ''});
+  const {password, id} = data;
   const [masking, setMasking] = React.useState(true);
   const [autoLogin, setAutoLogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
 
   const loginAuth = async () => {
-    if (url !== undefined) {
-      try {
-        const response = await axios.post(`${url}api/v1/users/login`, data);
-        const {accessToken, refreshToken, userId} = response.data;
-        // 자동 로그인 정보 수집
-        if (autoLogin) {
-          await storageSetValue('user', {accessToken, refreshToken, userId});
-        } else await storageDeleteValue('user');
-        // store에 userId와 토큰 저장
-        dispatch(setUserId(userId));
-        dispatch(setToken({accessToken, refreshToken}));
-        //메인화면으로 이동
-        navigation.navigate('MainTab');
-      } catch (error: any) {
-        navigation.navigate('MainTab');
-        // navigation.reset({routes: [{name: 'Login'}]});
-      }
+    try {
+      const res = await axios.post(`${url}api/v1/auth/login`, data);
+      const token = res.data.body.token;
+      if (autoLogin === true) storageSetValue('token', res.data.body.token);
+      dispatch(setLogin({id, token}));
+      navigation.navigate('MainTab');
+      // 자동 로그인 정보 수집
+    } catch (error: any) {
+      setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
     }
   };
 
@@ -41,19 +35,18 @@ const Login: React.FC<RouteProps> = ({url, navigation}) => {
     navigation.navigate('SignUpTab');
   };
 
-  const inputPassword = (text: string) => {
+  const inputText = (type: string, text: string) => {
     setData({
       ...data,
-      password: text,
+      [type]: text,
     });
   };
 
-  const inputEmail = (text: string) => {
-    setData({
-      ...data,
-      email: text,
-    });
-  };
+  useEffect(() => {
+    if (isPasswordValid(password) === false && password.length > 0)
+      setErrorMessage('8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.');
+    else setErrorMessage('');
+  }, [password, id]);
 
   return (
     <View style={styles.container}>
@@ -62,14 +55,14 @@ const Login: React.FC<RouteProps> = ({url, navigation}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.inputArea, styles.inputBottomLine]}
-          onChangeText={inputEmail}
-          value={email}
-          placeholder="이메일"
+          onChangeText={text => inputText('id', text)}
+          value={id}
+          placeholder="아이디"
         />
         <View style={styles.passwordInputArea}>
           <TextInput
             style={styles.inputArea}
-            onChangeText={inputPassword}
+            onChangeText={text => inputText('password', text)}
             value={password}
             placeholder="비밀번호"
             keyboardType="ascii-capable"
@@ -87,11 +80,7 @@ const Login: React.FC<RouteProps> = ({url, navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      {isPasswordValid(password) === false && password.length > 0 ? (
-        <Text style={styles.alertText}>
-          8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
-        </Text>
-      ) : null}
+      {errorMessage && <Text style={styles.alertText}>{errorMessage}</Text>}
       <View style={styles.loginMenu}>
         <TouchableOpacity
           style={styles.autoLogin}
@@ -117,7 +106,7 @@ const Login: React.FC<RouteProps> = ({url, navigation}) => {
       </View>
       <Oauth2
         onLogin={function (loginState: boolean): void {
-          throw new Error('Function not implemented.');
+          throw new Error('Error!');
         }}
       />
     </View>
@@ -224,9 +213,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   alertText: {
+    width: '100%',
     fontFamily: variables.font_4,
     color: variables.board_8,
-    lineHeight: 20,
+    marginTop: 10,
   },
   swmIcon: {
     width: 20,

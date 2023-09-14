@@ -7,17 +7,32 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
-import {PasswordInputArea, EmailInputArea, CheckBtn} from './SignUpComponent';
+import {InputArea, CheckBtn} from './SignUpComponent';
 import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
 
-type inputValue = {email: string; password: string};
+type InputValue = {
+  id: string;
+  password: string;
+  comparePassword: string;
+  username: string;
+  email: string;
+  birth: string;
+  pushAgree: boolean;
+  verifyKey: string;
+};
 
-type sendDataValue = {email: string; password: string; tokenOrKey: string};
+type Complete = {
+  usersAPI: boolean;
+  emailAPI: boolean;
+  verifyKeyAPI: boolean;
+  all: boolean;
+};
 
 type AgreeScreenProps = {
   route: RouteProp<ParamListBase, 'SignAgree'>;
@@ -30,13 +45,14 @@ type DataPostScreenProps = {
   url?: string;
 };
 
-// 약관동의 스크린
+//! step1: 약관동의 스크린
 const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   const [allAgree, setAllAgree] = useState(false);
   const [eachAgree, seteachAgree] = useState([
     {text: '[필수] 만 14세 이상입니다.', link: 'https//www.m.naver.com', on: false},
     {text: '[필수] 이용약관 동의', link: 'https//www.m.naver.com', on: false},
     {text: '[필수] 개인정보 수집 및 이용 동의', link: 'https//www.m.naver.com', on: false},
+    {text: '[선택] 푸쉬 알림 동의', on: false},
   ]);
 
   const handleAllAgreePress = () => {
@@ -54,21 +70,18 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   };
 
   const handleNextPage = () => {
-    navigation.navigate('SignUserInfo');
+    navigation.navigate('SignUserInfo', {pushAgree: eachAgree[eachAgree.length - 1].on});
   };
 
   useEffect(() => {
-    const allAgreeNow = eachAgree.filter(item => item.on === false).length;
+    const allAgreeNow = eachAgree.slice(0, -1).filter(item => item.on === false).length;
     allAgreeNow === 0 ? setAllAgree(true) : setAllAgree(false);
   }, [eachAgree]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.screenContainer}>
       <View>
-        <View style={styles.title}>
-          <Text style={styles.text}>서비스 이용약관에</Text>
-          <Text style={styles.text}>동의해 주세요.</Text>
-        </View>
+        <Text style={styles.title}>{'서비스 이용약관에\n동의해 주세요.'}</Text>
         <View style={styles.allAgree}>
           <TouchableOpacity style={styles.checkbox} onPress={handleAllAgreePress}>
             <Image
@@ -105,194 +118,151 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
   );
 };
 
-const SignUserInfo: React.FC<DataPostScreenProps> = ({navigation, url}) => {
-  const [inputValue, setInputValue] = useState<inputValue>({email: '', password: ''});
-  const [error, setError] = useState(false);
-  const {password, email} = inputValue;
+//! step2: 회원정보 입력
+const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
+  const pushAgree = route.params.pushAgree;
 
-  // 이메일 & 비밀번호 입력 api
-  const handleNextPage = async () => {
-    try {
-      const response = await axios.post(`${url}api/v1/users/signup`, inputValue);
-      console.log(response);
-      if (response.status === 200) navigation.navigate('SignEmailAuth', inputValue);
-    } catch (error: any) {
-      console.log(error);
-      // 에러 처리
-      setError(error => !error);
-    }
-  };
-
-  const handleChangePassword = (text: string) => {
-    setInputValue({
-      ...inputValue,
-      password: text,
-    });
-  };
-
-  const handleChangeEmail = (text: string) => {
-    setInputValue({
-      ...inputValue,
-      email: text,
-    });
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.title}>
-            <Text style={styles.text}>사용하실 회원 정보를</Text>
-            <Text style={styles.text}>입력해 주세요.</Text>
-          </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="이메일 입력"
-              btnText="메일 발송"
-              setInput={handleChangeEmail}
-              input={email}
-            />
-            {!isEmaildValid(email) && email.length > 0 ? (
-              <Text style={styles.alertText}>올바른 이메일 주소를 입력하세요.</Text>
-            ) : null}
-            {error ? <Text style={styles.alertText}>다른 이메일 주소를 입력해 주세요.</Text> : null}
-          </View>
-          <View style={styles.InputTextArea}>
-            <PasswordInputArea
-              text="비밀번호 입력"
-              input={password}
-              setInput={handleChangePassword}
-            />
-            {!isPasswordValid(password) && password.length > 0 ? (
-              <Text style={styles.alertText}>
-                8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
-              </Text>
-            ) : null}
-          </View>
-        </View>
-      </ScrollView>
-      <View style={styles.bottomButton}>
-        <GradientButton_L
-          text="다음"
-          onPress={handleNextPage}
-          disabled={!isPasswordValid(password) || !isEmaildValid(email)}
-        />
-      </View>
-    </SafeAreaView>
-  );
-};
-
-const SignEmailAuth: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
-  const initialEmail = route.params?.email;
-  const initialPassword = route.params?.password;
-  const [complete, setComplete] = useState(false);
-  const [inputValue, setInputValue] = useState<sendDataValue>({
-    email: '',
-    password: '',
-    tokenOrKey: '',
+  const [complete, setComplete] = useState<Complete>({
+    usersAPI: false,
+    emailAPI: false,
+    verifyKeyAPI: false,
+    all: false,
   });
-  const {email, tokenOrKey} = inputValue;
 
-  const changeEmailKey = (text: string) => {
+  console.log(complete);
+
+  const [inputValue, setInputValue] = useState<InputValue>({
+    id: '',
+    password: '',
+    comparePassword: '',
+    username: '',
+    email: '',
+    birth: '',
+    pushAgree: false,
+    verifyKey: '',
+  });
+
+  const {id, password, comparePassword, username, email, birth, verifyKey} = inputValue;
+
+  const changeInputText = (type: string, text: string) => {
     setInputValue({
       ...inputValue,
-      tokenOrKey: text,
+      [type]: text,
     });
   };
 
-  const changeCertifyEmail = (text: string) => {
-    setInputValue({
-      ...inputValue,
-      email: text,
+  const changeComplete = (type: string, value: boolean) => {
+    setComplete({
+      ...complete,
+      [type]: value,
     });
   };
 
-  // 회원가입 인증 메일 발송 api
-  const certifyEmailPost = async () => {
-    const formData = new FormData();
-    formData.append('recipientEmail', email);
-    formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      transformRequest: [
-        function () {
-          return formData;
-        },
-      ],
-    };
+  const handleNextPage = () => {
+    complete && navigation.navigate('SignSuccess');
+  };
+
+  const userInfoThenEmailPost = async () => {
+    const userData = {id, email, password, username, birth, pushAgree};
+    console.log(userData);
     try {
-      const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
-      console.log('인증메일발송', response.status);
+      const response = await axios.post(`${url}api/v1/users/signup`, userData);
+      if (response.status === 200) {
+        console.log('usersAPI 성공');
+        changeComplete('usersAPI', true);
+      }
     } catch (error: any) {
-      console.log('인증메일발송', error.request);
+      console.log('usersAPI', error.request);
+    }
+    if (complete.usersAPI === true) {
+      const formData = new FormData();
+      formData.append('recipientEmail', email);
+      formData.append('subject', 'KnockKnock 회원가입을 위한 인증 메일을 보내드립니다.');
+      const headers = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        transformRequest: [
+          function () {
+            return formData;
+          },
+        ],
+      };
+      try {
+        const response = await axios.post(`${url}api/v1/emails/send`, formData, headers);
+        if (response.status === 200) {
+          console.log('emailAPI 성공');
+          changeComplete('emailAPI', true);
+        }
+      } catch (error: any) {
+        console.log('emailAPI', error.request);
+      }
     }
   };
 
   // 최종 회원가입 인증 api
-  const SignupKeyPost = async () => {
+  const verifyKeyPost = async () => {
     try {
       const response = await axios.post(`${url}api/v1/emails/verify`, inputValue);
-      console.log('인증키발송', response.status);
-      if (response.status === 200) setComplete(boolean => !boolean);
+      if (response.status === 200) {
+        console.log('verifyKeyAPI 성공');
+        changeComplete('verifyKeyAPI', true);
+      }
     } catch (error: any) {
-      console.log('인증키발송', error.request);
+      console.log('verifyKeyAPI', error.request);
     }
   };
 
-  // inputvalue 초기값 설정
-  useEffect(() => {
-    setInputValue({
-      ...inputValue,
-      email: initialEmail || '',
-      password: initialPassword || '',
-    });
-  }, [initialEmail, initialPassword]);
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.screenContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.title}>
-            <Text style={styles.text}>입력하신 이메일 인증을</Text>
-            <Text style={styles.text}>진행해 주세요.</Text>
-          </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="인증하실 이메일을 확인해 주세요"
-              btnText="메일발송"
-              setInput={changeCertifyEmail}
-              input={email}
-              func={certifyEmailPost}
-              disabled={!isEmaildValid(email)}
-              defaultValue={initialEmail}
-            />
-          </View>
-          <View style={styles.InputTextArea}>
-            <EmailInputArea
-              text="전달받은 인증번호를 입력하세요"
-              btnText="인증하기"
-              setInput={changeEmailKey}
-              input={tokenOrKey}
-              func={SignupKeyPost}
-              disabled={!(tokenOrKey.length >= 6)}
-              defaultValue={initialEmail}
-            />
-            {!isEmaildValid(email) && email.length > 0 ? (
-              <Text style={styles.alertText}>올바른 이메일 주소를 입력하세요.</Text>
-            ) : null}
-          </View>
-        </View>
+        <Text style={styles.title}>{`회원정보를\n입력해 주세요.`}</Text>
+        <InputArea type="아이디" input={id} setInput={text => changeInputText('id', text)} />
+        <InputArea
+          type="비밀번호"
+          input={password}
+          setInput={text => changeInputText('password', text)}
+        />
+        <InputArea
+          type="비밀번호 다시"
+          input={comparePassword}
+          setInput={text => changeInputText('comparePassword', text)}
+          compare={password}
+        />
+        <InputArea
+          type="이름"
+          input={username}
+          setInput={text => changeInputText('username', text)}
+        />
+        <InputArea
+          type="생년월일"
+          input={birth}
+          setInput={text => changeInputText('birth', text)}
+          keyType="numeric"
+        />
+        <InputArea
+          type="이메일"
+          setInput={text => changeInputText('email', text)}
+          input={email}
+          btnText="메일발송"
+          func={userInfoThenEmailPost}
+          disabled={!isEmaildValid(email)}
+        />
+        {complete.emailAPI && isEmaildValid(email) && (
+          <InputArea
+            type="인증번호"
+            setInput={text => changeInputText('verifyKey', text)}
+            input={verifyKey}
+            btnText="인증하기"
+            func={verifyKeyPost}
+            disabled={!(verifyKey.length >= 6)}
+          />
+        )}
       </ScrollView>
       <View style={styles.bottomButton}>
-        <GradientButton_L
-          text="다음"
-          onPress={() => navigation.navigate('SignSuccess')}
-          disabled={!complete}
-        />
+        <GradientButton_L text="다음" onPress={handleNextPage} disabled={!complete.all} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -306,7 +276,7 @@ const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.inputContainer}>
       <Image
         source={require('front/assets/animations/signup.gif')}
         style={{width: '100%', height: '50%'}}
@@ -323,33 +293,40 @@ const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
   );
 };
 
-export {SignUserInfo, SignEmailAuth, SignAgree, SignSuccess};
+export {SignUserInfo, SignAgree, SignSuccess};
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
+    marginBottom: 60,
   },
   title: {
-    marginBottom: 24,
-  },
-  text: {
+    marginBottom: 30,
     color: variables.text_1,
     fontFamily: variables.font_4,
     fontSize: 24,
     textAlign: 'left',
-    marginBottom: 5,
+    lineHeight: 34,
   },
-  InputTextArea: {
+  inputContainer: {
     display: 'flex',
     flexDirection: 'column',
     marginBottom: 20,
   },
+  inputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderColor: '#eeeeee',
+    paddingBottom: 10,
+    marginBottom: 10,
+  },
   bottomButton: {
     marginTop: 'auto',
-    marginBottom: 60,
   },
   alertText: {
     fontFamily: variables.font_4,

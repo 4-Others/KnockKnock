@@ -4,7 +4,6 @@ import com.others.KnockKnock.domain.mail.entity.EmailConfirmRandomKey;
 import com.others.KnockKnock.domain.mail.repository.EmailConfirmRandomKeyRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
-import com.others.KnockKnock.domain.user.status.Status;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +12,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
@@ -140,11 +138,5 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to process email template.", e);
         }
-    }
-    public void updateEmailVerificationStatus(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setEmailVerifiedYn("Y");
-        userRepository.save(user);
     }
 }

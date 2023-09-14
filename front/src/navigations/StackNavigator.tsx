@@ -15,7 +15,7 @@ import ProfileEdit from '../pages/profile/ProfileEdit';
 import SignUpTab from '../pages/signUp/SignUpTab';
 import TabNavigator from './TabNavigator';
 
-export interface RouteProps {
+export interface AuthProps {
   route: any;
   navigation: any;
   url?: string;
@@ -41,11 +41,13 @@ const AuthStack: React.FC = () => {
   );
 };
 
-const StackSchedule: React.FC = () => {
+const StackSchedule = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ScheduleBoard" component={ScheduleBoard} options={{headerShown: false}} />
-      <Stack.Screen name="BoardDetail" component={BoardDetail} options={{headerShown: false}} />
+      <Stack.Screen name="BoardDetail" options={{headerShown: false}}>
+        {props => <BoardDetail {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
@@ -58,7 +60,7 @@ const StackSchedule: React.FC = () => {
   );
 };
 
-const StackCalendar: React.FC = () => {
+const StackCalendar = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Calendar" options={{headerShown: false}}>

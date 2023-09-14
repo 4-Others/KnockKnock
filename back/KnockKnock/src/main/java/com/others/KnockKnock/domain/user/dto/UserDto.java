@@ -1,17 +1,13 @@
 package com.others.KnockKnock.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.others.KnockKnock.custom.Password;
+import com.others.KnockKnock.security.oauth.entity.ProviderType;
+import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Generated;
 import lombok.Getter;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -63,17 +59,36 @@ public class UserDto {
     @AllArgsConstructor
     public static class Response{
         private Long userId;
+        private String id;
         private String email;
-        private String password;
+        private String username;
+        private LocalDate birth;
+        private Boolean pushAgree;
+        private String emailVerifiedYn;
+        private ProviderType providerType;
+        private RoleType roleType;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
     @Getter
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class PasswordUpdate {
         @NotNull
         @NotBlank
         @Pattern(regexp = "^(?=.*[!@#$%^&*]).{8,}$",
                 message = "패스워드는 8자 이상이어야 하며, 특수문자를 최소 1개 포함해야 합니다.")
         private String newPassword;
+    }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateProfile {
+        private String username;
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private LocalDate birth;
+        private Boolean pushAgree;
     }
 }

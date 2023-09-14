@@ -15,10 +15,12 @@ import com.others.KnockKnock.utils.CookieUtil;
 import com.others.KnockKnock.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -36,6 +38,7 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private  final PasswordEncoder passwordEncoder;
 
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
@@ -49,54 +52,64 @@ public class AuthController {
             HttpServletResponse response,
             @RequestBody AuthReqModel authReqModel
     ) {
-        //email인증 안된경우 api호출 불가능
+        //email 인증 안된경우 api 호출 불가능
         Optional<User> userOptional = userRepository.findById(authReqModel.getId());
 
-        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
+//        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
+//            return ApiResponse.unAuthorized();
+//        }
+
+        User user = userOptional.get();
+        String enteredPassword = authReqModel.getPassword();
+
+        if(passwordEncoder.matches(enteredPassword, user.getPassword())) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authReqModel.getId(),
+                            authReqModel.getPassword()
+                    )
+            );
+
+            String userId = authReqModel.getId();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            Date now = new Date();
+            AuthToken accessToken = tokenProvider.createAuthToken(
+                    userId,
+                    ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+            );
+
+            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+            AuthToken refreshToken = tokenProvider.createAuthToken(
+                    appProperties.getAuth().getTokenSecret(),
+                    new Date(now.getTime() + refreshTokenExpiry)
+            );
+
+            // userId refresh token 으로 DB 확인
+            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+            if (userRefreshToken == null) {
+                // 없는 경우 새로 등록
+                userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
+                userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+            } else {
+                // DB에 refresh 토큰 업데이트
+                userRefreshToken.setRefreshToken(refreshToken.getToken());
+            }
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+            return ApiResponse.success("token", accessToken.getToken());
+        }
+        else{
             return ApiResponse.unAuthorized();
         }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authReqModel.getId(),
-                        authReqModel.getPassword()
-                )
-        );
-
-        String userId = authReqModel.getId();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        Date now = new Date();
-        AuthToken accessToken = tokenProvider.createAuthToken(
-                userId,
-                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
-
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-        AuthToken refreshToken = tokenProvider.createAuthToken(
-                appProperties.getAuth().getTokenSecret(),
-                new Date(now.getTime() + refreshTokenExpiry)
-        );
-
-        // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
-        if (userRefreshToken == null) {
-            // 없는 경우 새로 등록
-            userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
-            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-        } else {
-            // DB에 refresh 토큰 업데이트
-            userRefreshToken.setRefreshToken(refreshToken.getToken());
-        }
-
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-        return ApiResponse.success("token", accessToken.getToken());
     }
-
+    /*
+    사용자 액세스 토큰을 반환하는 api
+     */
     @GetMapping("/refresh")
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인
@@ -162,3 +175,69 @@ public class AuthController {
     }
 }
 
+/*
+지난 로그인 api
+ */
+
+//    @PostMapping("/login")
+//    public ApiResponse login(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            @RequestBody AuthReqModel authReqModel
+//    ) {
+//        //email인증 안된경우 api호출 불가능
+//        Optional<User> userOptional = userRepository.findById(authReqModel.getId());
+//
+//        if (userOptional.isEmpty() || !"Y".equals(userOptional.get().getEmailVerifiedYn())) {
+//            return ApiResponse.unAuthorized();
+//        }
+//
+//        User user = userOptional.get();
+//        String enteredPassword = passwordEncoder.encode(authReqModel.getPassword());
+//
+//        if(passwordEncoder.matches(enteredPassword, user.getPassword())) {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            authReqModel.getId(),
+//                            authReqModel.getPassword()
+//                    )
+//            );
+//
+//            String userId = authReqModel.getId();
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            //accessToken, refreshToken , Expiry 생성
+//            Date now = new Date();
+//            AuthToken accessToken = tokenProvider.createAuthToken(
+//                    userId,
+//                    ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
+//                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+//            );
+//
+//            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+//            AuthToken refreshToken = tokenProvider.createAuthToken(
+//                    appProperties.getAuth().getTokenSecret(),
+//                    new Date(now.getTime() + refreshTokenExpiry)
+//            );
+//
+//            // userId refresh token 으로 DB 확인
+//            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+//            if (userRefreshToken == null) {
+//                // 없는 경우 새로 등록
+//                userRefreshToken = new UserRefreshToken(userId, refreshToken.getToken());
+//                userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+//            } else {
+//                // DB에 refresh 토큰 업데이트
+//                userRefreshToken.setRefreshToken(refreshToken.getToken());
+//            }
+//
+//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+//
+//            return ApiResponse.success("token", accessToken.getToken());
+//        }else{
+//            System.out.println("패스워드 or 아이디를 확인해주세요");
+//            return ApiResponse.unAuthorized();
+//        }
+//    }

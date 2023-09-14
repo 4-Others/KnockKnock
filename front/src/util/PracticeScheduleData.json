@@ -1,7 +1,7 @@
 [
   {
     "calendarId": 1,
-    "title": "첫번째 테스트 스케줄",
+    "title": "첫번째 테스트 케",
     "content": "테스트 텍스트입니다.",
     "period": "ALL_DAY",
     "startAt": "2023-06-20 00:00:00",

@@ -18,7 +18,7 @@ import {ScheduleData} from '../util/dataConvert';
 type SelectorProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setScheduleData: React.Dispatch<React.SetStateAction<ScheduleData>>;
+  onData: (value: any) => void;
   type: 'tag' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
 };
 
@@ -35,7 +35,7 @@ const Selector: React.FC<SelectorProps> = props => {
   const {
     modalVisible,
     setModalVisible,
-    setScheduleData,
+    onData,
     type, // 타입을 받아옴
   } = props;
 
@@ -77,13 +77,6 @@ const Selector: React.FC<SelectorProps> = props => {
   ).current;
 
   const RenderTagList = (tag: BoardData[]) => {
-    const onTagState = (value: {color: string; name: string}) => {
-      setScheduleData(prevData => ({
-        ...prevData,
-        tag: value,
-      }));
-    };
-
     return tag.map(data => {
       let colorValue: any = data.color;
       if (colorValue.startsWith('variables.')) {
@@ -97,7 +90,7 @@ const Selector: React.FC<SelectorProps> = props => {
           key={data.boardId}
           onPress={() => {
             setModalVisible(false);
-            onTagState(newTag);
+            onData(newTag);
           }}>
           <View style={[styles.colorChip, {backgroundColor: colorValue}]}></View>
           <Text style={styles.menuText}>{data.title}</Text>
@@ -107,25 +100,9 @@ const Selector: React.FC<SelectorProps> = props => {
   };
 
   const RenderNotificationList = () => {
-    const onNotificationState = (value: number) => {
-      setScheduleData(prevData => {
-        const updatedAlerts = prevData.alerts.includes(value)
-          ? prevData.alerts.filter(item => item !== value)
-          : [...prevData.alerts, value];
-
-        return {
-          ...prevData,
-          alerts: updatedAlerts,
-        };
-      });
-    };
-
     return periodData.map((data, index) => {
       return (
-        <TouchableOpacity
-          style={styles.itemSelectMenu}
-          key={index}
-          onPress={() => onNotificationState(data)}>
+        <TouchableOpacity style={styles.itemSelectMenu} key={index} onPress={() => onData(data)}>
           <Text>{`${data}분 전`}</Text>
         </TouchableOpacity>
       );

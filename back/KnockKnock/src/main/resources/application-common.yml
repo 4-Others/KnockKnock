@@ -5,28 +5,18 @@ token:
   expiration:
     access: 86400000
     refresh: 31536000000
-sns:
-  google:
-    url: "https://accounts.google.com/o/oauth2/v2/auth"
-    client:
-      id: ${GOOGLE_CLIENT_ID}
-      secret: ${GOOGLE_SECRET}
-    callback:
-      url: "http://www.knockknockofficial.shop:8080/auth/google/callback"
-    token:
-      url: "https://oauth2.googleapis.com/token"
 spring:
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${sns.google.client-id}
-            client-secret: ${sns.google.client-secret}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_SECRET}
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
-            redirect-uri: "http://www.knockknockofficial.shop:8080/auth/kakao/callback"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: post
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
@@ -37,34 +27,6 @@ spring:
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
             userNameAttribute: id
-  datasource:
-    url: jdbc:mysql://knockknockdb.ce0eox1y1obm.us-east-1.rds.amazonaws.com:3306/knockdb
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: ${RDS_PW}
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate:
-      ddl-auto: update
-  batch:
-    initialize-schema: always
-    table-prefix: BATCH_
-  quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
-    properties:
-      org:
-        quartz:
-          scheduler:
-            instanceName: MyScheduler
-          jobStore:
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            dataSource: myDataSource
-            tablePrefix: QRTZ_
-            isClustered: false
-            useProperties: false
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
@@ -89,4 +51,5 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect
+    authorizedRedirectUris: http://localhost:8080
+    #프론트 페이지만들어지면 여기다가 넣기

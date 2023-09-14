@@ -1,13 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  nickName: '',
+  userId: 0,
+  id: '',
   email: '',
-  userId: '',
-  token: {
-    accessToken: '',
-    refreshToken: '',
-  },
+  username: '',
+  birth: '',
+  pushAgree: false,
+  token: '',
 };
 
 export const userSlice = createSlice({
@@ -15,25 +15,26 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     // 모든 사용자 정보 저장
-    setUser(state, action) {
-      state.nickName = action.payload.name;
-      state.email = action.payload.email;
+    setLogin(state, action) {
+      state.id = action.payload.id;
+      state.token = action.payload.token;
+    },
+    setProfile(state, action) {
       state.userId = action.payload.userId;
+      state.id = action.payload.id;
+      state.email = action.payload.email;
+      state.username = action.payload.username;
+      state.birth = action.payload.birth;
+      state.pushAgree = action.payload.pushAgree;
     },
-    setNickName(state, action) {
-      state.nickName = action.payload;
-    },
-    setEmail(state, action) {
-      state.email = action.payload;
-    },
-    setUserId(state, action) {
-      state.userId = action.payload;
-    },
-    setToken(state, action) {
-      state.token = action.payload;
+    updateProfile(state, action) {
+      state.id = action.payload.id;
+      state.username = action.payload.username;
+      state.birth = action.payload.birth;
+      state.pushAgree = action.payload.pushAgree;
     },
   },
 });
 
-export const {setUser, setNickName, setEmail, setUserId, setToken} = userSlice.actions;
+export const {setLogin, setProfile, updateProfile} = userSlice.actions;
 export default userSlice;

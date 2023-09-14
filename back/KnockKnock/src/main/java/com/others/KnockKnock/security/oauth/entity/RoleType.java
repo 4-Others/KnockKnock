@@ -2,7 +2,6 @@ package com.others.KnockKnock.security.oauth.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.util.Arrays;
 
 @Getter
