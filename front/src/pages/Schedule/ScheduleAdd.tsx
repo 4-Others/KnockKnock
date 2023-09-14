@@ -22,7 +22,7 @@ const ScheduleAdd: React.FC<AuthProps> = ({url}) => {
     startAt: '',
     endAt: '',
     content: '',
-    period: '',
+    period: 'ALL_DAY',
     alerts: [],
     modifiedAt: '',
     tag: {
@@ -35,10 +35,10 @@ const ScheduleAdd: React.FC<AuthProps> = ({url}) => {
   const handleAddSchedule = async () => {
     if (scheduleWillAdd !== initialScheduleData) {
       try {
+        console.log(scheduleWillAdd);
         const response = await axios.post(
           `${url}api/v1/schedule`,
           {
-            user,
             schedule: scheduleWillAdd,
           },
           {
