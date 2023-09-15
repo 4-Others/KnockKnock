@@ -74,8 +74,10 @@ cors:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpiry: 1800000
-    refreshTokenExpiry: 604800000
+    tokenExpiry: 5000
+    refreshTokenExpiry: 20000
+#    tokenExpiry: 1800000
+#    refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris: http://www.knockknockofficial.shop:8080/oauth/redirect
     #프론트 페이지만들어지면 여기다가 넣기
