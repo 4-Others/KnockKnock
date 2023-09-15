@@ -64,8 +64,8 @@ jwt:
   expirationMs: 3600000
 token:
   expiration:
-    access: 86400000
-    refresh: 31536000000
+    access: 5000
+    refresh: 20000
 cors:
   allowed-origins: 'http://www.knockknockofficial.shop:8080'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
