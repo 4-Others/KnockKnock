@@ -36,8 +36,9 @@ public class Schedule extends Auditable implements Serializable {
     @Column(name = "ALERTS")
     private List<Integer> alerts;
 
-    @OneToMany(mappedBy = "schedule", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-    private List<Tag> tag;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+    @JoinColumn(name = "TAG_ID")
+    private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")

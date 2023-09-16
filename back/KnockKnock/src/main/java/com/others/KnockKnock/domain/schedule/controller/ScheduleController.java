@@ -32,8 +32,6 @@ public class ScheduleController {
         @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Valid @RequestBody ScheduleDto.Post requestBody
     ) {
-        //Long userId = 1L;
-
         ScheduleDto.Response response = scheduleService.createSchedule(userPrincipal.getUserId(), requestBody);
 
         URI uri = UriUtil.createUri(DEFAULT_URI, response.getScheduleId());
@@ -46,9 +44,7 @@ public class ScheduleController {
     public ResponseEntity<?> findAllSchedule(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        //Long userId = 1L;
-
-        List<ScheduleDto.TagGroup> responses = scheduleService.findAllSchedule(userPrincipal.getUserId());
+        List<ScheduleDto.Response> responses = scheduleService.findAllSchedule(userPrincipal.getUserId());
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
@@ -62,22 +58,7 @@ public class ScheduleController {
             message = "검색기간은 '필수' 입력값입니다. : 기대값 'yyyy-MM'"
         ) @RequestParam String startAt)
      {
-        //Long userId = 1L;
-
-        List<ScheduleDto.Response> responses = scheduleService.findCalendar(userPrincipal.getUserId(), startAt);
-
-        return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
-    }
-
-    @GetMapping("/tag")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> findTag(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @RequestParam String tagName
-    ) {
-        //Long userId = 1L;
-
-        List<ScheduleDto.Response> responses = scheduleService.findTag(userPrincipal.getUserId(), tagName);
+        List<ScheduleDto.Response> responses = scheduleService.findScheduleForCalendar(userPrincipal.getUserId(), startAt);
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
@@ -89,8 +70,6 @@ public class ScheduleController {
         @Positive @PathVariable("schedule-id") Long scheduleId,
         @Valid @RequestBody ScheduleDto.Patch requestBody
     ) {
-        //Long userId = 1L;
-
         ScheduleDto.Response response = scheduleService.updateSchedule(userPrincipal.getUserId(), scheduleId, requestBody);
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", response));
@@ -101,8 +80,6 @@ public class ScheduleController {
         @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Positive @PathVariable("schedule-id") Long scheduleId
     ) {
-        //Long userId = 1L;
-
         scheduleService.deleteSchedule(userPrincipal.getUserId(), scheduleId);
 
         return ResponseEntity.noContent().build();

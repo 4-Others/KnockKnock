@@ -5,7 +5,6 @@ import com.others.KnockKnock.domain.notification.dto.NotificationDto;
 import com.others.KnockKnock.domain.notification.entity.Notification;
 import com.others.KnockKnock.domain.notification.mapper.NotificationMapper;
 import com.others.KnockKnock.domain.notification.repository.NotificationRepository;
-import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.codec.ServerSentEvent;
@@ -24,7 +23,6 @@ import static com.others.KnockKnock.utils.DateUtil.parseStringToLocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
@@ -35,11 +33,15 @@ public class NotificationService {
     }
 
     public void updateNotifications(Schedule schedule) {
-        List<Notification> allByUserIdAndCalendarId = notificationRepository.findAllByUserIdAndCalendarId(schedule.getUser().getUserId(), schedule.getScheduleId());
-        List<Notification> notDeliveredNotification = allByUserIdAndCalendarId.stream().filter(ntf -> !ntf.getDelivered()).collect(Collectors.toList());
-        List<String> alerts = schedule.getAlerts().stream()
-                                  .map(alert -> convertLocalDateTimeToFormatString(parseStringToLocalDateTime(schedule.getStartAt()).minusMinutes(alert)))
-                                  .collect(Collectors.toList());
+        List<Notification> allByUserIdAndCalendarId = notificationRepository
+                                                          .findAllByUserIdAndCalendarId(
+                                                            schedule.getUser().getUserId(),
+                                                            schedule.getScheduleId()
+                                                          );
+        List<Notification> notDeliveredNotification = allByUserIdAndCalendarId.stream()
+                                                          .filter(ntf -> !ntf.getDelivered())
+                                                            .collect(Collectors.toList()
+                                                          );
 
         deleteNotifications(notDeliveredNotification);
 
@@ -67,20 +69,10 @@ public class NotificationService {
                                   .title(schedule.getTitle())
                                   .notifyAt(convertLocalDateTimeToFormatString(notifyAt))
                                   .delivered(false)
-                                  .isRead(false)
+                                  .read(false)
                                   .build();
                    })
                    .collect(Collectors.toList());
-    }
-
-    public List<NotificationDto.Response> updateReadStatus(Long userId, List<Long> notificationIds) {
-        List<Notification> allNotificationByUserIdAndNotificationIds = notificationRepository.findAllByUserIdAndNotificationIds(userId, notificationIds);
-
-        allNotificationByUserIdAndNotificationIds.forEach(ntf -> ntf.setIsRead(true));
-
-        List<Notification> updatedNotifications = notificationRepository.saveAll(allNotificationByUserIdAndNotificationIds);
-
-        return notificationMapper.notificationListToNotificationDtoResponseList(updatedNotifications);
     }
 
     public Flux<ServerSentEvent<List<NotificationDto.Response>>> genStreamEvent(Long userId) {
@@ -101,7 +93,13 @@ public class NotificationService {
 
         Flux<ServerSentEvent<List<NotificationDto.Response>>> recurringResults =
             Flux.interval(Duration.between(now, nextMin), Duration.ofSeconds(60))
-                .map(sequence -> streamEventNotDelivered(userId, sequence, DateUtil.convertLocalDateTimeToFormatString(LocalDateTime.now().withSecond(0))));
+                .map(sequence -> streamEventNotDelivered(
+                    userId,
+                    sequence,
+                    DateUtil.convertLocalDateTimeToFormatString(
+                        LocalDateTime.now().withSecond(0))
+                    )
+                );
 
         return Flux.concat(initialResult, recurringResults)
                    .publishOn(Schedulers.boundedElastic());
@@ -123,13 +121,29 @@ public class NotificationService {
                    .build();
     }
 
-    private List<NotificationDto.Response> findAllByUserId(Long userId) {
-        List<Notification> allNotificationByUserId = notificationRepository.findAllByUserId(userId);
+    public List<NotificationDto.Response> updateReadStatus(Long userId, List<Long> notificationIds) {
+        List<Notification> allNotificationByUserIdAndNotificationIds = notificationRepository.findAllByUserIdAndNotificationIds(userId, notificationIds);
 
-        return notificationMapper.notificationListToNotificationDtoResponseList(allNotificationByUserId);
+        allNotificationByUserIdAndNotificationIds.forEach(ntf -> ntf.setRead(true));
+
+        List<Notification> updatedNotifications = notificationRepository.saveAll(allNotificationByUserIdAndNotificationIds);
+
+        return notificationMapper.notificationListToNotificationDtoResponseList(updatedNotifications);
     }
 
-    private List<NotificationDto.Response> findAllByUserIdAndDeliveredButNotRead(Long userId) {
+    public void deleteAllNotificationDelivered(Long userId, List<Long> notificationIds) {
+        List<Notification> allByUserIdAndNotificationIdsAndDelivered = notificationRepository.findAllByUserIdAndNotificationIdsAndDelivered(userId, notificationIds);
+
+        notificationRepository.deleteAll(allByUserIdAndNotificationIdsAndDelivered);
+    }
+
+    public List<NotificationDto.Response> findAllByUserIdAndDelivered(Long userId) {
+        List<Notification> allByUserIdAndDelivered = notificationRepository.findAllByUserIdAndDelivered(userId);
+
+        return notificationMapper.notificationListToNotificationDtoResponseList(allByUserIdAndDelivered);
+    }
+
+    public List<NotificationDto.Response> findAllByUserIdAndDeliveredButNotRead(Long userId) {
         List<Notification> allNotificationByUserId = notificationRepository.findAllByUserIdAndDeliveredButNotRead(userId);
 
         return notificationMapper.notificationListToNotificationDtoResponseList(allNotificationByUserId);

@@ -27,11 +27,11 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     }
 
     @Override
-    public List<Notification> findAllByUserIdAndCalendarId(Long userId, Long calendarId) {
+    public List<Notification> findAllByUserIdAndCalendarId(Long userId, Long scheduleId) {
         return queryFactory.selectFrom(notification)
                    .where(
                        userIdEq(userId),
-                       calendarIdEq(calendarId)
+                       scheduleIdEq(scheduleId)
                    )
                    .fetch();
     }
@@ -42,6 +42,27 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
                    .where(
                        userIdEq(userId),
                        notificationIdIn(notificationIds)
+                   )
+                   .fetch();
+    }
+
+    @Override
+    public List<Notification> findAllByUserIdAndNotificationIdsAndDelivered(Long userId, List<Long> notificationIds) {
+        return queryFactory.selectFrom(notification)
+                   .where(
+                       userIdEq(userId),
+                       deliveredEq(true),
+                       notificationIdIn(notificationIds)
+                   )
+                   .fetch();
+    }
+
+    @Override
+    public List<Notification> findAllByUserIdAndDelivered(Long userId) {
+        return queryFactory.selectFrom(notification)
+                   .where(
+                       userIdEq(userId),
+                       deliveredEq(true)
                    )
                    .fetch();
     }
@@ -72,8 +93,8 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
         return notificationIds.size() != 0 ? notification.notificationId.in(notificationIds) : null;
     }
 
-    private BooleanExpression readEq(boolean isRead) {
-        return notification.isRead.eq(isRead);
+    private BooleanExpression readEq(boolean read) {
+        return notification.read.eq(read);
     }
 
     private BooleanExpression deliveredEq(boolean isDelivered) {
@@ -84,8 +105,8 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
         return userId != null ? notification.user.userId.eq(userId) : null;
     }
 
-    private BooleanExpression calendarIdEq(Long calendarId) {
-        return calendarId != null ? notification.schedule.scheduleId.eq(calendarId) : null;
+    private BooleanExpression scheduleIdEq(Long scheduleId) {
+        return scheduleId != null ? notification.schedule.scheduleId.eq(scheduleId) : null;
     }
 
     private BooleanExpression notifyAtEq(String notifyAt) {
