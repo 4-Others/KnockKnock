@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 import axios from 'axios';
 import {variables} from '../../style/variables';
 import {useDispatch, useSelector} from 'react-redux';
@@ -28,7 +28,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
       color: '',
     },
   };
-  console.log(user);
+
   const [scheduleWillAdd, setScheduleWillAdd] = useState(data);
   const handleAddSchedule = async () => {
     if (url) {
@@ -40,7 +40,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
         if (response.status === 200 || response.status === 201) {
           dispatch(addScheduleItem(response.data));
-          console.log('Success', '스케줄 등록에 성공했습니다.');
+          console.log('Success', 'Schedule add success!');
         }
       } catch (error: any) {
         console.error('Error saving data', error.request);

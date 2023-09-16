@@ -54,7 +54,8 @@ public class ScheduleController {
     public ResponseEntity<?> findCalendar(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Pattern(
-            regexp = "\\d{4}-\\d{2}",
+            regexp = "\\d{4}-\\d" +
+                    "{2}",
             message = "검색기간은 '필수' 입력값입니다. : 기대값 'yyyy-MM'"
         ) @RequestParam String startAt)
      {
