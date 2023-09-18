@@ -4,7 +4,6 @@ import com.others.KnockKnock.domain.notification.entity.Notification;
 import com.others.KnockKnock.domain.notification.repository.NotificationRepository;
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
-import com.others.KnockKnock.domain.tag.entity.Tag;
 import com.others.KnockKnock.domain.tag.repository.TagRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
@@ -12,13 +11,10 @@ import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 //@Component
 public class DummyDataLoader implements CommandLineRunner {
@@ -119,7 +115,7 @@ public class DummyDataLoader implements CommandLineRunner {
                                          .title("WorkOut")
                                          .notifyAt("2023-08-07 09:45")
                                          .delivered(false)
-                                         .isRead(false)
+                                         .read(false)
                                          .schedule(schedule1)
                                          .user(user1)
                                          .build();
@@ -129,7 +125,7 @@ public class DummyDataLoader implements CommandLineRunner {
                                          .title("Study")
                                          .notifyAt("2023-08-07 09:45")
                                          .delivered(false)
-                                         .isRead(false)
+                                         .read(false)
                                          .schedule(schedule2)
                                          .user(user2)
                                          .build();

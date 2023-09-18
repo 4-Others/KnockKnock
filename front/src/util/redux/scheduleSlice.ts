@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {ScheduleData} from '../dataConvert';
 
-export type ScheduleItems = Record<number, ScheduleData>;
+export type ScheduleItems = Record<number, ScheduleData[]>;
 
 type ScheduleState = {
   items: ScheduleItems;
@@ -20,7 +20,10 @@ export const scheduleSlice = createSlice({
     },
     addScheduleItem: (state, action: PayloadAction<ScheduleData>) => {
       const newItem = action.payload;
-      state.items[newItem.calendarId] = newItem;
+      if (!state.items[newItem.calendarId]) {
+        state.items[newItem.calendarId] = [];
+      }
+      state.items[newItem.calendarId].push(newItem);
     },
   },
 });

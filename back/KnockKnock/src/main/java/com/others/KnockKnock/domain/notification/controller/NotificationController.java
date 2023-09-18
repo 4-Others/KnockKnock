@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -31,9 +30,17 @@ public class NotificationController {
     public Flux<ServerSentEvent<List<NotificationDto.Response>>> streamEvent(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        //Long userId = 1L;
-
         return notificationService.genStreamEvent(userPrincipal.getUserId());
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> findDeliveredNotification(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        List<NotificationDto.Response> responses = notificationService.findAllByUserIdAndDelivered(userPrincipal.getUserId());
+
+        return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
 
     @PatchMapping("/read")
@@ -42,17 +49,17 @@ public class NotificationController {
         @AuthenticationPrincipal UserPrincipal userPrincipal,
         @Valid @RequestBody NotificationDto.Patch requestBody
     ) {
-        //Long userId = 1L;
-
         List<NotificationDto.Response> responses = notificationService.updateReadStatus(userPrincipal.getUserId(), requestBody.getNotificationIds());
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
 
-    @DeleteMapping("/{notification-id}")
-    public ResponseEntity<?> deleteNotification(@Positive @PathVariable("notification-id") Long notificationId) {
-
-        notificationRepository.delete(notificationRepository.findById(notificationId).get());
+    @DeleteMapping
+    public ResponseEntity<?> deleteNotification(
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @Valid @RequestBody NotificationDto.Delete requestBody
+    ) {
+        notificationService.deleteAllNotificationDelivered(userPrincipal.getUserId(), requestBody.getNotificationIds());
 
         return ResponseEntity.noContent().build();
     }

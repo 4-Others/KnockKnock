@@ -26,7 +26,7 @@ public class Notification extends Auditable {
     @Setter
     private Boolean delivered;
     @Setter
-    private Boolean isRead;
+    private Boolean read;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCHEDULE_ID")

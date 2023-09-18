@@ -38,7 +38,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
         if (response.status === 200 || response.status === 201) {
           dispatch(addScheduleItem(response.data));
-          console.log('Success', '스케줄 등록에 성공했습니다.');
+          console.log('Success', 'Schedule add success!');
         }
       } catch (error: any) {
         console.error('Error saving data', error.request);
