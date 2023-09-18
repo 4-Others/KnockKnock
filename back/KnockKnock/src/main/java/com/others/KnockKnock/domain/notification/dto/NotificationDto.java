@@ -23,6 +23,16 @@ public class NotificationDto {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
     @Builder
+    public static class Delete implements Serializable {
+        @NotNull
+        @NotEmpty
+        private List<Long> notificationIds;
+    }
+
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor
+    @Builder
     public static class Response implements Serializable {
         private Long notificationId;
         private String title;

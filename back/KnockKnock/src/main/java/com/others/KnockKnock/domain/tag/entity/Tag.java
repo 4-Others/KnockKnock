@@ -1,9 +1,14 @@
 package com.others.KnockKnock.domain.tag.entity;
 
+import com.others.KnockKnock.audit.Auditable;
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
+import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,37 +16,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Table(name = "TAGS")
-public class Tag {
+public class Tag extends Auditable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
 
+    @Column(unique = true, nullable = false)
     private String name;
     private String color;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
-    @JoinColumn(name = "SCHEDULE_ID")
-    private Schedule schedule;
+    @OneToMany(mappedBy = "tag", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    private List<Schedule> schedule = new ArrayList<>();
 
-    public void addCalendar(Schedule schedule) {
-        this.schedule = schedule;
-
-        if (!schedule.getTag().contains(this))
-            schedule.getTag().add(this);
-    }
-
-    public void updateCalendar(Schedule schedule) {
-        if (this.schedule != null)
-            this.schedule.getTag().remove(this);
-
-        this.schedule = schedule;
-        schedule.getTag().add(this);
-    }
-
-    public void removeCalendar() {
-        if (this.schedule != null) {
-            this.schedule.getTag().remove(this);
-            this.schedule = null;
-        }
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
 }

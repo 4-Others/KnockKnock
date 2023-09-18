@@ -38,6 +38,7 @@ public enum ExceptionCode {
      *
      */
     NOT_FOUND(404,"결과가 존재하지 않습니다."),
+    TAG_NOT_FOUND(404,"태그가 존재하지 않습니다."),
     USER_NOT_FOUND(404, "등록되지 않은 사용자입니다."),
     USER_WITHDRAW(404, "탈퇴한 사용자입니다."),
     USER_INACTIVE(404, "휴면 계정으로 전환된 사용자입니다."),
