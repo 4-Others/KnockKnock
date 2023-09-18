@@ -3,14 +3,15 @@ import React, {useState, useEffect} from 'react';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
-import axios from 'axios';
+import {AxiosError} from 'axios';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleItemlList from '../../components/ScheduleList';
-import {format} from 'date-fns';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
-import {ScheduleData, convertResponseData, ApiResponseData} from '../../util/dataConvert';
+import {fetchScheduleItems} from '../../api/scheduleApi';
+import {refreshToken} from '../../api/refreshTokenApi';
+import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
 const {width, height} = Dimensions.get('window');
@@ -29,40 +30,42 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const {title, color} = route.params;
-  const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
   const dispatch = useDispatch();
+  const items = useSelector((state: any) => state.schedule.items);
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
   const [scheduleCount, setScheduleCount] = useState(0);
 
+  const updateToken = (newToken: string) => {
+    dispatch({type: 'UPDATE_TOKEN', payload: newToken});
+  };
+
   const loadScheduleItems = async () => {
-    try {
-      const response = await axios.get(`${url}api/v1/schedule/tag?tagName=전체`, {
-        headers: {Authorization: `Bearer ${token}`},
-      });
-      const fetchedData = response.data.body.data;
-      const newItems: Record<string, ScheduleData[]> = {};
+    if (url) {
+      try {
+        const newItems = await fetchScheduleItems(url, token);
+        let count = 0;
+        Object.keys(newItems).forEach(key => {
+          count += newItems[key].length;
+        });
 
-      fetchedData.forEach((item: ApiResponseData) => {
-        const convertedData: ScheduleData = convertResponseData(item);
-        const dateKey = format(new Date(convertedData.startAt), 'yyyy-MM-dd');
-        if (!newItems[dateKey]) {
-          newItems[dateKey] = [];
+        setScheduleCount(count);
+        dispatch(setScheduleItems(newItems));
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response && axiosError.response.status === 401) {
+          const newToken = await refreshToken(url, token);
+          if (newToken) {
+            console.log('Success:', newToken);
+            updateToken(newToken);
+          }
         }
-        newItems[dateKey].push(convertedData);
-      });
-
-      let count = 0;
-      Object.keys(newItems).forEach(key => {
-        count += newItems[key].length;
-      });
-
-      setScheduleCount(count);
-      dispatch(setScheduleItems(newItems));
-    } catch (error) {
-      console.error('Failed to load schedules:', error);
+        console.error('Failed to load schedules:', error);
+      }
+    } else {
+      console.error('URL is undefined');
     }
   };
 
@@ -109,12 +112,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    marginRight: 12,
+    marginLeft: 12,
     paddingTop: 12,
     paddingRight: 20,
     paddingBottom: 10,
     paddingLeft: 36,
-    borderBottomRightRadius: 12,
-    borderBottomLeftRadius: 12,
+    borderRadius: 12,
   },
   shadow: {
     width: '100%',
