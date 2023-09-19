@@ -119,8 +119,13 @@ public class UserController {
     @PostMapping("/me/pw")
     public ResponseEntity<?> mePassword(@Valid @RequestBody UserDto.MePassword requestBody) throws MessagingException {
         try {
-            emailService.sendEmailWithTokenPw(requestBody.getEmail(),"[KnockKnock] 회원 비밀번호 찾기 요청 이메일입니다.");
-            return ResponseEntity.ok("이메일이 성공적으로 발송되었습니다.");
+            boolean isIdValid = userService.verifyId(requestBody.getId());
+            if(isIdValid){
+                emailService.sendEmailWithTokenPw(requestBody.getEmail(),"[KnockKnock] 회원 비밀번호 찾기 요청 이메일입니다.");
+                return ResponseEntity.ok("이메일이 성공적으로 발송되었습니다.");
+            } else{
+                return ResponseEntity.badRequest().body(ApiResponse.unAuthorized());
+            }
         } catch (MessagingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이메일 발송에 실패했습니다.");
         }
@@ -132,13 +137,13 @@ public class UserController {
     public ResponseEntity<?> meConfirmPassword(@Valid @RequestBody UserDto.MePasswordConfirm requestBody) throws MessagingException {
         try {
             boolean isTokenValid = emailService.verifyToken(requestBody.getRandomKey(), requestBody.getEmail());
-
-            if (isTokenValid) {
+            boolean isIdValid = userService.verifyId(requestBody.getId());
+            if (isTokenValid && isIdValid) {
                 // Send the user ID to the email
                 emailService.sendEmailWithPw(requestBody.getEmail(), "[KnockKnock] 회원 비밀번호를 보내드립니다.");
 
                 return ResponseEntity.ok("이메일을 성공적으로 전송했습니다.");
-            } else {
+            } else{
                 return ResponseEntity.badRequest().body(ApiResponse.unAuthorized());
             }
         } catch (Exception e) {

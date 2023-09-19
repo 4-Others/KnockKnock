@@ -21,7 +21,7 @@ public class ApiResponse<T> {
     private final static String INVALID_ACCESS_TOKEN = "Invalid access token.";
     private final static String INVALID_REFRESH_TOKEN = "Invalid refresh token.";
     private final static String NOT_EXPIRED_TOKEN_YET = "Not expired token yet.";
-    private final static String NOT_AUTHORIZED = "이메일 인증을 해주세요";
+    private final static String NOT_AUTHORIZED = "UnAuthorize error!";
     private final static String PASSWORD_IS_WRONG = "패스워드가 일치하지 않습니다";
 
     private final ApiResponseHeader header;
