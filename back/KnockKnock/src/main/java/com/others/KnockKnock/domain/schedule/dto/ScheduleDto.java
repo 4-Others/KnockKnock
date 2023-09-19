@@ -1,5 +1,6 @@
 package com.others.KnockKnock.domain.schedule.dto;
 
+import com.others.KnockKnock.domain.tag.dto.TagDto;
 import com.others.KnockKnock.global.annotations.ValidEnum;
 import lombok.*;
 import org.springframework.lang.Nullable;
@@ -9,9 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.others.KnockKnock.domain.schedule.entity.Schedule.*;
 
@@ -54,8 +53,8 @@ public class ScheduleDto {
 
         private Boolean complete;
 
+        private Long tagId;
         private List<Integer> alerts = new ArrayList<>();
-        private Map<String, String> tag = new HashMap<>();
     }
 
     @Getter
@@ -93,8 +92,8 @@ public class ScheduleDto {
 
         private Boolean complete;
 
+        private Long tagId;
         private List<Integer> alerts = new ArrayList<>();
-        private Map<String, String> tag = new HashMap<>();
     }
 
     @Getter
@@ -108,20 +107,10 @@ public class ScheduleDto {
         private Period period;
         private String startAt;
         private String endAt;
-        private List<Integer> alerts;
         private Boolean complete;
-        // MapStruct toMap(List<Tag> tag)
-        private Map<String, String> tag;
+        private List<Integer> alerts;
+        private TagDto.Response tag;
         private String createdAt;
         private String modifiedAt;
-    }
-
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @NoArgsConstructor
-    @Builder
-    public static class TagGroup implements Serializable {
-        private String tag;
-        private Long schedules;
     }
 }
