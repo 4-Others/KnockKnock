@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/v1/emails/**").permitAll()
                 .antMatchers("/api/v1/auth/login").permitAll()
-                .antMatchers("/api/v1/users", "/api/v1/users/signup").permitAll()
+                .antMatchers("/api/v1/users", "/api/v1/users/signup", "/api/v1/users/me/**").permitAll()
                 .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                 .anyRequest().authenticated()

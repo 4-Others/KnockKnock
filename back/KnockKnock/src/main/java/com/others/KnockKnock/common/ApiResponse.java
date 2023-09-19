@@ -14,6 +14,7 @@ public class ApiResponse<T> {
     private final static int NOT_FOUND = 400;
     private final static int FAILED = 500;
     private final static int UNAUTHORIZED = 401;
+    private final static int PASSWORD_WRONG = 401;
     private final static String SUCCESS_MESSAGE = "SUCCESS";
     private final static String NOT_FOUND_MESSAGE = "NOT FOUND";
     private final static String FAILED_MESSAGE = "서버에서 오류가 발생하였습니다.";
@@ -21,6 +22,7 @@ public class ApiResponse<T> {
     private final static String INVALID_REFRESH_TOKEN = "Invalid refresh token.";
     private final static String NOT_EXPIRED_TOKEN_YET = "Not expired token yet.";
     private final static String NOT_AUTHORIZED = "이메일 인증을 해주세요";
+    private final static String PASSWORD_IS_WRONG = "패스워드가 일치하지 않습니다";
 
     private final ApiResponseHeader header;
     private final Map<String, T> body;
@@ -49,6 +51,9 @@ public class ApiResponse<T> {
     }
     public static <T> ApiResponse<T> unAuthorized(){
         return new ApiResponse(new ApiResponseHeader(UNAUTHORIZED,NOT_AUTHORIZED),null);
+    }
+    public static <T> ApiResponse<T> passwordWrong(){
+        return new ApiResponse(new ApiResponseHeader(PASSWORD_WRONG,PASSWORD_IS_WRONG),null);
     }
 
 }
