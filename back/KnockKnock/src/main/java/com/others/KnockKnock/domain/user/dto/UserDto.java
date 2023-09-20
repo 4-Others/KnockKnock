@@ -90,4 +90,61 @@ public class UserDto {
         private LocalDate birth;
         private Boolean pushAgree;
     }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MeEmailConfirm {
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        @Email
+        private String email;
+
+        @NotNull
+        @NotBlank
+        private String randomKey;
+    }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MeEmail {
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        @Email
+        private String email;
+    }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MePasswordConfirm {
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        private String id;
+
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        @Email
+        private String email;
+
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        private String randomKey;
+    }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MePassword {
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        private String id;
+
+        @NotNull(message = "Null 값은 입력할 수 없습니다.")
+        @NotBlank
+        @Email
+        private String email;
+    }
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseId {
+        private String id;
+    }
 }

@@ -31,8 +31,9 @@ const {width} = Dimensions.get('window');
 
 const Calendar: React.FC<AuthProps> = ({navigation}) => {
   const items = useSelector((state: any) => state.schedule.items);
+  console.log(items);
   const dispatch = useDispatch();
-  const setItems = (newItems: {[key: string]: ScheduleData[]}) => {
+  const setItems = (newItems: any) => {
     dispatch(setScheduleItems(newItems));
   };
   const today = dateFormat(String(new Date()));
@@ -133,7 +134,9 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
         style={styles.calendar}
         onDayPress={day => setSelected(day.dateString)}
         items={items}
-        renderList={items => ScheduleList(items.items, setItems)}
+        renderList={items => {
+          return ScheduleList(items.items, setItems);
+        }}
         markingType={'multi-dot'}
         loadItemsForMonth={(day: DayData) => loadItems(day)}
         selected={selected}

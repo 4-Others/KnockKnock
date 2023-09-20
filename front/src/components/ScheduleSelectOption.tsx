@@ -10,16 +10,15 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
-import {variables} from '../style/variables';
+import {variables, VariablesKeys} from '../style/variables';
 import Selector from './BottomSheet';
-import {scheduleOptionStyles} from '../pages/Schedule/ScheduleAdd';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {SetScheduleData} from '../util/dataConvert';
 
 export interface inputProps {
   type: string;
-  state: string;
+  state: string | {color: string; name: string};
   event: () => void;
 }
 
@@ -98,16 +97,16 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={scheduleOptionStyles.contentLayout}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.contentLayout}>
       <TextInput
         defaultValue={scheduleWillAdd.title}
         placeholder="스케줄을 입력해 주세요."
-        style={scheduleOptionStyles.contentTitleInput}
+        style={styles.contentTitleInput}
         onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, title: text}))}
       />
       <SelectComponent
         type="보드"
-        state={scheduleWillAdd.tag.name}
+        state={scheduleWillAdd.tag}
         event={() => setBoardIsOpen(prevState => !prevState)}
       />
       <SelectComponent
@@ -122,13 +121,14 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
       />
       <SelectComponent type="일정 종료 시간" state={scheduleWillAdd.endAt} event={toggleEndAt} />
       <KeyboardAvoidingView
-        style={scheduleOptionStyles.contentInput}
+        style={styles.contentInput}
         behavior={Platform.OS === 'android' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'android' ? 64 : 0}>
         <Icon name="create-outline" style={styles.icon} />
-        <View style={scheduleOptionStyles.inputContainer}>
-          <Text style={scheduleOptionStyles.inputTitle}>메모</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputTitle}>메모</Text>
           <TextInput
+            style={styles.contentText}
             defaultValue={scheduleWillAdd.content}
             placeholder="메모를 입력하세요"
             onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, content: text}))}
@@ -139,7 +139,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
         onData={onTagState}
-        type="tag" // 타입을 전달
+        type="board" // 타입을 전달
       />
       <Selector
         modalVisible={notificationIsOpen}
@@ -159,18 +159,32 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 };
 
 export const SelectComponent = ({type, state, event}: inputProps) => {
+  const colorChipRender = () => {
+    if (typeof state !== 'string') {
+      let colorValue: any = state.color;
+      if (colorValue.startsWith('variables.')) {
+        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+        colorValue = variables[colorKey];
+      }
+      return <View style={[styles.colorChip, {backgroundColor: colorValue}]} />;
+    }
+  };
+
   return (
     <View style={styles.contentInput}>
       <Icon name="pricetag-outline" style={styles.icon} />
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>{type}</Text>
         <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <TextInput
-            value={state}
-            placeholder={`${type}을 선택하세요.`}
-            style={styles.contentText}
-            editable={false}
-          />
+          <View style={styles.selector}>
+            {colorChipRender()}
+            <TextInput
+              value={typeof state === 'string' ? state : state.name}
+              placeholder={`${type}을 선택하세요.`}
+              style={styles.contentText}
+              editable={false}
+            />
+          </View>
           <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
         </TouchableOpacity>
       </View>
@@ -179,6 +193,19 @@ export const SelectComponent = ({type, state, event}: inputProps) => {
 };
 
 const styles = StyleSheet.create({
+  contentLayout: {
+    marginRight: 24,
+    marginLeft: 24,
+    marginTop: 24,
+  },
+  contentTitleInput: {
+    fontFamily: variables.font_3,
+    color: variables.text_2,
+    fontSize: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_1,
+    paddingBottom: 16,
+  },
   contentInput: {
     marginTop: 20,
     flexDirection: 'row',
@@ -198,8 +225,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   contentText: {
+    padding: 0,
+    paddingTop: 10,
+    marginBottom: 10,
+    height: 30,
     fontFamily: variables.font_4,
     color: variables.text_3,
+    fontSize: 14,
     ...Platform.select({
       ios: {marginTop: 10},
       android: {marginTop: 0},
@@ -216,21 +248,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  searchBar: {
-    fontFamily: variables.font_3,
-    color: variables.text_2,
-    fontSize: 14,
-    backgroundColor: variables.back_1,
-    paddingTop: 12,
-    paddingBottom: 12,
-    paddingLeft: 20,
-    paddingRight: 20,
-    height: 44,
-    borderRadius: 60,
+  selector: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   icon: {
     fontSize: 24,
     marginRight: 30,
     color: variables.main,
+  },
+  colorChip: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    marginRight: 6,
   },
 });

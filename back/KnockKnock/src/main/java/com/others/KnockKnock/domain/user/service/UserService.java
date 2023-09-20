@@ -77,6 +77,16 @@ public class UserService {
         userRepository.save(existingUser);
     }
 
+    public Boolean verifyId(String id){
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        if(existingUser.getId().equals(id)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     @Transactional
     public void deleteUserByAccessToken(String accessToken) {
         // Access Token을 사용하여 사용자를 식별
@@ -143,6 +153,7 @@ public class UserService {
             throw new BusinessLogicException(ExceptionCode.ALREADY_EXISTS_EMAIL);
         });
     }
+
 
     public void saveUser(User user){
         userRepository.save(user);

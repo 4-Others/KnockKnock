@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -9,17 +9,19 @@ import {
   Dimensions,
   PanResponder,
   TouchableOpacity,
+  ScrollView,
+  TextInput,
 } from 'react-native';
 import {variables} from '../style/variables';
 import {VariablesKeys} from '../style/variables';
 import BoardData from '../pages/ScheduleBoard/BoardItems/boardData.json';
-import {ScheduleData} from '../util/dataConvert';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type SelectorProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   onData: (value: any) => void;
-  type: 'tag' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
+  type: 'board' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
 };
 
 type BoardData = {
@@ -32,6 +34,16 @@ type BoardData = {
 
 //? modalBottomSheet 레이아웃
 const Selector: React.FC<SelectorProps> = props => {
+  const [newBoard, setNewBoard] = useState({name: '', color: ''});
+  const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
+
+  const handleBoardValue = (type: string, value: string) => {
+    setNewBoard({
+      ...newBoard,
+      [type]: value,
+    });
+  };
+
   const {
     modalVisible,
     setModalVisible,
@@ -76,27 +88,70 @@ const Selector: React.FC<SelectorProps> = props => {
     }),
   ).current;
 
-  const RenderTagList = (tag: BoardData[]) => {
-    return tag.map(data => {
-      let colorValue: any = data.color;
-      if (colorValue.startsWith('variables.')) {
-        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
-        colorValue = variables[colorKey];
-      }
-      const newTag = {color: data.color, name: data.title};
-      return (
+  const RenderBoardList = () => {
+    //? board 컬러 리스트 배열 생성
+    const boardColors: string[] = Object.keys(variables)
+      .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
+      .map(key => variables[key as VariablesKeys] as string);
+
+    return (
+      <View style={styles.renderBoardContainer}>
+        <Text style={styles.title}>스케줄 보드</Text>
+        <ScrollView horizontal={true}>
+          {BoardData.map(data => {
+            const {color, boardId, title} = data;
+            let colorValue: any = color;
+            if (colorValue.startsWith('variables.')) {
+              let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+              colorValue = variables[colorKey];
+            }
+            const changBoard = {color, name: title};
+            return (
+              <TouchableOpacity
+                style={[styles.boardSeclector, {backgroundColor: colorValue}]}
+                key={boardId}
+                onPress={() => {
+                  setModalVisible(false);
+                  onData(changBoard);
+                }}>
+                <Text style={styles.menuText}>{title}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+        <Text style={styles.subTitle}>보드 명</Text>
+        <TextInput
+          style={styles.boardNameInput}
+          placeholder="새로운 보드 이름을 입력하세요."
+          onChangeText={text => handleBoardValue('name', text)}
+          value={newBoard.name}
+        />
+        <Text style={styles.subTitle}>보드 컬러</Text>
+        <View style={styles.colorChipContainer}>
+          {boardColors.map((color, i) => {
+            return (
+              <TouchableOpacity
+                key={i}
+                style={[styles.colorChip, {backgroundColor: color}]}
+                onPress={() => {
+                  handleBoardValue('color', color);
+                  setSelectedColorIndex(i);
+                }}>
+                {i === selectedColorIndex ? <Icon name="check" style={styles.icon} /> : null}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
         <TouchableOpacity
-          style={styles.itemSelectMenu}
-          key={data.boardId}
+          style={styles.button}
           onPress={() => {
             setModalVisible(false);
-            onData(newTag);
+            onData(newBoard);
           }}>
-          <View style={[styles.colorChip, {backgroundColor: colorValue}]}></View>
-          <Text style={styles.menuText}>{data.title}</Text>
+          <Text>보드 생성</Text>
         </TouchableOpacity>
-      );
-    });
+      </View>
+    );
   };
 
   const RenderNotificationList = () => {
@@ -130,8 +185,8 @@ const Selector: React.FC<SelectorProps> = props => {
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {type === 'tag' // 타입에 따라 다른 데이터 표시
-            ? RenderTagList(BoardData)
+          {type === 'board' // 타입에 따라 다른 데이터 표시
+            ? RenderBoardList()
             : RenderNotificationList()}
         </Animated.View>
       </View>
@@ -164,17 +219,69 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
+  renderBoardContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  title: {
+    fontFamily: variables.font_2,
+    fontSize: 18,
+    color: variables.text_1,
+    marginBottom: 20,
+  },
+  boardSeclector: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 26,
+    paddingLeft: 12,
+    paddingRight: 12,
+    marginRight: 6,
+    borderRadius: 30,
+    marginBottom: 30,
+  },
   menuText: {
     fontFamily: variables.font_3,
-    fontSize: 16,
-    color: variables.text_3,
+    fontSize: 14,
+    lineHeight: 16,
+    color: 'white',
+  },
+  subTitle: {
+    fontFamily: variables.font_4,
+    fontSize: 14,
+    color: variables.text_2,
+    marginBottom: 10,
+  },
+  boardNameInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_1,
+    marginBottom: 20,
+  },
+  colorChipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // 텍스트를 다음 줄로 넘기기 위해 필요한 속성
+    marginTop: 10,
   },
   colorChip: {
-    width: 12,
-    height: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 24,
+    height: 24,
+    borderRadius: 30,
+    marginRight: 14,
+    marginBottom: 14,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: variables.line_1,
-    borderRadius: 10,
-    marginRight: 10,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  icon: {
+    color: 'white',
+    fontSize: 14,
   },
 });
