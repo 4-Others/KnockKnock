@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,8 @@ public class ScheduleDto {
 
         private Boolean complete;
 
+        @NotNull
+        @Positive
         private Long tagId;
         private List<Integer> alerts = new ArrayList<>();
     }

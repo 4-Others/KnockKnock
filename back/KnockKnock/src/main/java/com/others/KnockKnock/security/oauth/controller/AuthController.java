@@ -60,7 +60,7 @@ public class AuthController {
 
         User user = userOptional.get();
         String enteredPassword = authReqModel.getPassword();
-
+        //패스워드 일치여부 판별
         if(passwordEncoder.matches(enteredPassword, user.getPassword())) {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -103,7 +103,7 @@ public class AuthController {
             return ApiResponse.success("token", accessToken.getToken());
         }
         else{
-            return ApiResponse.unAuthorized();
+            return ApiResponse.passwordWrong();
         }
     }
     /*

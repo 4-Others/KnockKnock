@@ -9,6 +9,7 @@ import {isPasswordValid} from '../../util/authUtil';
 import {storageSetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
 import {setLogin} from '../../util/redux/userSlice';
+import {loginPost} from '../../api/authApi';
 
 const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [data, setData] = useState({id: '', password: ''});
@@ -20,8 +21,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
 
   const loginAuth = async () => {
     try {
-      const res = await axios.post(`${url}api/v1/auth/login`, data);
-      const token = res.data.body.token;
+      const token = await loginPost(data);
       if (autoLogin === true) storageSetValue('user', {id, token});
       dispatch(setLogin({id, token}));
       navigation.navigate('MainTab');
