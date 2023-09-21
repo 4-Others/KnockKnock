@@ -25,6 +25,7 @@ export interface inputProps {
 interface ScheduleOptionProps {
   scheduleWillAdd: SetScheduleData;
   setScheduleWillAdd: React.Dispatch<React.SetStateAction<SetScheduleData>>;
+  url?: string;
 }
 
 export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
@@ -85,13 +86,13 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 
   const onNotificationState = (value: number) => {
     setScheduleWillAdd((prevData: SetScheduleData) => {
-      const updatedAlerts = prevData.alerts.includes(value)
-        ? prevData.alerts.filter(item => item !== value)
-        : [...prevData.alerts, value];
+      // const updatedAlerts = prevData.alerts.includes(value)
+      //   ? prevData.alerts.filter(item => item !== value)
+      //   : [value];
 
       return {
         ...prevData,
-        alerts: updatedAlerts,
+        alerts: [value],
       };
     });
   };
@@ -111,7 +112,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
       />
       <SelectComponent
         type="알림 시간"
-        state={scheduleWillAdd.alerts.join(', ')}
+        state={scheduleWillAdd.alerts.join()}
         event={() => setNotificationIsOpen(prevState => !prevState)}
       />
       <SelectComponent
@@ -166,7 +167,7 @@ export const SelectComponent = ({type, state, event}: inputProps) => {
         let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
         colorValue = variables[colorKey];
       }
-      return <View style={[styles.colorChip, {backgroundColor: colorValue}]} />;
+      return colorValue ? <View style={[styles.colorChip, {backgroundColor: colorValue}]} /> : null;
     }
   };
 

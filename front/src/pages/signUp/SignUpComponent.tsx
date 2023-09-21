@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -17,7 +17,6 @@ interface InputAreaProps {
   input: string;
   setInput: (text: string) => void;
   btnText?: string;
-  compare?: string;
   func?: () => void;
   disabled?: boolean;
   errorMessage?: string;
@@ -55,25 +54,8 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
 };
 const InputArea: React.FC<InputAreaProps> = props => {
   const [masking, setMasking] = useState(true);
-  const {type, input, setInput, compare, errorMessage, keyType} = props;
+  const {type, input, setInput, errorMessage, keyType} = props;
   const isPasswordInput = type.includes('비밀번호');
-
-  const validationError = (value: string) => {
-    if (value.length > 0) {
-      if (type === '비밀번호' && !isPasswordValid(value)) {
-        return (
-          <Text style={styles.alertText}>
-            8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.
-          </Text>
-        );
-      }
-      if (type === '비밀번호 다시' && compare !== value) {
-        return <Text style={styles.alertText}>비밀번호가 일치하지 않습니다.</Text>;
-      }
-    }
-  };
-
-  const ErrorMessage = (value: string) => {};
 
   return (
     <View style={styles.inputContainer}>
