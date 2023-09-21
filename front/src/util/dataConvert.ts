@@ -47,6 +47,13 @@ export interface SetScheduleData {
   };
 }
 
+export type BoardDataItem = {
+  tagId: number;
+  name: string;
+  color: string;
+  scheduleCount: number;
+};
+
 type DayData = {
   dateString: string;
   day: number;

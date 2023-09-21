@@ -44,7 +44,9 @@ const AuthStack: React.FC = () => {
 const StackSchedule = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="ScheduleBoard" component={ScheduleBoard} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleBoard" options={{headerShown: false}}>
+        {props => <ScheduleBoard {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="BoardDetail" options={{headerShown: false}}>
         {props => <BoardDetail {...props} url={url} />}
       </Stack.Screen>

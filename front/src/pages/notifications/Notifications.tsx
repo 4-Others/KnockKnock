@@ -1,38 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import {storageGetValue} from '../../util/authUtil';
-
-const {width, height} = Dimensions.get('window');
+import {useSelector} from 'react-redux';
 
 const Notifications = () => {
-  const [datas, setDatas] = useState([]);
+  const [notificationDatas, setNotificationDatas] = useState([]);
   const url = Config.API_APP_KEY;
+  const user = useSelector((state: any) => state.user);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = await storageGetValue('user');
-        if (token) {
-          const response = await axios.get(`${url}api/v1/notification/stream`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        if (user && user.token) {
+          const response = await axios.get(`${url}api/v1/notification`, {
+            headers: {Authorization: `Bearer ${user.token}`},
           });
-          setDatas(response.data);
-          console.log(response.data);
+          setNotificationDatas(response.data);
+          console.log(notificationDatas);
         } else {
           console.error('No token found.');
         }
@@ -48,10 +36,10 @@ const Notifications = () => {
     <SafeAreaView>
       <Header title="알림" type="alarm" />
       <ScrollView style={styles.scheduleListContainer}>
-        {datas.map((data, i) => {
+        {/* {notificationDatas.map((data, i) => {
           return (
             <View key={i}>
-              {/* <Text style={styles.listDateTitle}>{data.date.replace(/-/g, '.')}</Text>
+              <Text style={styles.listDateTitle}>{data.date.replace(/-/g, '.')}</Text>
               {data.contents.map((item, key) => (
                 <TouchableOpacity style={styles.item} key={key}>
                   <Shadow
@@ -66,10 +54,10 @@ const Notifications = () => {
                     </View>
                   </Shadow>
                 </TouchableOpacity>
-              ))} */}
+              ))}
             </View>
           );
-        })}
+        })} */}
       </ScrollView>
     </SafeAreaView>
   );

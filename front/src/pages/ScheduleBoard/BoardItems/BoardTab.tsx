@@ -14,7 +14,7 @@ type TabNavProp = MaterialTopTabNavigationProp<{[key: string]: undefined}>;
 const DisplayNone = () => null;
 
 type BoardTabProps = {
-  active: number;
+  active: number | null;
   onActiveChange: (newValue: number) => void;
 };
 

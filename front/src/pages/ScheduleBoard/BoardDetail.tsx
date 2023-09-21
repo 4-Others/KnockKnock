@@ -1,5 +1,5 @@
-import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import React, {useState, useEffect} from 'react';
+import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';

@@ -19,7 +19,7 @@ interface BoardItemProps {
   title: string;
   number: number;
   color: string;
-  active: number;
+  active: number | null;
 }
 
 const deviceWidth = Dimensions.get('window').width;
