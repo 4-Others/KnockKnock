@@ -16,6 +16,9 @@ import {variables} from '../style/variables';
 import {VariablesKeys} from '../style/variables';
 import BoardData from '../pages/ScheduleBoard/BoardItems/boardData.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import Config from 'react-native-config';
 
 type SelectorProps = {
   modalVisible: boolean;
@@ -34,6 +37,9 @@ type BoardData = {
 
 //? modalBottomSheet 레이아웃
 const Selector: React.FC<SelectorProps> = props => {
+  const url = Config.API_APP_KEY;
+  const user = useSelector((state: any) => state.user);
+  const [boardList, setBoardList] = useState<string[]>([]);
   const [newBoard, setNewBoard] = useState({name: '', color: ''});
   const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
 
@@ -89,11 +95,23 @@ const Selector: React.FC<SelectorProps> = props => {
   ).current;
 
   const RenderBoardList = () => {
+    const getByBoardList = async () => {
+      if (url) {
+        try {
+          const res = axios.get(`${url}api/v1/tags/1`, {
+            headers: {Authorization: `Bearer ${user.token}`},
+          });
+          console.log(res);
+        } catch {}
+      }
+    };
     //? board 컬러 리스트 배열 생성
     const boardColors: string[] = Object.keys(variables)
       .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
       .map(key => variables[key as VariablesKeys] as string);
-
+    useEffect(() => {
+      getByBoardList();
+    }, []);
     return (
       <View style={styles.renderBoardContainer}>
         <Text style={styles.title}>스케줄 보드</Text>
@@ -157,7 +175,13 @@ const Selector: React.FC<SelectorProps> = props => {
   const RenderNotificationList = () => {
     return periodData.map((data, index) => {
       return (
-        <TouchableOpacity style={styles.itemSelectMenu} key={index} onPress={() => onData(data)}>
+        <TouchableOpacity
+          style={styles.itemSelectMenu}
+          key={index}
+          onPress={() => {
+            setModalVisible(false);
+            onData(data);
+          }}>
           <Text>{`${data}분 전`}</Text>
         </TouchableOpacity>
       );

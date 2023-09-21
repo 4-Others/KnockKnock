@@ -11,9 +11,12 @@ import {
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
 import {InputArea, CheckBtn} from './SignUpComponent';
-import {isEmaildValid} from '../../util/authUtil';
+import {isEmaildValid, validErrorMessage} from '../../util/authUtil';
 import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
+import {loginPost} from '../../api/authApi';
+import {useDispatch} from 'react-redux';
+import {setLogin} from '../../util/redux/userSlice';
 
 type InputValue = {
   id: string;
@@ -118,7 +121,7 @@ const SignAgree: React.FC<AgreeScreenProps> = ({navigation}) => {
 //! step2: 회원정보 입력
 const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
   const pushAgree = route.params.pushAgree;
-
+  const dispatch = useDispatch();
   const [complete, setComplete] = useState<Complete>({
     emailAPI: false,
     verifyKeyAPI: false,
@@ -196,7 +199,20 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
       const response = await axios.post(`${url}api/v1/emails/verify`, key);
       if (response.status === 200) {
         console.log('verifyKeyAPI 성공');
-        changeComplete('verifyKeyAPI', true);
+        try {
+          const token = await loginPost({id, password});
+          if (token) {
+            const allTag = {name: '전체', color: 'variables.Mater_15'};
+            const initalTagRes = await axios.post(`${url}api/v1/tags`, allTag, {
+              headers: {Authorization: `Bearer ${token}`},
+            });
+            console.log('initalTagRes 성공');
+            changeComplete('verifyKeyAPI', true);
+            dispatch(setLogin({id, token}));
+          }
+        } catch (error: any) {
+          console.log('initalTagRes', error.request);
+        }
       }
     } catch (error: any) {
       console.log('verifyKeyAPI', error.request);
@@ -212,12 +228,13 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
           type="비밀번호"
           input={password}
           setInput={text => changeInputText('password', text)}
+          errorMessage={validErrorMessage.password(password)}
         />
         <InputArea
           type="비밀번호 다시"
           input={comparePassword}
           setInput={text => changeInputText('comparePassword', text)}
-          compare={password}
+          errorMessage={validErrorMessage.comparePassword(comparePassword, password)}
         />
         <InputArea
           type="이름"
@@ -229,6 +246,7 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
           input={birth}
           setInput={text => changeInputText('birth', text)}
           keyType="numeric"
+          errorMessage={validErrorMessage.birth(birth)}
         />
         <InputArea
           type="이메일"
@@ -237,6 +255,7 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
           btnText="메일발송"
           func={userInfoThenEmailPost}
           disabled={!isEmaildValid(email)}
+          errorMessage={validErrorMessage.email(email)}
         />
         {complete.emailAPI && isEmaildValid(email) && (
           <InputArea
@@ -258,15 +277,16 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
 
 interface SuccessScreenProps {
   navigation: any;
+  route: any;
 }
 
 const SignSuccess: React.FC<SuccessScreenProps> = ({navigation}) => {
   const handleLogin = () => {
-    navigation.navigate('Login');
+    navigation.navigate('MainTab');
   };
 
   return (
-    <SafeAreaView style={styles.inputContainer}>
+    <SafeAreaView style={styles.screenContainer}>
       <Image
         source={require('front/assets/animations/signup.gif')}
         style={{width: '100%', height: '50%'}}

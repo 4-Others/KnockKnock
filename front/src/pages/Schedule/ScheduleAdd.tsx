@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {addScheduleItem} from '../../util/redux/scheduleSlice';
