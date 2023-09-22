@@ -16,6 +16,7 @@ spring:
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
+            client-secret: ${KAKAO_SECRET}
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: post
             authorization-grant-type: authorization_code
