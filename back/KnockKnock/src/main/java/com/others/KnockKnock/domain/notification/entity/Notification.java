@@ -31,7 +31,7 @@ public class Notification extends Auditable {
     @Setter
     @Column(columnDefinition = "TINYINT(1)")
     //@Type(type = "org.hibernate.type.NumericBooleanType")
-    private Boolean read;
+    private Boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCHEDULE_ID")
