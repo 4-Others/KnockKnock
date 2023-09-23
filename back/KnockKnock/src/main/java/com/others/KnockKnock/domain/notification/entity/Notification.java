@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "NOTIFICATIONS")
+@Table(name = "NOTIFICATION")
 public class Notification extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
