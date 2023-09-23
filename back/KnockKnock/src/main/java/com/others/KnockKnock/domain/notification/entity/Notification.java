@@ -6,6 +6,7 @@ import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Table(name = "NOTIFICATION")
+@Table(name = "NOTIFICATIONS")
 public class Notification extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,12 @@ public class Notification extends Auditable {
     private String notifyAt;
 
     @Setter
+    @Column(columnDefinition = "TINYINT(1)")
+    //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean delivered;
     @Setter
+    @Column(columnDefinition = "TINYINT(1)")
+    //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean read;
 
     @ManyToOne(fetch = FetchType.LAZY)
