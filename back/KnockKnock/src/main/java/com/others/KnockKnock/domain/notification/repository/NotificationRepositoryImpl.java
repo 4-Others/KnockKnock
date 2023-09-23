@@ -93,8 +93,8 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
         return notificationIds.size() != 0 ? notification.notificationId.in(notificationIds) : null;
     }
 
-    private BooleanExpression readEq(boolean read) {
-        return notification.read.eq(read);
+    private BooleanExpression readEq(boolean isRead) {
+        return notification.isRead.eq(isRead);
     }
 
     private BooleanExpression deliveredEq(boolean isDelivered) {

@@ -25,11 +25,11 @@ public class Notification extends Auditable {
     private String notifyAt;
 
     @Setter
-    @Column(columnDefinition = "TINYINT(1)")
+    @Column(columnDefinition = "TINYINT")
     //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean delivered;
     @Setter
-    @Column(columnDefinition = "TINYINT(1)")
+    @Column(columnDefinition = "TINYINT")
     //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean isRead;
 
