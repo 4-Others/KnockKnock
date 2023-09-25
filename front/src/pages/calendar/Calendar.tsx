@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Agenda} from 'react-native-calendars';
 import {StyleSheet, View, Platform, Dimensions, TouchableOpacity, Text} from 'react-native';
-import scheduleData from '../../util/PracticeScheduleData.json';
 import {variables} from '../../style/variables';
 import ProfileHeader from '../../components/ProfileHeader';
 import {AuthProps} from '../../navigations/StackNavigator';
@@ -9,7 +8,6 @@ import ScheduleList from '../../components/ScheduleList';
 import {convertResponseData, dateFormat, ScheduleData} from '../../util/dataConvert';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
-import {storageResetValue} from '../../util/authUtil';
 
 interface DayData {
   dateString: string;
@@ -29,7 +27,7 @@ interface MarkedDate {
 
 const {width} = Dimensions.get('window');
 
-const Calendar: React.FC<AuthProps> = ({navigation}) => {
+const Calendar: React.FC<AuthProps> = () => {
   const items = useSelector((state: any) => state.schedule.items);
   console.log(items);
   const dispatch = useDispatch();
@@ -65,29 +63,29 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
   const multiDotProps = (): Record<string, MarkedDate> => {
     const markedDates: Record<string, MarkedDate> = {};
 
-    scheduleData.forEach((data, index) => {
-      const date = data.startAt.split(' ')[0];
-      const tag = data.tag;
+    // scheduleData.forEach((data, index) => {
+    //   const date = data.startAt.split(' ')[0];
+    //   const tag = data.tag;
 
-      if (!markedDates[date]) {
-        markedDates[date] = {
-          selected: selected === date,
-          selectedColor: 'white',
-          selectedTextColor: variables.main,
-          marked: true,
-          dots: [],
-        };
-      }
+    //   if (!markedDates[date]) {
+    //     markedDates[date] = {
+    //       selected: selected === date,
+    //       selectedColor: 'white',
+    //       selectedTextColor: variables.main,
+    //       marked: true,
+    //       dots: [],
+    //     };
+    //   }
 
-      if (tag) {
-        const dot = {
-          key: String(index),
-          color: tag.color,
-          selectedDotColor: tag.color,
-        };
-        markedDates[date].dots.push(dot);
-      }
-    });
+    //   if (tag) {
+    //     const dot = {
+    //       key: String(index),
+    //       color: tag.color,
+    //       selectedDotColor: tag.color,
+    //     };
+    //     markedDates[date].dots.push(dot);
+    //   }
+    // });
 
     return markedDates;
   };
@@ -99,17 +97,17 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
     const startDate = new Date(timestamp);
     const endDate = new Date(timestamp + 10 * 24 * 60 * 60 * 1000);
 
-    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-      const time = dateFormat(String(date));
+    // for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+    //   const time = dateFormat(String(date));
 
-      if (!newItems[time]) {
-        newItems[time] = [];
-        const renderData = scheduleData.filter((item: any) => dateFormat(item.startAt) === time);
-        renderData.forEach((item: any) => {
-          newItems[time].push(convertResponseData(item));
-        });
-      }
-    }
+    //   if (!newItems[time]) {
+    //     newItems[time] = [];
+    //     const renderData = scheduleData.filter((item: any) => dateFormat(item.startAt) === time);
+    //     renderData.forEach((item: any) => {
+    //       newItems[time].push(convertResponseData(item));
+    //     });
+    //   }
+    // }
 
     function formatDate(year: number, month: number) {
       const yyyy = year.toString();
@@ -122,13 +120,6 @@ const Calendar: React.FC<AuthProps> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          storageResetValue();
-          navigation.navigate('AuthSplach');
-        }}>
-        <Text>로그아웃</Text>
-      </TouchableOpacity>
       <ProfileHeader />
       <Agenda
         style={styles.calendar}

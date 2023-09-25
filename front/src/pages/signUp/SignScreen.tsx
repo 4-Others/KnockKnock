@@ -202,7 +202,7 @@ const SignUserInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) =
         try {
           const token = await loginPost({id, password});
           if (token) {
-            const allTag = {name: '전체', color: 'variables.Mater_15'};
+            const allTag = {name: '전체', color: '#757575'};
             const initalTagRes = await axios.post(`${url}api/v1/tags`, allTag, {
               headers: {Authorization: `Bearer ${token}`},
             });

@@ -3,7 +3,8 @@ import {View, StyleSheet, Platform, Dimensions} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import LinearGradient from 'react-native-linear-gradient';
 import {variables, VariablesKeys} from '../../../style/variables';
-import {BoardDataItem} from '../../../util/dataConvert';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../util/redux/store';
 import BoardItem from './BoardItem';
 
 const deviceHeight = Dimensions.get('window').height;
@@ -11,12 +12,12 @@ const deviceHeight = Dimensions.get('window').height;
 type BoardPackProps = {
   active: number | null;
   onActiveChange: (newValue: number) => void;
-  url: string;
-  boardData: BoardDataItem[];
   carouselRef: RefObject<any>;
 };
 
-const BoardPack = ({url, active, onActiveChange, boardData, carouselRef}: BoardPackProps) => {
+const BoardPack = ({active, onActiveChange, carouselRef}: BoardPackProps) => {
+  const boardData = useSelector((state: RootState) => state.board);
+
   const renderItem = ({item}: {item: any}) => {
     let colorValue = item.color;
     if (colorValue.startsWith('variables.')) {
@@ -25,7 +26,7 @@ const BoardPack = ({url, active, onActiveChange, boardData, carouselRef}: BoardP
     }
     return (
       <BoardItem
-        key={item.boardId.toString()}
+        key={item.boardId}
         boardId={item.tagId}
         title={item.name}
         number={item.scheduleCount}

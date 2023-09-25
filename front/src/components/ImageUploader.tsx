@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, Image, View, StyleSheet, Alert} from 'react-native';
+import {TouchableOpacity, Image, View, StyleSheet} from 'react-native';
 import {Text} from 'react-native-animatable';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {variables} from '../style/variables';

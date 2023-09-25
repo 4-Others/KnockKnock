@@ -11,14 +11,13 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Alert,
 } from 'react-native';
 import {variables} from '../style/variables';
 import {VariablesKeys} from '../style/variables';
-import BoardData from '../pages/ScheduleBoard/BoardItems/boardData.json';
+import {useSelector} from 'react-redux';
+import {RootState} from '../util/redux/store';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
-import Config from 'react-native-config';
 
 type SelectorProps = {
   modalVisible: boolean;
@@ -27,21 +26,12 @@ type SelectorProps = {
   type: 'board' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
 };
 
-type BoardData = {
-  boardId: number;
-  type: string;
-  title: string;
-  number: number;
-  color: string;
-};
-
 //? modalBottomSheet 레이아웃
-const Selector: React.FC<SelectorProps> = props => {
-  const url = Config.API_APP_KEY;
-  const user = useSelector((state: any) => state.user);
-  const [boardList, setBoardList] = useState<string[]>([]);
+const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onData, type}) => {
   const [newBoard, setNewBoard] = useState({name: '', color: ''});
   const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
+  const [selectedNotification, setSelectedNotification] = useState<string | null>(null);
+  const boardData = useSelector((state: RootState) => state.board);
 
   const handleBoardValue = (type: string, value: string) => {
     setNewBoard({
@@ -49,15 +39,6 @@ const Selector: React.FC<SelectorProps> = props => {
       [type]: value,
     });
   };
-
-  const {
-    modalVisible,
-    setModalVisible,
-    onData,
-    type, // 타입을 받아옴
-  } = props;
-
-  const periodData = [30, 60, 90, 120, 1440];
 
   const screenHeight = Dimensions.get('screen').height;
   const panY = useRef(new Animated.Value(screenHeight)).current;
@@ -95,47 +76,39 @@ const Selector: React.FC<SelectorProps> = props => {
   ).current;
 
   const RenderBoardList = () => {
-    const getByBoardList = async () => {
-      if (url) {
-        try {
-          const res = axios.get(`${url}api/v1/tags/1`, {
-            headers: {Authorization: `Bearer ${user.token}`},
-          });
-          console.log(res);
-        } catch {}
-      }
-    };
     //? board 컬러 리스트 배열 생성
     const boardColors: string[] = Object.keys(variables)
       .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
       .map(key => variables[key as VariablesKeys] as string);
-    useEffect(() => {
-      getByBoardList();
-    }, []);
+
     return (
       <View style={styles.renderBoardContainer}>
         <Text style={styles.title}>스케줄 보드</Text>
         <ScrollView horizontal={true}>
-          {BoardData.map(data => {
-            const {color, boardId, title} = data;
-            let colorValue: any = color;
-            if (colorValue.startsWith('variables.')) {
-              let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
-              colorValue = variables[colorKey];
-            }
-            const changBoard = {color, name: title};
-            return (
-              <TouchableOpacity
-                style={[styles.boardSeclector, {backgroundColor: colorValue}]}
-                key={boardId}
-                onPress={() => {
-                  setModalVisible(false);
-                  onData(changBoard);
-                }}>
-                <Text style={styles.menuText}>{title}</Text>
-              </TouchableOpacity>
-            );
-          })}
+          {boardData && boardData.length > 0 ? (
+            boardData.map(data => {
+              const {color, tagId, name} = data;
+              let colorValue: any = color;
+              if (colorValue.startsWith('variables.')) {
+                let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+                colorValue = variables[colorKey];
+              }
+              const changBoard = {color, name: name};
+              return (
+                <TouchableOpacity
+                  style={[styles.boardSeclector, {backgroundColor: colorValue}]}
+                  key={tagId}
+                  onPress={() => {
+                    setModalVisible(false);
+                    onData(changBoard);
+                  }}>
+                  <Text style={styles.menuText}>{name}</Text>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text style={styles.boardSeclector}>No Board Data</Text>
+          )}
         </ScrollView>
         <Text style={styles.subTitle}>보드 명</Text>
         <TextInput
@@ -163,8 +136,12 @@ const Selector: React.FC<SelectorProps> = props => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setModalVisible(false);
-            onData(newBoard);
+            if (newBoard.name && newBoard.color) {
+              setModalVisible(false);
+              onData(newBoard);
+            } else {
+              Alert.alert('보드 이름과 컬러를 모두 작성해주세요.');
+            }
           }}>
           <Text>보드 생성</Text>
         </TouchableOpacity>
@@ -172,27 +149,43 @@ const Selector: React.FC<SelectorProps> = props => {
     );
   };
 
+  const notificatioData = ['30분 전', '60분 전', '90분 전', '120분 전', '1440분 전'];
+
+  const handleSelectNotification = (period: string) => {
+    setSelectedNotification(prev => {
+      const newPeriod = prev === period ? null : period;
+      onData(newPeriod === null ? '' : newPeriod);
+      return newPeriod;
+    });
+  };
+
+  useEffect(() => {
+    if (selectedNotification !== null) {
+      onData(selectedNotification === null ? '' : selectedNotification);
+    }
+  }, [selectedNotification]);
+
   const RenderNotificationList = () => {
-    return periodData.map((data, index) => {
+    return notificatioData.map((data, index) => {
+      const isSelected = selectedNotification === data;
       return (
         <TouchableOpacity
-          style={styles.itemSelectMenu}
+          style={[styles.itemSelectMenu, isSelected ? styles.selectedPeriod : {}]}
           key={index}
           onPress={() => {
-            setModalVisible(false);
-            onData(data);
+            handleSelectNotification(data);
           }}>
-          <Text>{`${data}분 전`}</Text>
+          <Text>{data}</Text>
         </TouchableOpacity>
       );
     });
   };
 
   useEffect(() => {
-    if (props.modalVisible) {
+    if (modalVisible) {
       resetBottomSheet.start();
     }
-  }, [props.modalVisible]);
+  }, [modalVisible]);
 
   const closeModal = () => {
     closeBottomSheet.start(() => {
@@ -307,5 +300,8 @@ const styles = StyleSheet.create({
   icon: {
     color: 'white',
     fontSize: 14,
+  },
+  selectedPeriod: {
+    backgroundColor: variables.line_2,
   },
 });

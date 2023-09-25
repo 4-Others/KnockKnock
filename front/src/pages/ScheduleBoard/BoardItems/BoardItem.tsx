@@ -8,7 +8,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';

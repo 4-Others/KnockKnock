@@ -5,7 +5,6 @@ import Login from '../pages/login/Login';
 import AuthSplashScreen from '../pages/login/AuthSplashScreen';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
-import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
@@ -50,7 +49,6 @@ const StackSchedule = () => {
       <Stack.Screen name="BoardDetail" options={{headerShown: false}}>
         {props => <BoardDetail {...props} url={url} />}
       </Stack.Screen>
-      <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
         {props => <ScheduleAdd {...props} url={url} />}

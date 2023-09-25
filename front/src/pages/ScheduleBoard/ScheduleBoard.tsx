@@ -1,43 +1,42 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
+import Carousel from 'react-native-snap-carousel';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
-import {useSelector} from 'react-redux';
-import BoardPack from './BoardItems/BoardPack';
-import BoardTab from './BoardItems/BoardTab';
-import ProfileHeader from '../../components/ProfileHeader';
+import {useDispatch, useSelector} from 'react-redux';
+import {setBoardData} from '../../util/redux/boardSlice';
+import {RootState} from '../../util/redux/store';
+import {fetchBoardData} from '../../api/boardApi';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {BoardDataItem} from '../../util/dataConvert';
+import ProfileHeader from '../../components/ProfileHeader';
+import BoardPack from './BoardItems/BoardPack';
+import BoardTab from './BoardItems/BoardTab';
 
 const deviceWidth = Dimensions.get('window').width;
 
 const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
-  const [boardData, setBoardData] = useState<BoardDataItem[]>([]);
-  const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
-  const carouselRef = useRef<any>(null);
+  const carouselRef = useRef<Carousel<BoardDataItem>>(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const boardData = useSelector((state: RootState) => state.board);
   const token = useSelector((state: any) => state.user.token);
+  const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
 
   useEffect(() => {
-    if (token) {
+    if (url) {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`${url}api/v1/tags`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          console.log('API Response:', response.data.body.data);
-          setBoardData(response.data.body.data);
+          const data = await fetchBoardData(url, token);
+          dispatch(setBoardData(data));
         } catch (error) {
-          console.error('Error fetching data:', error);
+          console.error(error);
         }
       };
 
       fetchData();
     }
-  }, [token]);
+  }, [url, token, dispatch]);
 
   useEffect(() => {
     if (boardData.length > 0) {
@@ -65,13 +64,7 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
       <ProfileHeader />
       <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View style={styles.body}>
-        <BoardPack
-          url={url}
-          active={active}
-          onActiveChange={handleActiveChange}
-          carouselRef={carouselRef}
-          boardData={boardData}
-        />
+        <BoardPack active={active} onActiveChange={handleActiveChange} carouselRef={carouselRef} />
       </View>
     </SafeAreaView>
   );

@@ -2,7 +2,7 @@ import {StyleSheet, SafeAreaView, View} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {SelectComponent} from '../../components/ScheduleSelectOption';
+import ScheduleOption from '../Schedule/ScheduleOption';
 import Selector from '../../components/BottomSheet';
 import {variables} from '../../style/variables';
 
@@ -35,12 +35,12 @@ const Search = () => {
       <Header title="검색" type="search" />
       {
         <View style={styles.contentLayout}>
-          <SelectComponent
+          <ScheduleOption
             type="보드"
             state={board.name}
             event={() => setBoardIsOpen(prevState => !prevState)}
           />
-          <SelectComponent type="일정 시작 시간" state={startAt} event={toggleStartAt} />
+          <ScheduleOption type="일정 시작 시간" state={startAt} event={toggleStartAt} />
         </View>
       }
       <Selector

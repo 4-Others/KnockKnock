@@ -1,12 +1,12 @@
-import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
+import {View, Text, StyleSheet, Platform} from 'react-native';
 import React, {useEffect} from 'react';
 import {
   createMaterialTopTabNavigator,
   MaterialTopTabNavigationProp,
 } from '@react-navigation/material-top-tabs';
 import {useNavigation} from '@react-navigation/native';
-import boardData from './boardData.json';
-import {variables} from '../../../style/variables';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../util/redux/store';
 
 const Tab = createMaterialTopTabNavigator();
 type TabNavProp = MaterialTopTabNavigationProp<{[key: string]: undefined}>;
@@ -20,17 +20,16 @@ type BoardTabProps = {
 
 const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
   const navigation = useNavigation<TabNavProp>();
+  const boardData = useSelector((state: RootState) => state.board);
 
   useEffect(() => {
-    const activeTab = boardData.find(data => data.boardId === active);
+    const activeTab = boardData.find(data => data.tagId === active);
     if (activeTab) {
-      navigation.navigate(activeTab.title);
+      navigation.navigate(activeTab.name);
     }
   }, [active]);
 
-  const handleAddPress = () => {
-    navigation.navigate('BoardAdd');
-  };
+  if (!boardData.length) return null;
 
   return (
     <View style={styles.container}>
@@ -64,10 +63,10 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
         })}>
         {boardData.map(item => (
           <Tab.Screen
-            key={item.boardId.toString()}
-            name={item.title}
+            key={item.tagId}
+            name={item.name}
             listeners={{
-              focus: () => onActiveChange(item.boardId),
+              focus: () => onActiveChange(item.tagId),
             }}
             component={DisplayNone}
             options={() => ({
@@ -76,18 +75,13 @@ const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   style={{color: focused ? '#1b1b1b' : '#cccccc'}}>
-                  {item.title}
+                  {item.name}
                 </Text>
               ),
             })}
           />
         ))}
       </Tab.Navigator>
-      <View style={styles.addButtonContainer}>
-        <TouchableOpacity onPress={handleAddPress}>
-          <Text style={styles.addButton}>+</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -103,20 +97,5 @@ const styles = StyleSheet.create({
     paddingLeft: 22,
     paddingRight: 22,
     zIndex: 1,
-  },
-  addButtonContainer: {
-    paddingLeft: 10,
-    backgroundColor: '#ffffff',
-    ...Platform.select({
-      ios: {height: 36},
-      android: {height: 40},
-    }),
-  },
-  addButton: {
-    zIndex: 10,
-    bottom: 3,
-    fontFamily: 'Pretendard-Light',
-    color: variables.icon_3,
-    fontSize: 30,
   },
 });
