@@ -4,6 +4,8 @@ import com.others.KnockKnock.audit.Auditable;
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.user.entity.User;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,5 +32,6 @@ public class Tag extends Auditable implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 }

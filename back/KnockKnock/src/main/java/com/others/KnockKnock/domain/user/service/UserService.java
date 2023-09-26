@@ -1,6 +1,8 @@
 package com.others.KnockKnock.domain.user.service;
 
 
+import com.others.KnockKnock.domain.schedule.entity.Schedule;
+import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.exception.BusinessLogicException;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
 
@@ -111,11 +114,9 @@ public class UserService {
 
     public void deleteUser(String id) {
         User optionalUser = userRepository.findUserById(id);
-
         if (optionalUser==null) {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
-
         userRepository.delete(optionalUser);
     }
 
