@@ -77,6 +77,6 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris: http://www.knockknockofficial.shop:8080
+    authorizedRedirectUris: http://www.knockknockofficial.shop:8080/login/oauth2/code/google
     #oauth/redirect
     #프론트 페이지만들어지면 여기다가 넣기
