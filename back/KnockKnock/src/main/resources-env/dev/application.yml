@@ -21,9 +21,6 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
-  batch:
-    initialize-schema: always
-    table-prefix: BATCH_
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
@@ -59,13 +56,6 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
-#jwt:
-#  secret: ${JWT_SECRET_KEY}
-#  expirationMs: 3600000
-#token:
-#  expiration:
-#    access: 1800000
-#    refresh: 604800000
 cors:
   allowed-origins: 'http://www.knockknockofficial.shop:8080'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
