@@ -7,6 +7,7 @@ import com.others.KnockKnock.security.oauth.entity.UserPrincipal;
 import com.others.KnockKnock.utils.UriUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -49,17 +50,31 @@ public class ScheduleController {
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }
 
-    @GetMapping("/calendar")
+    @GetMapping("/search")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> findCalendar(
+    public ResponseEntity<?> searchSchedule(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @RequestParam String keyword,
+        @Nullable
         @Pattern(
-            regexp = "\\d{4}-\\d" +
-                    "{2}",
-            message = "검색기간은 '필수' 입력값입니다. : 기대값 'yyyy-MM'"
-        ) @RequestParam String startAt)
-     {
-        List<ScheduleDto.Response> responses = scheduleService.findScheduleForCalendar(userPrincipal.getUserId(), startAt);
+            regexp = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}",
+            message = "검색기간 시작일 포맷을 확인해주세요. : 기대값 'yyyy-MM-dd HH:mm:ss'"
+        )
+        @RequestParam String startAt,
+        @Nullable
+        @Pattern(
+            regexp = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}",
+            message = "검색기간 종료일 포맷을 확인해주세요. : 기대값 'yyyy-MM-dd HH:mm:ss'"
+        )
+        @RequestParam String endAt
+    )
+    {
+        List<ScheduleDto.Response> responses = scheduleService.findScheduleByTitleAndStartAtLikeEndAtLike(
+            userPrincipal.getUserId(),
+            keyword,
+            startAt,
+            endAt
+        );
 
         return ResponseEntity.ok().body(ApiResponse.ok("data", responses));
     }

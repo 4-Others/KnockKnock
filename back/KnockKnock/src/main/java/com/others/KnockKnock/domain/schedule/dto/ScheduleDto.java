@@ -54,8 +54,6 @@ public class ScheduleDto {
 
         private Boolean complete;
 
-        @NotNull
-        @Positive
         private Long tagId;
         private List<Integer> alerts = new ArrayList<>();
     }

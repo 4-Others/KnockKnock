@@ -53,7 +53,7 @@ public class TagController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> findTag(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @Positive @PathVariable("tag-id") Long tagId
+        @PathVariable("tag-id") Long tagId
     ) {
         TagDto.ResponseWithSchedules response = tagService.findTag(userPrincipal.getUserId(), tagId);
 

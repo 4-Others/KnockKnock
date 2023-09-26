@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.others.KnockKnock.domain.schedule.entity.Schedule.*;
@@ -29,25 +31,32 @@ public class ScheduleService {
     private final NotificationService notificationService;
     private final TagService tagService;
 
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public ScheduleDto.Response createSchedule(Long userId, ScheduleDto.Post requestBody) {
         Optional<User> byEmail = userRepository.findByUserId(userId);
         User user = byEmail.get();
 
-        Tag findTag = tagService.findTagByUserIdAndTagId(userId, requestBody.getTagId());
+        ScheduleBuilder scheduleBuilder = builder()
+                                    .title(requestBody.getTitle())
+                                    .period(Period.valueOf(requestBody.getPeriod()))
+                                    .content(requestBody.getContent())
+                                    .startAt(LocalDateTime.parse(requestBody.getStartAt(), timeFormatter))
+                                    .endAt(LocalDateTime.parse(requestBody.getStartAt(), timeFormatter))
+                                    .alerts(requestBody.getAlerts())
+                                    .complete(requestBody.getComplete())
+                                    .user(user);
 
-        Schedule createSchedule = builder()
-                                      .title(requestBody.getTitle())
-                                      .period(Period.valueOf(requestBody.getPeriod()))
-                                      .content(requestBody.getContent())
-                                      .startAt(requestBody.getStartAt())
-                                      .endAt(requestBody.getEndAt())
-                                      .alerts(requestBody.getAlerts())
-                                      .complete(requestBody.getComplete())
-                                      .user(user)
-                                      .tag(findTag)
-                                      .build();
+        Schedule buildSchedule;
 
-        Schedule createdSchedule = scheduleRepository.save(createSchedule);
+        if (requestBody.getTagId() != null) {
+            Tag findTag = tagService.findTagByUserIdAndTagId(userId, requestBody.getTagId());
+            buildSchedule = scheduleBuilder.tag(findTag).build();
+        } else {
+            buildSchedule = scheduleBuilder.build();
+        }
+
+        Schedule createdSchedule = scheduleRepository.save(buildSchedule);
 
         notificationService.createNotifications(createdSchedule);
 
@@ -55,19 +64,30 @@ public class ScheduleService {
     }
 
     public ScheduleDto.Response updateSchedule(Long userId, Long scheduleId, ScheduleDto.Patch requestBody) {
-        Tag findTag = tagService.findTagByUserIdAndTagId(userId, requestBody.getTagId());
-
         Schedule findSchedule = findScheduleByUserIdAndScheduleId(userId, scheduleId);
-        Schedule buildSchedule = builder()
-                                      .title(requestBody.getTitle())
-                                      .period(Period.valueOf(requestBody.getPeriod()))
-                                      .content(requestBody.getContent())
-                                      .startAt(requestBody.getStartAt())
-                                      .endAt(requestBody.getEndAt())
-                                      .alerts(requestBody.getAlerts())
-                                      .complete(requestBody.getComplete())
-                                      .tag(findTag)
-                                      .build();
+        ScheduleBuilder scheduleBuilder = builder()
+                                       .title(requestBody.getTitle())
+                                       .period(Period.valueOf(requestBody.getPeriod()))
+                                       .content(requestBody.getContent())
+                                       .startAt(requestBody.getStartAt() != null
+                                                    ? LocalDateTime.parse(requestBody.getStartAt(), timeFormatter)
+                                                    : findSchedule.getStartAt()
+                                       )
+                                       .endAt(requestBody.getEndAt() != null
+                                                  ? LocalDateTime.parse(requestBody.getStartAt(), timeFormatter)
+                                                  : findSchedule.getEndAt()
+                                       )
+                                       .alerts(requestBody.getAlerts())
+                                       .complete(requestBody.getComplete());
+
+        Schedule buildSchedule;
+
+        if (requestBody.getTagId() != null) {
+            Tag findTag = tagService.findTagByUserIdAndTagId(userId, requestBody.getTagId());
+            buildSchedule = scheduleBuilder.tag(findTag).build();
+        } else {
+            buildSchedule = scheduleBuilder.build();
+        }
 
         Schedule mergedSchedule = mergeScheduleInfo(findSchedule, buildSchedule);
         Schedule updatedSchedule = scheduleRepository.save(mergedSchedule);
@@ -89,10 +109,26 @@ public class ScheduleService {
         return scheduleMapper.scheduleListToScheduleDtoResponseList(schedules);
     }
 
-    public List<ScheduleDto.Response> findScheduleForCalendar(Long userId, String startAt) {
-        List<Schedule> byUserIdAndDate = scheduleRepository.findByUserIdAndStartAtLike(userId, startAt);
+    public List<ScheduleDto.Response> findScheduleByTitleAndStartAtLikeEndAtLike(
+        Long userId,
+        String keyword,
+        String startAt,
+        String endAt
+    ) {
+        List<Schedule> schedules;
 
-        return scheduleMapper.scheduleListToScheduleDtoResponseList(byUserIdAndDate);
+        if (startAt != null && endAt != null) {
+            schedules = scheduleRepository.findScheduleByTitleAndBetweenDate(
+                userId,
+                keyword,
+                LocalDateTime.parse(startAt, timeFormatter),
+                LocalDateTime.parse(endAt, timeFormatter)
+            );
+        } else {
+            schedules = scheduleRepository.findScheduleByTitleLike(userId, keyword);
+        }
+
+        return scheduleMapper.scheduleListToScheduleDtoResponseList(schedules);
     }
 
     @Transactional(readOnly = true)

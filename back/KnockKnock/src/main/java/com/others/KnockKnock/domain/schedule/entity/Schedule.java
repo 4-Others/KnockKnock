@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,8 +27,8 @@ public class Schedule extends Auditable implements Serializable {
     @Enumerated(EnumType.STRING)
     private Period period;
 
-    private String startAt;
-    private String endAt;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
 
     private Boolean complete;
 

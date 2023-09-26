@@ -61,7 +61,7 @@ public class NotificationService {
     private List<Notification> genNotification(Schedule schedule) {
         return schedule.getAlerts().stream()
                    .map(alert -> {
-                       LocalDateTime notifyAt = parseStringToLocalDateTime(schedule.getStartAt()).minusMinutes(alert);
+                       LocalDateTime notifyAt = schedule.getStartAt().minusMinutes(alert);
 
                        return Notification.builder()
                                   .schedule(schedule)

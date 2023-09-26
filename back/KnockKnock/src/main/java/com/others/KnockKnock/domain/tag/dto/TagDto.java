@@ -5,6 +5,7 @@ import com.others.KnockKnock.domain.schedule.dto.ScheduleDto;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 public class TagDto {
@@ -14,6 +15,7 @@ public class TagDto {
     @Builder
     public static class Post {
         @NotNull
+        @Pattern(regexp = "^(?!전체$).*", message = "이름은 '전체' 값을 사용할 수 없습니다.")
         private String name;
         private String color;
     }
@@ -23,6 +25,7 @@ public class TagDto {
     @NoArgsConstructor
     @Builder
     public static class Patch {
+        @Pattern(regexp = "^(?!전체$).*", message = "이름은 '전체' 값을 사용할 수 없습니다.")
         private String name;
         private String color;
     }

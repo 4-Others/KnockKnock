@@ -26,11 +26,9 @@ public class Notification extends Auditable {
 
     @Setter
     @Column(columnDefinition = "TINYINT")
-    //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean delivered;
     @Setter
     @Column(columnDefinition = "TINYINT")
-    //@Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
