@@ -1,8 +1,12 @@
 package com.others.KnockKnock.domain.user.service;
 
 
+import com.others.KnockKnock.domain.notification.entity.Notification;
+import com.others.KnockKnock.domain.notification.repository.NotificationRepository;
 import com.others.KnockKnock.domain.schedule.entity.Schedule;
 import com.others.KnockKnock.domain.schedule.repository.ScheduleRepository;
+import com.others.KnockKnock.domain.tag.entity.Tag;
+import com.others.KnockKnock.domain.tag.repository.TagRepository;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.repository.UserRepository;
 import com.others.KnockKnock.exception.BusinessLogicException;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +30,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final TagRepository tagRepository;
+    private final NotificationRepository notificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
 
@@ -117,6 +124,14 @@ public class UserService {
         if (optionalUser==null) {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
+        List<Tag> userTags = tagRepository.findAllTagByUserId(optionalUser.getUserId());
+        tagRepository.deleteAll(userTags);
+
+        List<Schedule> userSchedules = scheduleRepository.findAllByUserId(optionalUser.getUserId());
+        scheduleRepository.deleteAll(userSchedules);
+
+        List<Notification> userNotifications = notificationRepository.findAllByUserId(optionalUser.getUserId());
+        notificationRepository.deleteAll(userNotifications);
         userRepository.delete(optionalUser);
     }
 
