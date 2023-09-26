@@ -21,7 +21,7 @@ public class Tag extends Auditable implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
     private String color;
 
