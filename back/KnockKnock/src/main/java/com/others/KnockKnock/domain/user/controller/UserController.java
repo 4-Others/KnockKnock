@@ -155,8 +155,9 @@ public class UserController {
      */
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal, HttpServletRequest request) {
         String accessToken = HeaderUtil.getAccessToken(request);
+        userService.deleteUser(userPrincipal.getId());
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 이루어졌습니다.");
     }
 }
