@@ -44,7 +44,14 @@ export interface SetScheduleData {
   tag: {
     name: string;
     color: string;
+    tagId?: number;
   };
+}
+
+export interface SearchData {
+  keyword: string;
+  startAt: string;
+  endAt: string;
 }
 
 export type BoardDataItem = {

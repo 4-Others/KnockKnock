@@ -29,10 +29,10 @@ type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
-  const {title, color} = route.params;
   const token = useSelector((state: any) => state.user.token);
-  const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
+  const {title, color} = route.params;
+  const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };

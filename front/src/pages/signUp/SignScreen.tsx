@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {variables} from '../../style/variables';
-import {GradientButton_L} from '../../components/GradientButton';
-import {InputArea, CheckBtn} from './SignUpComponent';
-import {isEmaildValid, validErrorMessage} from '../../util/authUtil';
-import axios from 'axios';
 import {RouteProp, ParamListBase} from '@react-navigation/native';
-import {loginPost} from '../../api/authApi';
+import axios from 'axios';
 import {useDispatch} from 'react-redux';
+import {variables} from '../../style/variables';
+import {isEmaildValid, validErrorMessage} from '../../util/authUtil';
+import {InputArea, CheckBtn} from './SignUpComponent';
+import {GradientButton_L} from '../../components/GradientButton';
+import {loginPost} from '../../api/authApi';
 import {setLogin} from '../../util/redux/userSlice';
 
 type InputValue = {

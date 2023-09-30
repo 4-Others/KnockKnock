@@ -30,7 +30,7 @@ type SelectorProps = {
 const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onData, type}) => {
   const [newBoard, setNewBoard] = useState({name: '', color: ''});
   const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
-  const [selectedNotification, setSelectedNotification] = useState<string | null>(null);
+  const [selectedNotification, setSelectedNotification] = useState<number | null>(null);
   const boardData = useSelector((state: RootState) => state.board);
 
   const handleBoardValue = (type: string, value: string) => {
@@ -149,9 +149,9 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
     );
   };
 
-  const notificatioData = ['30분 전', '60분 전', '90분 전', '120분 전', '1440분 전'];
+  const notificatioData = [30, 60, 90, 120, 1440];
 
-  const handleSelectNotification = (period: string) => {
+  const handleSelectNotification = (period: number) => {
     setSelectedNotification(prev => {
       const newPeriod = prev === period ? null : period;
       onData(newPeriod === null ? '' : newPeriod);
@@ -175,7 +175,7 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
           onPress={() => {
             handleSelectNotification(data);
           }}>
-          <Text>{data}</Text>
+          <Text>{`${data}분 전`}</Text>
         </TouchableOpacity>
       );
     });

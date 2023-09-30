@@ -33,9 +33,12 @@ const ScheduleOptionSelect: React.FC<inputProps> = ({type, state, event, iconNam
             {colorChipRender()}
             <TextInput
               value={typeof state === 'string' ? state : state.name}
-              placeholder={`${type}을 선택하세요.`}
+              placeholder={`${type} 선택하세요.`}
               style={[
-                type === '보드' || type === '알림 시간'
+                type === '스케줄 보드' ||
+                type === '알림 시간' ||
+                type === '검색 기간 시작' ||
+                type === '검색 기간 종료'
                   ? {color: variables.text_3}
                   : (type === '일정 시작 시간' || type === '일정 종료 시간') &&
                     period === 'SPECIFIC_TIME'

@@ -7,6 +7,7 @@ import {
   Platform,
   ScrollView,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {variables} from '../../style/variables';
 import {SetScheduleData} from '../../util/dataConvert';
@@ -51,12 +52,21 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   const handleConfirm = (date: Date) => {
     onCancel();
     const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+
     if (timeType === 'start') {
+      if (new Date(formattedDate) > new Date(scheduleWillAdd.endAt) && scheduleWillAdd.endAt) {
+        Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
+        return;
+      }
       setScheduleWillAdd(prevData => ({
         ...prevData,
         startAt: formattedDate,
       }));
     } else if (timeType === 'end') {
+      if (new Date(formattedDate) < new Date(scheduleWillAdd.startAt)) {
+        Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
+        return;
+      }
       setScheduleWillAdd(prevData => ({
         ...prevData,
         endAt: formattedDate,
@@ -65,12 +75,12 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const toggleStartAt = () => {
-    setVisible(prevState => !prevState);
+    setVisible(!visible);
     setTimeType('start');
   };
 
   const toggleEndAt = () => {
-    setVisible(prevState => !prevState);
+    setVisible(!visible);
     setTimeType('end');
   };
 
@@ -85,7 +95,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
     ? parseDate(scheduleWillAdd.startAt)
     : parseDate(scheduleWillAdd.endAt);
 
-  const onTagState = (value: {color: string; name: string}) => {
+  const onTagState = (value: {color: string; name: string; tagId: number}) => {
     setScheduleWillAdd(prevData => ({
       ...prevData,
       tag: value,
@@ -110,7 +120,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, title: text}))}
       />
       <ScheduleOptionSelect
-        type="보드"
+        type="스케줄 보드"
         state={scheduleWillAdd.tag}
         event={() => setBoardIsOpen(prevState => !prevState)}
         iconName="pricetag-outline"
@@ -151,7 +161,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
           <TextInput
             style={styles.contentText}
             defaultValue={scheduleWillAdd.content}
-            placeholder="메모를 입력하세요"
+            placeholder="자세한 내용을 기록하려면 입력하세요"
             onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, content: text}))}
           />
         </View>
@@ -160,13 +170,13 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
         onData={onTagState}
-        type="board" // 타입을 전달
+        type="board"
       />
       <Selector
         modalVisible={notificationIsOpen}
         setModalVisible={setNotificationIsOpen}
         onData={onNotificationState}
-        type="notification" // 타입을 전달
+        type="notification"
       />
       <DateTimePickerModal
         isVisible={visible && scheduleWillAdd.period === 'SPECIFIC_TIME'}

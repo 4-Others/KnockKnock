@@ -57,7 +57,7 @@ const BoardPack = ({active, onActiveChange, carouselRef}: BoardPackProps) => {
         sliderHeight={sliderHeight}
         itemHeight={210}
         vertical={true}
-        loop={true}
+        loop={boardData.length >= 5}
         inactiveSlideOpacity={0.8}
         onSnapToItem={index => onActiveChange(boardData[index].tagId)}
       />
