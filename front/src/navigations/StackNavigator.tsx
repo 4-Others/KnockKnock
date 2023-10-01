@@ -5,7 +5,6 @@ import Login from '../pages/login/Login';
 import AuthSplashScreen from '../pages/login/AuthSplashScreen';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
 import Calendar from '../pages/calendar/Calendar';
-import BoardAdd from '../pages/ScheduleBoard/BoardAdd';
 import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
@@ -44,15 +43,14 @@ const AuthStack: React.FC = () => {
 const StackSchedule = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="ScheduleBoard" component={ScheduleBoard} options={{headerShown: false}} />
+      <Stack.Screen name="ScheduleBoard" options={{headerShown: false}}>
+        {props => <ScheduleBoard {...props} url={url} />}
+      </Stack.Screen>
       <Stack.Screen name="BoardDetail" options={{headerShown: false}}>
         {props => <BoardDetail {...props} url={url} />}
       </Stack.Screen>
-      <Stack.Screen name="BoardAdd" component={BoardAdd} options={{headerShown: false}} />
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
-      <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
-        {props => <ScheduleAdd {...props} url={url} />}
-      </Stack.Screen>
+      <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
       <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}} />
       <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
@@ -66,9 +64,7 @@ const StackCalendar = () => {
       <Stack.Screen name="Calendar" options={{headerShown: false}}>
         {props => <Calendar {...props} />}
       </Stack.Screen>
-      <Stack.Screen name="ScheduleAdd" options={{headerShown: false}}>
-        {props => <ScheduleAdd {...props} url={url} />}
-      </Stack.Screen>
+      <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
   );

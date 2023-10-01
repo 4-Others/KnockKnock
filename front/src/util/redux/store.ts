@@ -1,12 +1,17 @@
 import {configureStore} from '@reduxjs/toolkit';
 import userSlice from './userSlice';
 import {scheduleSlice} from './scheduleSlice';
+import boardReducer from './boardSlice';
+import {BoardDataItem} from '../dataConvert';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
     schedule: scheduleSlice.reducer,
+    board: boardReducer,
   },
 });
 
-export default store;
+export type RootState = {
+  board: BoardDataItem[];
+};

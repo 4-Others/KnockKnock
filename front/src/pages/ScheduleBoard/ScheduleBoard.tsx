@@ -1,27 +1,70 @@
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {StyleSheet, SafeAreaView, StatusBar, Platform, Dimensions} from 'react-native';
 import {View} from 'react-native-animatable';
-import React, {useCallback, useState} from 'react';
+import Carousel from 'react-native-snap-carousel';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setBoardData} from '../../util/redux/boardSlice';
+import {RootState} from '../../util/redux/store';
+import {fetchBoardData} from '../../api/boardApi';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {BoardDataItem} from '../../util/dataConvert';
+import ProfileHeader from '../../components/ProfileHeader';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
-import ProfileHeader from '../../components/ProfileHeader';
-import boardData from './BoardItems/boardData.json';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const ScheduleBoard = () => {
-  const [active, setActive] = useState(boardData[0].boardId);
+const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
+  const carouselRef = useRef<Carousel<BoardDataItem>>(null);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const boardData = useSelector((state: RootState) => state.board);
+  const token = useSelector((state: any) => state.user.token);
+  const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
 
-  const handleActiveChange = useCallback((newValue: React.SetStateAction<number>) => {
+  useEffect(() => {
+    if (url) {
+      const fetchData = async () => {
+        try {
+          const data = await fetchBoardData(url, token);
+          dispatch(setBoardData(data));
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [url, token, dispatch]);
+
+  useEffect(() => {
+    if (boardData.length > 0) {
+      setActive(boardData[0].tagId);
+    }
+  }, [boardData]);
+
+  useEffect(() => {
+    const activeIndex = boardData.findIndex(data => data.tagId === active);
+    if (activeIndex !== -1) {
+      carouselRef.current?.snapToItem(activeIndex, false);
+    }
+  }, [active, boardData]);
+  const handleActiveChange = useCallback((newValue: React.SetStateAction<number | null>) => {
     setActive(newValue);
   }, []);
 
+  if (!url) {
+    navigation.goBack();
+    return null;
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ProfileHeader />
       <BoardTab active={active} onActiveChange={handleActiveChange} />
       <View style={styles.body}>
-        <BoardPack active={active} onActiveChange={handleActiveChange} />
+        <BoardPack active={active} onActiveChange={handleActiveChange} carouselRef={carouselRef} />
       </View>
     </SafeAreaView>
   );

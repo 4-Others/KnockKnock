@@ -6,7 +6,7 @@ type ScheduleItems = Record<string, ScheduleData[]>;
 
 export const fetchScheduleItems = async (url: string, token: string): Promise<ScheduleItems> => {
   try {
-    const response = await axios.get(`${url}api/v1/schedule/tag?tagName=전체`, {
+    const response = await axios.get(`${url}api/v1/schedule`, {
       headers: {Authorization: `Bearer ${token}`},
     });
     const fetchedData = response.data.body.data;
@@ -20,7 +20,7 @@ export const fetchScheduleItems = async (url: string, token: string): Promise<Sc
       }
       newItems[dateKey].push(convertedData);
     });
-
+    console.log(newItems);
     return newItems;
   } catch (error) {
     throw error as AxiosError;

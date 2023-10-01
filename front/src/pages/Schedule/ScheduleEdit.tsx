@@ -1,7 +1,7 @@
 import {SafeAreaView} from 'react-native';
 import React from 'react';
 import Header from '../../components/Header';
-import {ScheduleOption} from '../../components/ScheduleSelectOption';
+import ScheduleOption from './ScheduleOption';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {

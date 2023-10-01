@@ -1,27 +1,22 @@
+import React, {RefObject} from 'react';
 import {View, StyleSheet, Platform, Dimensions} from 'react-native';
-import React, {useRef, useEffect} from 'react';
 import Carousel from 'react-native-snap-carousel';
 import LinearGradient from 'react-native-linear-gradient';
 import {variables, VariablesKeys} from '../../../style/variables';
-import boardData from './boardData.json';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../util/redux/store';
 import BoardItem from './BoardItem';
 
 const deviceHeight = Dimensions.get('window').height;
 
 type BoardPackProps = {
-  active: number;
+  active: number | null;
   onActiveChange: (newValue: number) => void;
+  carouselRef: RefObject<any>;
 };
 
-const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
-  const carouselRef = useRef<any>(null);
-
-  useEffect(() => {
-    const activeIndex = boardData.findIndex(data => data.boardId === active);
-    if (activeIndex !== -1) {
-      carouselRef.current?.snapToItem(activeIndex, false);
-    }
-  }, [active]);
+const BoardPack = ({active, onActiveChange, carouselRef}: BoardPackProps) => {
+  const boardData = useSelector((state: RootState) => state.board);
 
   const renderItem = ({item}: {item: any}) => {
     let colorValue = item.color;
@@ -31,10 +26,10 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
     }
     return (
       <BoardItem
-        key={item.boardId.toString()}
-        boardId={item.boardId}
-        title={item.title}
-        number={item.number}
+        key={item.boardId}
+        boardId={item.tagId}
+        title={item.name}
+        number={item.scheduleCount}
         color={colorValue}
         active={active}
       />
@@ -62,9 +57,9 @@ const BoardPack = ({active, onActiveChange}: BoardPackProps) => {
         sliderHeight={sliderHeight}
         itemHeight={210}
         vertical={true}
-        loop={true}
+        loop={boardData.length >= 5}
         inactiveSlideOpacity={0.8}
-        onSnapToItem={index => onActiveChange(boardData[index].boardId)}
+        onSnapToItem={index => onActiveChange(boardData[index].tagId)}
       />
       <LinearGradient
         style={styles.linearGradient}

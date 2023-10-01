@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Platform, Dimensions} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StackSchedule, StackCalendar} from './StackNavigator';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
@@ -11,6 +12,10 @@ const Tab = createBottomTabNavigator();
 const deviceHeight = Dimensions.get('window').height;
 
 const TabNavigator = () => {
+  const navigation = useNavigation();
+  const [isFocused, setIsFocused] = useState(false);
+  const [lastTab, setLastTab] = useState('Schedule Board');
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -58,11 +63,61 @@ const TabNavigator = () => {
           flex: 1,
         },
       })}>
-      <Tab.Screen name="Schedule Board" component={StackSchedule} />
-      <Tab.Screen name="Schedule Calendar" component={StackCalendar} />
-      <Tab.Screen name="Add" component={ScheduleAdd} />
-      <Tab.Screen name="Search" component={Search} />
-      <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3}} />
+      <Tab.Screen
+        name="Schedule Board"
+        component={StackSchedule}
+        listeners={{
+          focus: () => {
+            setLastTab('Schedule Board');
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Schedule Calendar"
+        component={StackCalendar}
+        listeners={{
+          focus: () => {
+            setLastTab('Schedule Calendar');
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Add"
+        component={ScheduleAdd}
+        listeners={{
+          focus: () => {
+            setIsFocused(true);
+          },
+          blur: () => {
+            setIsFocused(false);
+          },
+          tabPress: e => {
+            if (isFocused && lastTab) {
+              e.preventDefault();
+              navigation.navigate(lastTab as never);
+            }
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        listeners={{
+          focus: () => {
+            setLastTab('Search');
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Notifications"
+        component={Notifications}
+        listeners={{
+          focus: () => {
+            setLastTab('Notifications');
+          },
+        }}
+        options={{tabBarBadge: 3}}
+      />
     </Tab.Navigator>
   );
 };

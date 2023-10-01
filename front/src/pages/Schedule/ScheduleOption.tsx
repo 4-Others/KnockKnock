@@ -2,40 +2,49 @@ import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   Text,
-  TouchableOpacity,
   TextInput,
   Platform,
   ScrollView,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
-import {variables, VariablesKeys} from '../style/variables';
-import Selector from './BottomSheet';
+import {variables} from '../../style/variables';
+import {SetScheduleData} from '../../util/dataConvert';
+import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
+import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
+import Selector from '../../components/BottomSheet';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {SetScheduleData} from '../util/dataConvert';
-
-export interface inputProps {
-  type: string;
-  state: string | {color: string; name: string};
-  event: () => void;
-}
 
 interface ScheduleOptionProps {
   scheduleWillAdd: SetScheduleData;
   setScheduleWillAdd: React.Dispatch<React.SetStateAction<SetScheduleData>>;
   url?: string;
+  getCurrentDateStartAndEnd: any;
 }
 
-export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
+const ScheduleOption: React.FC<ScheduleOptionProps> = ({
+  url,
   scheduleWillAdd,
   setScheduleWillAdd,
+  getCurrentDateStartAndEnd,
 }) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [timeType, setTimeType] = useState('');
+
+  const handleTogglePeriod = (value: boolean) => {
+    const {start, end} = getCurrentDateStartAndEnd();
+    setScheduleWillAdd(prevData => ({
+      ...prevData,
+      period: value ? 'ALL_DAY' : 'SPECIFIC_TIME',
+      startAt: value ? start : prevData.startAt,
+      endAt: value ? end : prevData.endAt,
+    }));
+  };
+
   const onCancel = () => {
     setVisible(false);
   };
@@ -43,12 +52,21 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   const handleConfirm = (date: Date) => {
     onCancel();
     const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+
     if (timeType === 'start') {
+      if (new Date(formattedDate) > new Date(scheduleWillAdd.endAt) && scheduleWillAdd.endAt) {
+        Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
+        return;
+      }
       setScheduleWillAdd(prevData => ({
         ...prevData,
         startAt: formattedDate,
       }));
     } else if (timeType === 'end') {
+      if (new Date(formattedDate) < new Date(scheduleWillAdd.startAt)) {
+        Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
+        return;
+      }
       setScheduleWillAdd(prevData => ({
         ...prevData,
         endAt: formattedDate,
@@ -57,12 +75,12 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const toggleStartAt = () => {
-    setVisible(prevState => !prevState);
+    setVisible(!visible);
     setTimeType('start');
   };
 
   const toggleEndAt = () => {
-    setVisible(prevState => !prevState);
+    setVisible(!visible);
     setTimeType('end');
   };
 
@@ -77,7 +95,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
     ? parseDate(scheduleWillAdd.startAt)
     : parseDate(scheduleWillAdd.endAt);
 
-  const onTagState = (value: {color: string; name: string}) => {
+  const onTagState = (value: {color: string; name: string; tagId: number}) => {
     setScheduleWillAdd(prevData => ({
       ...prevData,
       tag: value,
@@ -86,10 +104,6 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 
   const onNotificationState = (value: number) => {
     setScheduleWillAdd((prevData: SetScheduleData) => {
-      // const updatedAlerts = prevData.alerts.includes(value)
-      //   ? prevData.alerts.filter(item => item !== value)
-      //   : [value];
-
       return {
         ...prevData,
         alerts: [value],
@@ -105,22 +119,38 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         style={styles.contentTitleInput}
         onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, title: text}))}
       />
-      <SelectComponent
-        type="보드"
+      <ScheduleOptionSelect
+        type="스케줄 보드"
         state={scheduleWillAdd.tag}
         event={() => setBoardIsOpen(prevState => !prevState)}
+        iconName="pricetag-outline"
       />
-      <SelectComponent
+      <ScheduleOptionSelect
         type="알림 시간"
         state={scheduleWillAdd.alerts.join()}
         event={() => setNotificationIsOpen(prevState => !prevState)}
+        iconName="notifications-outline"
       />
-      <SelectComponent
+      <ScheduleOptionToggle
+        type="하루 종일"
+        value={scheduleWillAdd.period === 'ALL_DAY'}
+        onToggle={handleTogglePeriod}
+        iconName="sunny-outline"
+      />
+      <ScheduleOptionSelect
         type="일정 시작 시간"
         state={scheduleWillAdd.startAt}
         event={toggleStartAt}
+        iconName="time-outline"
+        period={scheduleWillAdd.period}
       />
-      <SelectComponent type="일정 종료 시간" state={scheduleWillAdd.endAt} event={toggleEndAt} />
+      <ScheduleOptionSelect
+        type="일정 종료 시간"
+        state={scheduleWillAdd.endAt}
+        event={toggleEndAt}
+        iconName="time-outline"
+        period={scheduleWillAdd.period}
+      />
       <KeyboardAvoidingView
         style={styles.contentInput}
         behavior={Platform.OS === 'android' ? 'padding' : 'height'}
@@ -131,7 +161,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
           <TextInput
             style={styles.contentText}
             defaultValue={scheduleWillAdd.content}
-            placeholder="메모를 입력하세요"
+            placeholder="자세한 내용을 기록하려면 입력하세요"
             onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, content: text}))}
           />
         </View>
@@ -140,16 +170,16 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         modalVisible={boardIsOpen}
         setModalVisible={setBoardIsOpen}
         onData={onTagState}
-        type="board" // 타입을 전달
+        type="board"
       />
       <Selector
         modalVisible={notificationIsOpen}
         setModalVisible={setNotificationIsOpen}
         onData={onNotificationState}
-        type="notification" // 타입을 전달
+        type="notification"
       />
       <DateTimePickerModal
-        isVisible={visible}
+        isVisible={visible && scheduleWillAdd.period === 'SPECIFIC_TIME'}
         mode={'datetime'}
         onConfirm={handleConfirm}
         onCancel={onCancel}
@@ -159,39 +189,7 @@ export const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   );
 };
 
-export const SelectComponent = ({type, state, event}: inputProps) => {
-  const colorChipRender = () => {
-    if (typeof state !== 'string') {
-      let colorValue: any = state.color;
-      if (colorValue.startsWith('variables.')) {
-        let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
-        colorValue = variables[colorKey];
-      }
-      return colorValue ? <View style={[styles.colorChip, {backgroundColor: colorValue}]} /> : null;
-    }
-  };
-
-  return (
-    <View style={styles.contentInput}>
-      <Icon name="pricetag-outline" style={styles.icon} />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{type}</Text>
-        <TouchableOpacity style={styles.selectContainer} onPress={event}>
-          <View style={styles.selector}>
-            {colorChipRender()}
-            <TextInput
-              value={typeof state === 'string' ? state : state.name}
-              placeholder={`${type}을 선택하세요.`}
-              style={styles.contentText}
-              editable={false}
-            />
-          </View>
-          <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+export default ScheduleOption;
 
 const styles = StyleSheet.create({
   contentLayout: {
@@ -238,31 +236,9 @@ const styles = StyleSheet.create({
       android: {marginTop: 0},
     }),
   },
-  arrowIcon: {
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    transform: [{scaleX: -1}],
-  },
-  selectContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  selector: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   icon: {
     fontSize: 24,
     marginRight: 30,
     color: variables.main,
-  },
-  colorChip: {
-    width: 12,
-    height: 12,
-    borderRadius: 12,
-    marginRight: 6,
   },
 });

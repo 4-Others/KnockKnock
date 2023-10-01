@@ -90,7 +90,8 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
           endColor={'#ffffff05'}
           offset={[0, 1]}>
           <View style={styles.content}>
-            <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View>
+            <View style={styles.colorChip}></View>
+            {/* <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View> */}
             <View>
               <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
                 {item.name}

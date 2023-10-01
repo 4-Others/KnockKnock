@@ -13,9 +13,9 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import MyBoard from '../../components/MyBoard';
 import {GradientButton_L} from '../../components/GradientButton';
-import boardData from '../ScheduleBoard/BoardItems/boardData.json';
+import {storageResetValue} from '../../util/authUtil';
+import {AuthProps} from '../../navigations/StackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
@@ -25,12 +25,16 @@ type RootStackParamList = {
   ProfileEdit: undefined;
 };
 
-const Profile = () => {
-  const navigation = useNavigation<navigationProp>();
+const Profile: React.FC<AuthProps> = ({navigation}) => {
+  const navigationEdit = useNavigation<navigationProp>();
+
+  const navigateToProfileEdit = () => {
+    navigationEdit.navigate('ProfileEdit');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="내 프로필" type="edit" navigation={() => navigation.navigate('ProfileEdit')} />
+      <Header title="내 프로필" type="edit" nextFunc={navigateToProfileEdit} />
       <View style={styles.contentLayout}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.contentContainer}>
@@ -43,14 +47,18 @@ const Profile = () => {
             <Text style={styles.profileName}>BangBang</Text>
             <Text style={styles.profileMail}>myMail@gmail.com</Text>
           </View>
-          <View style={styles.myBoardContainer}>
-            <Text style={styles.boardInfo}>내 스케줄 보드 ({boardData.length})</Text>
-            {boardData.map(data => (
-              <MyBoard key={data.boardId} data={data} />
-            ))}
-          </View>
+          {/* <View style={styles.alarmContainer}>
+            <Text style={styles.boardInfo}>내 알람</Text>
+          </View> */}
         </ScrollView>
-        <GradientButton_L text="로그아웃" style={styles.buttonLogout} />
+        <GradientButton_L
+          text="로그아웃"
+          style={styles.buttonLogout}
+          onPress={() => {
+            storageResetValue();
+            navigation.navigate('AuthSplach');
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -112,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: variables.text_4,
   },
-  myBoardContainer: {
+  alarmContainer: {
     paddingTop: 36,
     paddingRight: 12,
     paddingLeft: 12,
@@ -129,7 +137,6 @@ const styles = StyleSheet.create({
     color: variables.text_4,
   },
   buttonLogout: {
-    position: 'absolute',
     bottom: 0,
   },
 });
