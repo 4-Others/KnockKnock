@@ -1,5 +1,12 @@
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {SignUserInfo, SignAgree, SignSuccess} from './SignScreen';
+import {
+  SignVerifyEmalInfo,
+  SignPersonalInfo,
+  SignPasswordInfo,
+  SignIDandEmailInfo,
+  SignAgree,
+  SignSuccess,
+} from './SignScreen';
 import Header from '../../components/Header';
 import {SafeAreaView} from 'react-native';
 import {View, StyleSheet} from 'react-native';
@@ -20,8 +27,13 @@ const SignUpTab: React.FC<AuthProps> = () => {
           swipeEnabled: false,
         }}>
         <Tab.Screen name="SignAgree">{props => <SignAgree {...props} />}</Tab.Screen>
-        <Tab.Screen name="SignUserInfo" initialParams={{password: ''}}>
-          {props => <SignUserInfo {...props} url={url} />}
+        <Tab.Screen name="SignPersonalInfo">{props => <SignPersonalInfo {...props} />}</Tab.Screen>
+        <Tab.Screen name="SignPasswordInfo">{props => <SignPasswordInfo {...props} />}</Tab.Screen>
+        <Tab.Screen name="SignIDandEmailInfo">
+          {props => <SignIDandEmailInfo {...props} url={url} />}
+        </Tab.Screen>
+        <Tab.Screen name="SignVerifyEmalInfo">
+          {props => <SignVerifyEmalInfo {...props} url={url} />}
         </Tab.Screen>
         <Tab.Screen name="SignSuccess">{props => <SignSuccess {...props} />}</Tab.Screen>
       </Tab.Navigator>
