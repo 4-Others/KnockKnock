@@ -18,10 +18,10 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface ScheduleOptionProps {
+  url?: string;
   scheduleWillAdd: SetScheduleData;
   setScheduleWillAdd: React.Dispatch<React.SetStateAction<SetScheduleData>>;
-  url?: string;
-  getCurrentDateStartAndEnd: any;
+  getCurrentDateStartAndEnd?: any;
 }
 
 const ScheduleOption: React.FC<ScheduleOptionProps> = ({
@@ -51,13 +51,15 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 
   const handleConfirm = (date: Date) => {
     onCancel();
-    const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      '0',
+    )}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(
+      2,
+      '0',
+    )}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     if (timeType === 'start') {
-      if (new Date(formattedDate) > new Date(scheduleWillAdd.endAt) && scheduleWillAdd.endAt) {
-        Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
-        return;
-      }
       setScheduleWillAdd(prevData => ({
         ...prevData,
         startAt: formattedDate,

@@ -6,7 +6,7 @@ import {setScheduleItems} from '../../util/redux/scheduleSlice';
 import {AxiosError} from 'axios';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
-import ScheduleItemlList from '../../components/ScheduleList';
+import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {fetchScheduleItems} from '../../api/scheduleApi';
@@ -72,7 +72,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   useEffect(() => {
     loadScheduleItems();
   }, []);
-
+  console.log('items: ', items);
   return (
     <SafeAreaView style={styles.container}>
       <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
@@ -91,7 +91,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems)}</View>
+        <View style={styles.listContainer}>{ScheduleList(items, setItems)}</View>
       </ScrollView>
     </SafeAreaView>
   );

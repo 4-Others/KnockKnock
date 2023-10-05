@@ -26,19 +26,17 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
   const getCurrentDateStartAndEnd = () => {
     const date = new Date();
-    const startAt = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
-    const endAt = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+    const startAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const endAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    const formatDateTime = (date: Date) => {
+    const formatDate = (date: Date) => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
         date.getDate(),
-      ).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(
-        date.getMinutes(),
-      ).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+      ).padStart(2, '0')}`;
     };
     return {
-      start: formatDateTime(startAt),
-      end: formatDateTime(endAt),
+      start: formatDate(startAt),
+      end: formatDate(endAt),
     };
   };
 
@@ -67,45 +65,60 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
       return;
     }
 
+    let formattedStartAt;
+    let formattedEndAt;
+    if (scheduleWillAdd.period === 'ALL_DAY') {
+      formattedStartAt = `${scheduleWillAdd.startAt} 00:00:00`;
+      formattedEndAt = `${scheduleWillAdd.endAt} 23:59:59`;
+    } else {
+      formattedStartAt = `${scheduleWillAdd.startAt}:00`;
+      formattedEndAt = `${scheduleWillAdd.endAt}:00`;
+    }
+
+    const postData = {
+      ...scheduleWillAdd,
+      startAt: formattedStartAt,
+      endAt: formattedEndAt,
+    };
+
     if (url) {
       try {
-        if (scheduleWillAdd.tag.name !== '전체') {
+        if (postData.tag.name !== '전체') {
           const tagExists = boardData.some(
-            (tag: any) =>
-              tag.name === scheduleWillAdd.tag.name && tag.color === scheduleWillAdd.tag.color,
+            (tag: any) => tag.name === postData.tag.name && tag.color === postData.tag.color,
           );
 
-          if (!tagExists && scheduleWillAdd.tag.name && scheduleWillAdd.tag.color) {
+          if (!tagExists && postData.tag.name && postData.tag.color) {
             const allTagIds = boardData.map((tag: any) => tag.tagId);
             let newTagId = 1;
             while (allTagIds.includes(newTagId)) {
               newTagId++;
             }
-            scheduleWillAdd.tag.tagId = newTagId;
+            postData.tag.tagId = newTagId;
 
-            await axios.post(`${url}api/v1/tags`, scheduleWillAdd.tag, {
+            await axios.post(`${url}api/v1/tags`, postData.tag, {
               headers: {Authorization: `Bearer ${user.token}`},
             });
           } else if (tagExists) {
             const existingTag = boardData.find(
-              (tag: any) =>
-                tag.name === scheduleWillAdd.tag.name && tag.color === scheduleWillAdd.tag.color,
+              (tag: any) => tag.name === postData.tag.name && tag.color === postData.tag.color,
             );
             if (existingTag) {
-              scheduleWillAdd.tag.tagId = existingTag.tagId;
+              postData.tag.tagId = existingTag.tagId;
             }
           }
         }
         console.log('scheduleWillAdd: ', scheduleWillAdd);
-        const response = await axios.post(`${url}api/v1/schedule`, scheduleWillAdd, {
+        console.log('postData: ', postData);
+        const response = await axios.post(`${url}api/v1/schedule`, postData, {
           headers: {Authorization: `Bearer ${user.token}`},
         });
         if (response.status === 200 || response.status === 201) {
           dispatch(addScheduleItem(response.data));
           console.log('스케줄 등록 성공!');
           navigation.navigate('BoardDetail', {
-            title: scheduleWillAdd.tag.name,
-            color: scheduleWillAdd.tag.color,
+            title: postData.tag.name,
+            color: postData.tag.color,
           });
         }
       } catch (error) {
