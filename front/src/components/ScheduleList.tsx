@@ -16,7 +16,7 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
   // 일정 완료 체크 토글 함수
   const handleToggleComplete = (day: string, itemId: number) => {
     const updatedItems = items[day].map((item: ScheduleData) => {
-      if (item.calendarId === itemId) {
+      if (item.scheduleId === itemId) {
         return {...item, complete: !item.complete};
       }
       return item;
@@ -30,7 +30,7 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
 
     for (const day of itemsKeyArray) {
       updatedItems[day] = updatedItems[day].filter(
-        (item: ScheduleData) => item.calendarId !== itemId,
+        (item: ScheduleData) => item.scheduleId !== itemId,
       );
     }
     setItems(updatedItems);
@@ -47,7 +47,7 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
               <ScheduleItem
                 item={item}
                 key={j}
-                onPress={() => handleToggleComplete(date, item.calendarId)}
+                onPress={() => handleToggleComplete(date, item.scheduleId)}
                 onDelete={handleDelete}
               />
             ))}
@@ -73,7 +73,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
-        onDelete(item.calendarId);
+        onDelete(item.scheduleId);
         resetSwipeable();
       }}>
       <Text style={styles.deleteText}>Delete</Text>

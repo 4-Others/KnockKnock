@@ -5,7 +5,7 @@ import {variables} from '../../style/variables';
 import ProfileHeader from '../../components/ProfileHeader';
 import {AuthProps} from '../../navigations/StackNavigator';
 import ScheduleList from '../../components/ScheduleList';
-import {convertResponseData, dateFormat, ScheduleData} from '../../util/dataConvert';
+import {dateFormat, ScheduleData} from '../../util/dataConvert';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
 

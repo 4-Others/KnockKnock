@@ -1,5 +1,5 @@
 export interface ApiResponseData {
-  calendarId: number;
+  scheduleId: number;
   title: string;
   content: string;
   period: string;
@@ -16,7 +16,7 @@ export interface ApiResponseData {
 }
 
 export interface ScheduleData {
-  calendarId: number;
+  scheduleId: number;
   name: string;
   height: number;
   day: string;
@@ -61,14 +61,6 @@ export type BoardDataItem = {
   scheduleCount: number;
 };
 
-type DayData = {
-  dateString: string;
-  day: number;
-  month: number;
-  timestamp: number;
-  year: number;
-};
-
 const dateCache: {[key: string]: string} = {}; // 날짜 포맷 결과를 저장할 캐시 객체
 
 const dateFormat = (dateString: string) => {
@@ -89,7 +81,7 @@ const dateFormat = (dateString: string) => {
 
 const convertResponseData = (resData: ApiResponseData) => {
   const {
-    calendarId,
+    scheduleId,
     title,
     content,
     period,
@@ -103,7 +95,7 @@ const convertResponseData = (resData: ApiResponseData) => {
   } = resData;
 
   const calendarData: ScheduleData = {
-    calendarId,
+    scheduleId,
     name: title,
     height: 0,
     day: dateFormat(createdAt), // formatDate로 형식 일치시킴
