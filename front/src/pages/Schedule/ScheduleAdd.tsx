@@ -1,7 +1,6 @@
 import React, {useState, useCallback} from 'react';
 import {SafeAreaView, Alert} from 'react-native';
 import Config from 'react-native-config';
-import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
@@ -9,9 +8,11 @@ import {addScheduleItem} from '../../util/redux/scheduleSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {StackNavigationProp} from '@react-navigation/stack';
-import ScheduleOption from './ScheduleOption';
-import {SetScheduleData} from '../../util/dataConvert';
+import {postScheduleItem} from '../../api/scheduleApi';
+import {postBoardData} from '../../api/boardApi';
+import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import Header from '../../components/Header';
+import ScheduleAddOption from './ScheduleAddOption';
 
 type RootStackParamList = {
   BoardDetail: {title: string; color: string};
@@ -42,7 +43,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
   const {start, end} = getCurrentDateStartAndEnd();
 
-  const data: SetScheduleData = {
+  const scheduleData: SetScheduleData = {
     title: '',
     content: '',
     period: 'ALL_DAY',
@@ -50,6 +51,8 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     endAt: end,
     alerts: [],
     complete: false,
+  };
+  const tagData: SetBoardData = {
     tag: {
       name: '전체',
       color: '#757575',
@@ -57,70 +60,57 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   };
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
-  const [scheduleWillAdd, setScheduleWillAdd] = useState(data);
+  const [postSchedule, setPostSchedule] = useState(scheduleData);
+  const [postTag, setPostTag] = useState(tagData);
 
   const handleAddSchedule = async () => {
-    if (!scheduleWillAdd.title || !scheduleWillAdd.tag) {
+    if (!postSchedule.title || !postTag.tag) {
       Alert.alert('일정과 보드를 작성해주세요.');
       return;
     }
 
     let formattedStartAt;
     let formattedEndAt;
-    if (scheduleWillAdd.period === 'ALL_DAY') {
-      formattedStartAt = `${scheduleWillAdd.startAt} 00:00:00`;
-      formattedEndAt = `${scheduleWillAdd.endAt} 23:59:59`;
+    if (postSchedule.period === 'ALL_DAY') {
+      formattedStartAt = `${postSchedule.startAt} 00:00:00`;
+      formattedEndAt = `${postSchedule.endAt} 23:59:59`;
     } else {
-      formattedStartAt = `${scheduleWillAdd.startAt}:00`;
-      formattedEndAt = `${scheduleWillAdd.endAt}:00`;
+      formattedStartAt = `${postSchedule.startAt}:00`;
+      formattedEndAt = `${postSchedule.endAt}:00`;
     }
 
-    const postData = {
-      ...scheduleWillAdd,
+    const finalPostData = {
+      ...postSchedule,
       startAt: formattedStartAt,
       endAt: formattedEndAt,
     };
 
     if (url) {
       try {
-        if (postData.tag.name !== '전체') {
-          const tagExists = boardData.some(
-            (tag: any) => tag.name === postData.tag.name && tag.color === postData.tag.color,
+        if (postTag.tag.name !== '전체') {
+          const tagExists = boardData.find(
+            (tag: any) => tag.name === postTag.tag.name && tag.color === postTag.tag.color,
           );
 
-          if (!tagExists && postData.tag.name && postData.tag.color) {
-            const allTagIds = boardData.map((tag: any) => tag.tagId);
-            let newTagId = 1;
-            while (allTagIds.includes(newTagId)) {
-              newTagId++;
-            }
-            postData.tag.tagId = newTagId;
-
-            await axios.post(`${url}api/v1/tags`, postData.tag, {
-              headers: {Authorization: `Bearer ${user.token}`},
-            });
+          if (!tagExists && postTag.tag.name && postTag.tag.color) {
+            await postBoardData(url, user.token, {tag: postTag.tag});
           } else if (tagExists) {
             const existingTag = boardData.find(
-              (tag: any) => tag.name === postData.tag.name && tag.color === postData.tag.color,
+              (tag: any) => tag.name === postTag.tag.name && tag.color === postTag.tag.color,
             );
             if (existingTag) {
-              postData.tag.tagId = existingTag.tagId;
+              finalPostData.tagId = existingTag.tagId;
             }
           }
         }
-        console.log('scheduleWillAdd: ', scheduleWillAdd);
-        console.log('postData: ', postData);
-        const response = await axios.post(`${url}api/v1/schedule`, postData, {
-          headers: {Authorization: `Bearer ${user.token}`},
+        console.log('finalPostData: ', JSON.stringify(finalPostData, null, 2));
+        const response = await postScheduleItem(url, user.token, finalPostData);
+        dispatch(addScheduleItem(response));
+        console.log('스케줄 등록 성공!');
+        navigation.navigate('BoardDetail', {
+          title: postTag.tag.name,
+          color: postTag.tag.color,
         });
-        if (response.status === 200 || response.status === 201) {
-          dispatch(addScheduleItem(response.data));
-          console.log('스케줄 등록 성공!');
-          navigation.navigate('BoardDetail', {
-            title: postData.tag.name,
-            color: postData.tag.color,
-          });
-        }
       } catch (error) {
         Alert.alert(
           'Error',
@@ -134,7 +124,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   useFocusEffect(
     useCallback(() => {
       return () => {
-        setScheduleWillAdd(data);
+        setPostSchedule(scheduleData);
       };
     }, []),
   );
@@ -142,10 +132,12 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header title="스케줄 등록" nextFunc={handleAddSchedule} />
-      <ScheduleOption
+      <ScheduleAddOption
         url={url}
-        scheduleWillAdd={scheduleWillAdd}
-        setScheduleWillAdd={setScheduleWillAdd}
+        postSchedule={postSchedule}
+        setPostSchedule={setPostSchedule}
+        postTag={postTag}
+        setPostTag={setPostTag}
         getCurrentDateStartAndEnd={getCurrentDateStartAndEnd}
       />
     </SafeAreaView>

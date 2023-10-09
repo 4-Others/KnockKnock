@@ -1,51 +1,96 @@
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, Alert} from 'react-native';
-import React, {useState} from 'react';
 import Config from 'react-native-config';
-import axios from 'axios';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../util/redux/store';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {patchScheduleItem} from '../../api/scheduleApi';
+import {postBoardData} from '../../api/boardApi';
 import Header from '../../components/Header';
-import ScheduleOption from './ScheduleOption';
+import ScheduleEditOption from './ScheduleEditOption';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {
   const url = Config.API_APP_KEY as string;
-  const token = useSelector((state: any) => state.user.token);
+  const user = useSelector((state: any) => state.user);
+  const boardData = useSelector((state: RootState) => state.board);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const initialData = route.params.item;
-  const [scheduleToEdit, setScheduleToEdit] = useState(initialData);
+  const [updateData, setUpdateData] = useState(initialData);
 
   const handleEditSchedule = async () => {
-    try {
-      const response = await axios.patch(
-        `${url}/api/v1/schedule/${initialData.calendarId}`,
-        scheduleToEdit,
-        {
-          headers: {Authorization: `Bearer ${token}`},
-        },
-      );
+    if (!updateData.title || !updateData.tag) {
+      Alert.alert('일정과 보드를 작성해주세요.');
+      return;
+    }
 
-      if (response.status === 200) {
-        dispatch(setScheduleItems(response.data));
-        navigation.goBack();
-      } else {
-        throw new Error('스케줄 수정 실패.');
+    let formattedStartAt;
+    let formattedEndAt;
+    if (updateData.period === 'ALL_DAY') {
+      formattedStartAt = `${updateData.startAt} 00:00:00`;
+      formattedEndAt = `${updateData.endAt} 23:59:59`;
+    } else {
+      formattedStartAt = `${updateData.startAt}:00`;
+      formattedEndAt = `${updateData.endAt}:00`;
+    }
+
+    const finalUpdateData = {
+      ...updateData,
+      startAt: formattedStartAt,
+      endAt: formattedEndAt,
+    };
+
+    if (url) {
+      try {
+        if (updateData.tag.name !== '전체') {
+          const tagExists = boardData.find(
+            (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
+          );
+
+          if (!tagExists && updateData.tag.name && updateData.tag.color) {
+            await postBoardData(url, user.token, {tag: updateData.tag});
+          } else if (tagExists) {
+            const existingTag = boardData.find(
+              (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
+            );
+            if (existingTag) {
+              finalUpdateData.tagId = existingTag.tagId;
+            }
+          }
+        }
+        console.log('finalUpdateData: ', JSON.stringify(finalUpdateData, null, 2));
+        const result = await patchScheduleItem(url, user.token, updateData.id, updateData);
+        if (typeof result !== 'boolean' && result !== undefined) {
+          dispatch(setScheduleItems(result));
+          console.log('스케줄 수정 성공!');
+          navigation.goBack();
+        } else {
+          console.log('예상치 못한 결과가 발생했습니다:', result);
+        }
+      } catch (error) {
+        Alert.alert(
+          'Error',
+          '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
+        );
+        console.log('Error editing data', error);
       }
-    } catch (error) {
-      Alert.alert('Error', '스케줄 수정을 실패했습니다.', [{text: 'OK'}]);
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setUpdateData(updateData);
+      };
+    }, []),
+  );
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Header title="스케줄 편집" />
-      <ScheduleOption
-        url={url}
-        scheduleWillAdd={scheduleToEdit}
-        setScheduleWillAdd={setScheduleToEdit}
-      />
+      <Header title="스케줄 편집" nextFunc={handleEditSchedule} />
+      <ScheduleEditOption url={url} updateData={updateData} setUpdateData={setUpdateData} />
     </SafeAreaView>
   );
 };

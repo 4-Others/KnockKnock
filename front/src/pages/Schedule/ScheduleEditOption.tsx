@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {variables} from '../../style/variables';
-import {SetScheduleData} from '../../util/dataConvert';
+import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
 import Selector from '../../components/BottomSheet';
@@ -19,15 +19,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 interface ScheduleOptionProps {
   url?: string;
-  scheduleWillAdd: SetScheduleData;
-  setScheduleWillAdd: React.Dispatch<React.SetStateAction<SetScheduleData>>;
+  updateData: SetScheduleData & SetBoardData;
+  setUpdateData: React.Dispatch<React.SetStateAction<SetScheduleData & SetBoardData>>;
   getCurrentDateStartAndEnd?: any;
 }
 
 const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   url,
-  scheduleWillAdd,
-  setScheduleWillAdd,
+  updateData,
+  setUpdateData,
   getCurrentDateStartAndEnd,
 }) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
@@ -37,7 +37,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 
   const handleTogglePeriod = (value: boolean) => {
     const {start, end} = getCurrentDateStartAndEnd();
-    setScheduleWillAdd(prevData => ({
+    setUpdateData(prevData => ({
       ...prevData,
       period: value ? 'ALL_DAY' : 'SPECIFIC_TIME',
       startAt: value ? start : prevData.startAt,
@@ -60,16 +60,16 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
     )}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     if (timeType === 'start') {
-      setScheduleWillAdd(prevData => ({
+      setUpdateData(prevData => ({
         ...prevData,
         startAt: formattedDate,
       }));
     } else if (timeType === 'end') {
-      if (new Date(formattedDate) < new Date(scheduleWillAdd.startAt)) {
+      if (new Date(formattedDate) < new Date(updateData.startAt)) {
         Alert.alert('시작과 종료를 시간순서에\n맞게 설정해주세요.');
         return;
       }
-      setScheduleWillAdd(prevData => ({
+      setUpdateData(prevData => ({
         ...prevData,
         endAt: formattedDate,
       }));
@@ -93,19 +93,19 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
 
   let date = new Date();
 
-  scheduleWillAdd.startAt.length !== 0 && timeType === 'start'
-    ? parseDate(scheduleWillAdd.startAt)
-    : parseDate(scheduleWillAdd.endAt);
+  updateData.startAt.length !== 0 && timeType === 'start'
+    ? parseDate(updateData.startAt)
+    : parseDate(updateData.endAt);
 
   const onTagState = (value: {color: string; name: string; tagId: number}) => {
-    setScheduleWillAdd(prevData => ({
+    setUpdateData(prevData => ({
       ...prevData,
       tag: value,
     }));
   };
 
   const onNotificationState = (value: number) => {
-    setScheduleWillAdd((prevData: SetScheduleData) => {
+    setUpdateData((prevData: SetScheduleData & SetBoardData) => {
       return {
         ...prevData,
         alerts: [value],
@@ -116,42 +116,42 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentLayout}>
       <TextInput
-        defaultValue={scheduleWillAdd.title}
+        defaultValue={updateData.name}
         placeholder="스케줄을 입력해 주세요."
         style={styles.contentTitleInput}
-        onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, title: text}))}
+        onChangeText={text => setUpdateData(prevData => ({...prevData, title: text}))}
       />
       <ScheduleOptionSelect
         type="스케줄 보드"
-        state={scheduleWillAdd.tag}
+        state={updateData.tag}
         event={() => setBoardIsOpen(prevState => !prevState)}
         iconName="pricetag-outline"
       />
       <ScheduleOptionSelect
         type="알림 시간"
-        state={scheduleWillAdd.alerts.join()}
+        state={updateData.alerts.join()}
         event={() => setNotificationIsOpen(prevState => !prevState)}
         iconName="notifications-outline"
       />
       <ScheduleOptionToggle
         type="하루 종일"
-        value={scheduleWillAdd.period === 'ALL_DAY'}
+        value={updateData.period === 'ALL_DAY'}
         onToggle={handleTogglePeriod}
         iconName="sunny-outline"
       />
       <ScheduleOptionSelect
         type="일정 시작 시간"
-        state={scheduleWillAdd.startAt}
+        state={updateData.startAt}
         event={toggleStartAt}
         iconName="time-outline"
-        period={scheduleWillAdd.period}
+        period={updateData.period}
       />
       <ScheduleOptionSelect
         type="일정 종료 시간"
-        state={scheduleWillAdd.endAt}
+        state={updateData.endAt}
         event={toggleEndAt}
         iconName="time-outline"
-        period={scheduleWillAdd.period}
+        period={updateData.period}
       />
       <KeyboardAvoidingView
         style={styles.contentInput}
@@ -162,9 +162,9 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
           <Text style={styles.inputTitle}>메모</Text>
           <TextInput
             style={styles.contentText}
-            defaultValue={scheduleWillAdd.content}
+            defaultValue={updateData.content}
             placeholder="자세한 내용을 기록하려면 입력하세요"
-            onChangeText={text => setScheduleWillAdd(prevData => ({...prevData, content: text}))}
+            onChangeText={text => setUpdateData(prevData => ({...prevData, content: text}))}
           />
         </View>
       </KeyboardAvoidingView>
@@ -181,7 +181,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         type="notification"
       />
       <DateTimePickerModal
-        isVisible={visible && scheduleWillAdd.period === 'SPECIFIC_TIME'}
+        isVisible={visible && updateData.period === 'SPECIFIC_TIME'}
         mode={'datetime'}
         onConfirm={handleConfirm}
         onCancel={onCancel}

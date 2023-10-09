@@ -10,7 +10,12 @@ import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {Swipeable} from 'react-native-gesture-handler';
 
-const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) => {
+interface ScheduleItemProps {
+  items: any;
+  setItems: (newItems: ScheduleItems) => void;
+}
+
+const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
 
@@ -29,7 +34,7 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
       const newItems = {...items};
       for (let date in newItems) {
         newItems[date] = newItems[date].map((item: ScheduleData) => {
-          if (item.calendarId === scheduleId) {
+          if (item.scheduleId === scheduleId) {
             return {...item, complete: newCompleteStatus};
           }
           return item;
@@ -44,13 +49,14 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
   const handleDelete = async (scheduleId: number) => {
     const success = await deleteScheduleItem(url, token, scheduleId);
     if (success) {
-      const newItems = {...items};
-      for (let date in newItems) {
-        newItems[date] = newItems[date].filter(
-          (item: ScheduleData) => item.calendarId !== scheduleId,
+      const updatedItems: ScheduleItems = {...items};
+      for (let date in updatedItems) {
+        updatedItems[date] = updatedItems[date].filter(
+          (item: ScheduleData) => item.scheduleId !== scheduleId,
         );
       }
-      setItems(newItems);
+      setItems(updatedItems);
+      console.log('setItems: ', setItems);
     } else {
       console.error(`삭제 실패한 스케줄 ID: ${scheduleId}`);
     }
@@ -92,7 +98,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
-        onDelete(item.calendarId);
+        onDelete(item.scheduleId);
         resetSwipeable();
       }}>
       <Text style={styles.deleteText}>Delete</Text>
@@ -110,6 +116,8 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
     return `${date} ${time.split(':')[0]}:${time.split(':')[1]}`;
   };
 
+  const tagColor = item.tag && item.tag.color ? item.tag.color : '#757575';
+
   return (
     <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
       <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
@@ -120,8 +128,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
           endColor={'#ffffff05'}
           offset={[0, 1]}>
           <View style={styles.content}>
-            <View style={styles.colorChip}></View>
-            {/* <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View> */}
+            <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
             <View>
               <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
                 {item.name}

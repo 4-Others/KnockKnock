@@ -1,5 +1,5 @@
 export interface ApiResponseData {
-  calendarId: number;
+  scheduleId: number;
   title: string;
   content: string;
   period: string;
@@ -12,11 +12,12 @@ export interface ApiResponseData {
   tag: {
     name: string;
     color: string;
+    tagId?: number;
   };
 }
 
 export interface ScheduleData {
-  calendarId: number;
+  scheduleId: number;
   name: string;
   height: number;
   day: string;
@@ -30,28 +31,20 @@ export interface ScheduleData {
   tag: {
     name: string;
     color: string;
+    tagId?: number;
   };
 }
 
 export interface SetScheduleData {
   title: string;
+  name?: string;
   content: string;
   period: string;
   startAt: string;
   endAt: string;
   alerts: number[];
   complete: boolean;
-  tag: {
-    name: string;
-    color: string;
-    tagId?: number;
-  };
-}
-
-export interface SearchData {
-  keyword: string;
-  startAt: string;
-  endAt: string;
+  tagId?: number;
 }
 
 export type BoardDataItem = {
@@ -60,6 +53,19 @@ export type BoardDataItem = {
   color: string;
   scheduleCount: number;
 };
+
+export type SetBoardData = {
+  tag: {
+    name: string;
+    color: string;
+    tagId?: number;
+  };
+};
+export interface SearchData {
+  keyword: string;
+  startAt: string;
+  endAt: string;
+}
 
 type DayData = {
   dateString: string;
@@ -89,7 +95,7 @@ const dateFormat = (dateString: string) => {
 
 const convertResponseData = (resData: ApiResponseData) => {
   const {
-    calendarId,
+    scheduleId,
     title,
     content,
     period,
@@ -103,7 +109,7 @@ const convertResponseData = (resData: ApiResponseData) => {
   } = resData;
 
   const calendarData: ScheduleData = {
-    calendarId,
+    scheduleId,
     name: title,
     height: 0,
     day: dateFormat(createdAt), // formatDate로 형식 일치시킴

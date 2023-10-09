@@ -3,14 +3,12 @@ import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'reac
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
-import {AxiosError} from 'axios';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {fetchScheduleItems} from '../../api/scheduleApi';
-import {refreshToken} from '../../api/refreshTokenApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
@@ -31,48 +29,40 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
   const items = useSelector((state: any) => state.schedule.items);
-  const {title, color} = route.params;
-  const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
+  const {title, color} = route.params;
+  const dispatch = useDispatch();
   const [scheduleCount, setScheduleCount] = useState(0);
-
-  const updateToken = (newToken: string) => {
-    dispatch({type: 'UPDATE_TOKEN', payload: newToken});
-  };
 
   const loadScheduleItems = async () => {
     if (url) {
       try {
-        const newItems = await fetchScheduleItems(url, token);
+        const fetchedItems = await fetchScheduleItems(url, token);
         let count = 0;
-        Object.keys(newItems).forEach(key => {
-          count += newItems[key].length;
+        Object.keys(fetchedItems).forEach(key => {
+          count += fetchedItems[key].length;
         });
-
         setScheduleCount(count);
-        dispatch(setScheduleItems(newItems));
+        return fetchedItems;
       } catch (error) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response && axiosError.response.status === 401) {
-          const newToken = await refreshToken(url, token);
-          if (newToken) {
-            console.log('Success:', newToken);
-            updateToken(newToken);
-          }
-        }
         console.error('Failed to load schedules:', error);
+        return null;
       }
-    } else {
-      console.error('URL is undefined');
     }
+    return null;
   };
 
   useEffect(() => {
-    loadScheduleItems();
-  }, []);
-  console.log('items: ', items);
+    (async () => {
+      const newItems = await loadScheduleItems();
+      if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
+        dispatch(setScheduleItems(newItems));
+      }
+    })();
+  }, [items]);
+  console.log('items: ', JSON.stringify(items, null, 2));
   return (
     <SafeAreaView style={styles.container}>
       <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
@@ -91,7 +81,9 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>{ScheduleList(items, setItems)}</View>
+        <View style={styles.listContainer}>
+          <ScheduleList items={items} setItems={setItems} />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

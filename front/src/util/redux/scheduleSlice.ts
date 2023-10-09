@@ -20,10 +20,10 @@ export const scheduleSlice = createSlice({
     },
     addScheduleItem: (state, action: PayloadAction<ScheduleData>) => {
       const newItem = action.payload;
-      if (!state.items[newItem.calendarId]) {
-        state.items[newItem.calendarId] = [];
+      if (!state.items[newItem.scheduleId]) {
+        state.items[newItem.scheduleId] = [];
       }
-      state.items[newItem.calendarId].push(newItem);
+      state.items[newItem.scheduleId].push(newItem);
     },
   },
 });
