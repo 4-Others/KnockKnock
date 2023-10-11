@@ -13,6 +13,8 @@ import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
 import SignUpTab from '../pages/signUp/SignUpTab';
 import TabNavigator from './TabNavigator';
+import Search from '../pages/search/Search';
+import SearchResult from '../pages/search/SearchResult';
 
 export interface AuthProps {
   route: any;
@@ -70,4 +72,17 @@ const StackCalendar = () => {
   );
 };
 
-export {AuthStack, StackSchedule, StackCalendar};
+const StackSearch = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="SearchOption" options={{headerShown: false}}>
+        {props => <Search {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="SearchResult" options={{headerShown: false}}>
+        {props => <SearchResult {...props} url={url} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+};
+
+export {AuthStack, StackSchedule, StackCalendar, StackSearch};

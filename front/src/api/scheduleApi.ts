@@ -1,5 +1,5 @@
 import axios, {AxiosError} from 'axios';
-import {ScheduleData, SetScheduleData, convertResponseData} from '../util/dataConvert';
+import {ScheduleData, SetScheduleData} from '../util/dataConvert';
 import {format} from 'date-fns';
 
 type ScheduleItems = Record<string, ScheduleData[]>;
@@ -20,7 +20,7 @@ export const fetchScheduleItems = async (url: string, token: string): Promise<Sc
           tagId: 0,
         };
       }
-      const convertedData: ScheduleData = convertResponseData(item);
+      const convertedData: ScheduleData = item;
       const dateKey = format(new Date(convertedData.startAt), 'yyyy-MM-dd');
       if (!newItems[dateKey]) {
         newItems[dateKey] = [];

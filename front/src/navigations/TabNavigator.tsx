@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StackSchedule, StackCalendar} from './StackNavigator';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
-import Search from '../pages/search/Search';
+import {StackSearch} from './StackNavigator';
 import Notifications from '../pages/notifications/Notifications';
 import CustomIcon from '../components/CustomIcon';
 
@@ -101,7 +101,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Search"
-        component={Search}
+        component={StackSearch}
         listeners={{
           focus: () => {
             setLastTab('Search');

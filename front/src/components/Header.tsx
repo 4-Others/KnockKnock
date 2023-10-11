@@ -33,7 +33,7 @@ const Header = ({title, type, nextFunc, state, navigation}: HeaderProps) => {
           <Text style={styles.title}>{title}</Text>
         </View>
         <TouchableOpacity onPress={nextFunc}>
-          {type === 'alarm' || type === 'signUp' ? null : (
+          {type === 'alarm' || type === 'signUp' || type === 'none' ? null : (
             <Image source={prevBtnIconHandller()} style={[styles.icon, {marginRight: 24}]} />
           )}
         </TouchableOpacity>
