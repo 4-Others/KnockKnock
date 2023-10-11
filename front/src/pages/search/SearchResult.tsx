@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
+import {Text, StyleSheet, SafeAreaView, Dimensions, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import Header from '../../components/Header';
 import {variables} from '../../style/variables';
-import {Shadow} from 'react-native-shadow-2';
 import {AuthProps} from '../../navigations/StackNavigator';
 import axios from 'axios';
-import {ApiResponseData, ScheduleData, convertResponseData} from '../../util/dataConvert';
+import {ScheduleData} from '../../util/dataConvert';
 import {format} from 'date-fns';
 import ScheduleList from '../../components/ScheduleList';
 import {useDispatch} from 'react-redux';
@@ -32,21 +31,28 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
         params: route.params,
       });
       const fetchedData = res.data.body.data;
+
       const newItems: ScheduleItems = {};
 
-      fetchedData.forEach((item: ApiResponseData) => {
-        const convertedData: ScheduleData = convertResponseData(item);
-        const dateKey = format(new Date(convertedData.startAt), 'yyyy-MM-dd');
+      fetchedData.forEach((item: ScheduleData) => {
+        if (item.tag === null) {
+          item.tag = {
+            name: '전체',
+            color: '#757575',
+            tagId: 0,
+          };
+        }
+        const dateKey = format(new Date(item.startAt), 'yyyy-MM-dd');
         if (!newItems[dateKey]) {
           newItems[dateKey] = [];
         }
-        newItems[dateKey].push(convertedData);
+        newItems[dateKey].push(item);
       });
-
       let count = 0;
       Object.keys(newItems).forEach(key => {
         count += newItems[key].length;
       });
+      console.log(JSON.stringify(newItems, null, 2));
       setScheduleCount(count);
       setItems(newItems);
     } catch (error: any) {
@@ -68,7 +74,11 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
         <Text style={styles.countText}>{`total memo: ${scheduleCount}`}</Text>
       </View>
       <View style={styles.listContainer}>
-        {Object.keys(items).length > 0 ? ScheduleList(items, setItems) : <EmptySearch />}
+        {Object.keys(items).length > 0 ? (
+          <ScheduleList items={items} setItems={setItems} />
+        ) : (
+          <EmptySearch />
+        )}
       </View>
     </SafeAreaView>
   );
