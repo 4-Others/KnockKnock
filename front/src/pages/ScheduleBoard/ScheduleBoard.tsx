@@ -8,7 +8,7 @@ import {setBoardData} from '../../util/redux/boardSlice';
 import {RootState} from '../../util/redux/store';
 import {fetchBoardData} from '../../api/boardApi';
 import {AuthProps} from '../../navigations/StackNavigator';
-import {BoardDataItem} from '../../util/dataConvert';
+import {BoardItem} from '../../util/dataConvert';
 import ProfileHeader from '../../components/ProfileHeader';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
@@ -16,7 +16,7 @@ import BoardTab from './BoardItems/BoardTab';
 const deviceWidth = Dimensions.get('window').width;
 
 const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
-  const carouselRef = useRef<Carousel<BoardDataItem>>(null);
+  const carouselRef = useRef<Carousel<BoardItem>>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const boardData = useSelector((state: RootState) => state.board);

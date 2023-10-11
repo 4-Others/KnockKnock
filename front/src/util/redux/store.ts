@@ -2,7 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import userSlice from './userSlice';
 import {scheduleSlice} from './scheduleSlice';
 import boardReducer from './boardSlice';
-import {BoardDataItem} from '../dataConvert';
+import {BoardItem} from '../dataConvert';
 
 export const store = configureStore({
   reducer: {
@@ -13,5 +13,5 @@ export const store = configureStore({
 });
 
 export type RootState = {
-  board: BoardDataItem[];
+  board: BoardItem[];
 };

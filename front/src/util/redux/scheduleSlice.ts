@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {ScheduleData} from '../dataConvert';
 
-export type ScheduleItems = Record<number, ScheduleData[]>;
+export type ScheduleItems = Record<string, ScheduleData[]>;
 
 type ScheduleState = {
   items: ScheduleItems;

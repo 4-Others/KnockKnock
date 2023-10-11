@@ -1,13 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {BoardDataItem} from '../dataConvert';
+import {BoardItem} from '../dataConvert';
 
-const initialState: BoardDataItem[] = [];
+const initialState: BoardItem[] = [];
 
 const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {
-    setBoardData: (state, action: PayloadAction<BoardDataItem[]>) => {
+    setBoardData: (state, action: PayloadAction<BoardItem[]>) => {
       return action.payload;
     },
   },

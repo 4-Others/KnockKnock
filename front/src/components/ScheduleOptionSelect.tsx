@@ -13,7 +13,7 @@ interface inputProps {
 
 const ScheduleOptionSelect: React.FC<inputProps> = ({type, state, event, iconName, period}) => {
   const colorChipRender = () => {
-    if (typeof state !== 'string') {
+    if (state && typeof state !== 'string') {
       let colorValue: any = state.color;
       if (colorValue.startsWith('variables.')) {
         let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
@@ -32,7 +32,7 @@ const ScheduleOptionSelect: React.FC<inputProps> = ({type, state, event, iconNam
           <View style={styles.selector}>
             {colorChipRender()}
             <TextInput
-              value={typeof state === 'string' ? state : state.name}
+              value={state && typeof state !== 'string' ? state.name : state}
               placeholder={`${type} 선택하세요.`}
               style={[
                 type === '스케줄 보드' ||

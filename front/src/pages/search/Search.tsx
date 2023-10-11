@@ -46,12 +46,21 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
     }));
   };
 
-  const searchSchedule = () => {
-    navigation.navigate('SearchResult', {
-      keyword: searchData.keyword,
-      startAt: `${searchData.startAt} 00:00:00`,
-      endAt: `${searchData.endAt} 00:00:00`,
-    });
+  const searchSchedule = async () => {
+    try {
+      const response = await axios.get(`${url}api/v1/schedule/search`, {
+        headers: {Authorization: `Bearer ${user.token}`},
+        params: {
+          keyword: searchData.keyword,
+          startAt: `${searchData.startAt} 00:00:00`,
+          endAt: `${searchData.endAt} 23:59:59`,
+        },
+      });
+
+      console.log(response.data.body.data);
+    } catch (error) {
+      console.error('API 호출 중 오류 발생:', error);
+    }
   };
 
   return (
