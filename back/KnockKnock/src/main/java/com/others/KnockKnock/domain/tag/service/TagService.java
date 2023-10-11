@@ -70,7 +70,7 @@ public class TagService {
         Tag allTag = Tag.builder()
                          .tagId(0L)
                          .name("전체")
-                         .color("#75757")
+                         .color("#757575")
                          .schedule(allSchedule)
                          .build();
 
@@ -87,7 +87,7 @@ public class TagService {
             findTag = Tag.builder()
                              .tagId(0L)
                              .name("전체")
-                             .color("#75757")
+                             .color("#757575")
                              .schedule(allSchedule)
                              .build();
         } else {
