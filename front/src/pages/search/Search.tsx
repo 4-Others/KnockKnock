@@ -8,33 +8,15 @@ import {variables} from '../../style/variables';
 import {SearchData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
+import {AuthProps} from '../../navigations/StackNavigator';
 
-const Search = () => {
-  const url = Config.API_APP_KEY;
-  const user = useSelector((state: any) => state.user);
-
-  const getCurrentDateStartAndEnd = () => {
-    const date = new Date();
-    const startAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const endAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-    const formatDateTime = (date: Date) => {
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-        date.getDate(),
-      ).padStart(2, '0')}`;
-    };
-    return {
-      start: formatDateTime(startAt),
-      end: formatDateTime(endAt),
-    };
-  };
-
-  const {start, end} = getCurrentDateStartAndEnd();
+const Search: React.FC<AuthProps> = ({navigation}) => {
+  const dateFormat = (date: Date) => date.toISOString().split('T')[0];
 
   const data: SearchData = {
     keyword: '',
-    startAt: start,
-    endAt: end,
+    startAt: dateFormat(new Date()),
+    endAt: dateFormat(new Date()),
   };
 
   const [visible, setVisible] = useState(false);
@@ -57,32 +39,19 @@ const Search = () => {
 
   const handleConfirm = (date: Date) => {
     onCancel();
-    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(date.getDate()).padStart(2, '0')}`;
 
     setSearchData(prevState => ({
       ...prevState,
-      [timeType === 'start' ? 'startAt' : 'endAt']: formattedDate,
+      [timeType === 'start' ? 'startAt' : 'endAt']: dateFormat(date),
     }));
   };
 
-  const searchSchedule = async () => {
-    try {
-      const response = await axios.get(`${url}api/v1/schedule/search`, {
-        headers: {Authorization: `Bearer ${user.token}`},
-        params: {
-          keyword: searchData.keyword,
-          startAt: `${searchData.startAt} 00:00:00`,
-          endAt: `${searchData.endAt} 23:59:59`,
-        },
-      });
-
-      console.log(response.data.body.data);
-    } catch (error) {
-      console.error('API 호출 중 오류 발생:', error);
-    }
+  const searchSchedule = () => {
+    navigation.navigate('SearchResult', {
+      keyword: searchData.keyword,
+      startAt: `${searchData.startAt} 00:00:00`,
+      endAt: `${searchData.endAt} 00:00:00`,
+    });
   };
 
   return (

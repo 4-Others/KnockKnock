@@ -54,25 +54,3 @@ export interface SearchData {
   startAt: string;
   endAt: string;
 }
-
-const convertResponseData = (resData: ScheduleData) => {
-  const {scheduleId, title, content, period, startAt, endAt, alerts, modifiedAt, complete, tag} =
-    resData;
-
-  const calendarData: ScheduleData = {
-    scheduleId,
-    title,
-    complete,
-    startAt,
-    endAt,
-    modifiedAt,
-    content,
-    period,
-    alerts,
-    tag,
-  };
-
-  return calendarData;
-};
-
-export {convertResponseData};
