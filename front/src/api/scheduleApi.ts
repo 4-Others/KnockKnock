@@ -1,10 +1,5 @@
 import axios, {AxiosError} from 'axios';
-import {
-  ApiResponseData,
-  ScheduleData,
-  SetScheduleData,
-  convertResponseData,
-} from '../util/dataConvert';
+import {ScheduleData, SetScheduleData, convertResponseData} from '../util/dataConvert';
 import {format} from 'date-fns';
 
 type ScheduleItems = Record<string, ScheduleData[]>;
@@ -17,7 +12,7 @@ export const fetchScheduleItems = async (url: string, token: string): Promise<Sc
     const fetchedData = response.data.body.data;
     const newItems: ScheduleItems = {};
 
-    fetchedData.forEach((item: ApiResponseData) => {
+    fetchedData.forEach((item: ScheduleData) => {
       if (item.tag === null) {
         item.tag = {
           name: '전체',

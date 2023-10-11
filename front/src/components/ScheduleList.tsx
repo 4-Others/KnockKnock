@@ -131,7 +131,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
             <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
             <View>
               <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-                {item.name}
+                {item.title}
               </Text>
               {item.period === 'ALL_DAY' ? (
                 <Text style={styles.time}>{formatDate(item.startAt)}</Text>

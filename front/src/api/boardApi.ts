@@ -21,6 +21,7 @@ export const postBoardData = async (url: string, token: string, tag: SetBoardDat
     const response = await axios.post(`${url}api/v1/tags`, tag, {
       headers: {Authorization: `Bearer ${token}`},
     });
+    console.log('Posting tag data:', JSON.stringify(tag));
     return response.data;
   } catch (error) {
     console.error('Error posting tag:', error);

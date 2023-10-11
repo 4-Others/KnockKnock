@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {variables} from '../../style/variables';
-import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
+import {PostBoardData, SetScheduleData} from '../../util/dataConvert';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
 import Selector from '../../components/BottomSheet';
@@ -21,8 +21,8 @@ interface ScheduleOptionProps {
   url?: string;
   postSchedule: SetScheduleData;
   setPostSchedule: React.Dispatch<React.SetStateAction<SetScheduleData>>;
-  postTag: SetBoardData;
-  setPostTag: React.Dispatch<React.SetStateAction<SetBoardData>>;
+  postTag: PostBoardData;
+  setPostTag: React.Dispatch<React.SetStateAction<PostBoardData>>;
   getCurrentDateStartAndEnd?: any;
 }
 
@@ -101,11 +101,8 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
     ? parseDate(postSchedule.startAt)
     : parseDate(postSchedule.endAt);
 
-  const onTagState = (value: {color: string; name: string; tagId: number}) => {
-    setPostTag(prevData => ({
-      ...prevData,
-      tag: value,
-    }));
+  const onTagState = (value: {color: string; name: string}) => {
+    setPostTag(value);
   };
 
   const onNotificationState = (value: number) => {
@@ -127,7 +124,7 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
       />
       <ScheduleOptionSelect
         type="스케줄 보드"
-        state={postTag.tag}
+        state={postTag}
         event={() => setBoardIsOpen(prevState => !prevState)}
         iconName="pricetag-outline"
       />

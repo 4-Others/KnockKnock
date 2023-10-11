@@ -1,3 +1,4 @@
+import React, {useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,7 +9,6 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import React, {useRef, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {variables} from '../../../style/variables';
@@ -25,38 +25,27 @@ interface BoardItemProps {
 const deviceWidth = Dimensions.get('window').width;
 
 const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
-  // const [allowNavigation, setAllowNavigation] = useState(false);
   const swipeRef = useRef<Swipeable>(null);
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     swipeRef.current?.close();
   }, [active]);
 
-  const navigation = useNavigation<any>();
-
   const handleEditPress = () => {
-    // if (allowNavigation) {
     navigation.navigate('BoardEdit');
-    // }
   };
 
   const handleBoardPress = () => {
-    navigation.navigate('BoardDetail', {title, color});
+    navigation.navigate('BoardDetail', {title, color, number});
   };
-
-  // const handleSwipeableRightOpen = () => {
-  //   setAllowNavigation(true);
-  // };
-
-  // const handleSwipeableRightClose = () => {
-  //   setAllowNavigation(false);
-  // };
 
   const renderRightActions = (dragX: any) => {
     const translate = dragX.interpolate({
       inputRange: [-50, -10, 0],
       outputRange: [-50, 0, -((deviceWidth - 310) * 0.5)],
     });
+
     return (
       <Animated.View style={[styles.swipeContainer, {transform: [{translateX: translate}]}]}>
         <RectButton onPress={() => handleEditPress()}>
@@ -72,16 +61,7 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
 
   return (
     <View style={styles.fullWidth}>
-      <Swipeable
-        key={boardId}
-        ref={swipeRef}
-        friction={2}
-        rightThreshold={10}
-        overshootRight={false}
-        renderRightActions={renderRightActions}
-        // onSwipeableRightOpen={handleSwipeableRightOpen}
-        // onSwipeableClose={handleSwipeableRightClose}
-      >
+      {title === '전체' && color === '#757575' ? (
         <TouchableOpacity onPress={handleBoardPress}>
           <ImageBackground
             source={require('../../../../assets/image/card_graphic.png')}
@@ -93,7 +73,27 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
             </View>
           </ImageBackground>
         </TouchableOpacity>
-      </Swipeable>
+      ) : (
+        <Swipeable
+          key={boardId}
+          ref={swipeRef}
+          friction={2}
+          rightThreshold={10}
+          overshootRight={false}
+          renderRightActions={renderRightActions}>
+          <TouchableOpacity onPress={handleBoardPress}>
+            <ImageBackground
+              source={require('../../../../assets/image/card_graphic.png')}
+              style={[styles.container, {backgroundColor: color}]}>
+              <Text style={styles.title}>{title}</Text>
+              <View style={styles.textContainer}>
+                <Text style={styles.total}>total list</Text>
+                <Text style={styles.number}>{number}</Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        </Swipeable>
+      )}
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
@@ -19,7 +19,7 @@ type ScheduleItems = Record<string, ScheduleData[]>;
 
 type RootStackParamList = {
   BoardEdit: undefined;
-  BoardDetail: {title: string; color: string};
+  BoardDetail: {title: string; color: string; number: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
@@ -32,20 +32,24 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
-  const {title, color} = route.params;
+  const {title, color, number} = route.params;
   const dispatch = useDispatch();
-  const [scheduleCount, setScheduleCount] = useState(0);
 
   const loadScheduleItems = async () => {
     if (url) {
       try {
         const fetchedItems = await fetchScheduleItems(url, token);
-        let count = 0;
-        Object.keys(fetchedItems).forEach(key => {
-          count += fetchedItems[key].length;
-        });
-        setScheduleCount(count);
-        return fetchedItems;
+        if (title === '전체' && color === '#757575') {
+          return fetchedItems;
+        } else {
+          const filteredItems = Object.keys(fetchedItems).reduce<ScheduleItems>((acc, date) => {
+            acc[date] = fetchedItems[date].filter(
+              item => item.tag.name === title && item.tag.color === color,
+            );
+            return acc;
+          }, {});
+          return filteredItems;
+        }
       } catch (error) {
         console.error('Failed to load schedules:', error);
         return null;
@@ -77,7 +81,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
             <Text style={styles.title}>{title}</Text>
             <View style={styles.itemNumContainer}>
               <Text style={styles.textMemo}>total memo:</Text>
-              <Text style={styles.textNum}> {scheduleCount}</Text>
+              <Text style={styles.textNum}> {number}</Text>
             </View>
           </View>
         </Shadow>

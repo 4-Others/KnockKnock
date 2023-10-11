@@ -53,10 +53,8 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     complete: false,
   };
   const tagData: SetBoardData = {
-    tag: {
-      name: '전체',
-      color: '#757575',
-    },
+    name: '전체',
+    color: '#757575',
   };
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
@@ -64,7 +62,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   const [postTag, setPostTag] = useState(tagData);
 
   const handleAddSchedule = async () => {
-    if (!postSchedule.title || !postTag.tag) {
+    if (!postSchedule.title || !postTag) {
       Alert.alert('일정과 보드를 작성해주세요.');
       return;
     }
@@ -87,20 +85,18 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
     if (url) {
       try {
-        if (postTag.tag.name !== '전체') {
+        if (postTag.name !== '전체') {
           const tagExists = boardData.find(
-            (tag: any) => tag.name === postTag.tag.name && tag.color === postTag.tag.color,
+            (tag: any) => tag.name === postTag.name && tag.color === postTag.color,
           );
 
-          if (!tagExists && postTag.tag.name && postTag.tag.color) {
-            await postBoardData(url, user.token, {tag: postTag.tag});
+          if (!tagExists && postTag.name && postTag.color) {
+            const boardResponse = await postBoardData(url, user.token, postTag);
+            console.log('boardResponse: ', JSON.stringify(boardResponse, null, 2));
+            const newBoardId = boardResponse.body.data.tagId;
+            finalPostData.tagId = newBoardId;
           } else if (tagExists) {
-            const existingTag = boardData.find(
-              (tag: any) => tag.name === postTag.tag.name && tag.color === postTag.tag.color,
-            );
-            if (existingTag) {
-              finalPostData.tagId = existingTag.tagId;
-            }
+            finalPostData.tagId = tagExists.tagId;
           }
         }
         console.log('finalPostData: ', JSON.stringify(finalPostData, null, 2));
@@ -108,8 +104,8 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         dispatch(addScheduleItem(response));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
-          title: postTag.tag.name,
-          color: postTag.tag.color,
+          title: postTag.name,
+          color: postTag.color,
         });
       } catch (error) {
         Alert.alert(
@@ -125,6 +121,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     useCallback(() => {
       return () => {
         setPostSchedule(scheduleData);
+        setPostTag(tagData);
       };
     }, []),
   );

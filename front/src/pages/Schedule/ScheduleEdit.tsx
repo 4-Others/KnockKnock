@@ -29,17 +29,22 @@ const ScheduleEdit = ({route}: any) => {
     let formattedStartAt;
     let formattedEndAt;
     if (updateData.period === 'ALL_DAY') {
-      formattedStartAt = `${updateData.startAt} 00:00:00`;
-      formattedEndAt = `${updateData.endAt} 23:59:59`;
+      formattedStartAt = `${updateData.startAt.split(' ')[0]} 00:00:00`;
+      formattedEndAt = `${updateData.endAt.split(' ')[0]} 23:59:59`;
     } else {
       formattedStartAt = `${updateData.startAt}:00`;
       formattedEndAt = `${updateData.endAt}:00`;
     }
 
     const finalUpdateData = {
-      ...updateData,
+      title: updateData.title,
       startAt: formattedStartAt,
       endAt: formattedEndAt,
+      period: updateData.period,
+      alerts: updateData.alerts,
+      complete: updateData.complete,
+      content: updateData.content,
+      tagId: updateData.tagId,
     };
 
     if (url) {
@@ -50,14 +55,9 @@ const ScheduleEdit = ({route}: any) => {
           );
 
           if (!tagExists && updateData.tag.name && updateData.tag.color) {
-            await postBoardData(url, user.token, {tag: updateData.tag});
+            await postBoardData(url, user.token, updateData.tag);
           } else if (tagExists) {
-            const existingTag = boardData.find(
-              (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
-            );
-            if (existingTag) {
-              finalUpdateData.tagId = existingTag.tagId;
-            }
+            finalUpdateData.tagId = tagExists.tagId;
           }
         }
         console.log('finalUpdateData: ', JSON.stringify(finalUpdateData, null, 2));

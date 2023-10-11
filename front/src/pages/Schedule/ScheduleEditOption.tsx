@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {variables} from '../../style/variables';
-import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
+import {BoardData, SetScheduleData} from '../../util/dataConvert';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
 import Selector from '../../components/BottomSheet';
@@ -19,30 +19,38 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 interface ScheduleOptionProps {
   url?: string;
-  updateData: SetScheduleData & SetBoardData;
-  setUpdateData: React.Dispatch<React.SetStateAction<SetScheduleData & SetBoardData>>;
-  getCurrentDateStartAndEnd?: any;
+  updateData: SetScheduleData & BoardData;
+  setUpdateData: React.Dispatch<React.SetStateAction<SetScheduleData & BoardData>>;
 }
 
-const ScheduleOption: React.FC<ScheduleOptionProps> = ({
-  url,
-  updateData,
-  setUpdateData,
-  getCurrentDateStartAndEnd,
-}) => {
+const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpdateData}) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [timeType, setTimeType] = useState('');
+  const start = updateData.startAt.split(' ')[0];
+  const end = updateData.endAt.split(' ')[0];
 
   const handleTogglePeriod = (value: boolean) => {
-    const {start, end} = getCurrentDateStartAndEnd();
-    setUpdateData(prevData => ({
-      ...prevData,
-      period: value ? 'ALL_DAY' : 'SPECIFIC_TIME',
-      startAt: value ? start : prevData.startAt,
-      endAt: value ? end : prevData.endAt,
-    }));
+    if (value) {
+      const formattedStart = updateData.startAt.split(' ')[0];
+      const formattedEnd = updateData.endAt.split(' ')[0];
+      setUpdateData(prevData => ({
+        ...prevData,
+        period: 'ALL_DAY',
+        startAt: formattedStart,
+        endAt: formattedEnd,
+      }));
+    } else {
+      const formattedStart = `${updateData.startAt.split(' ')[0]} 00:00`;
+      const formattedEnd = `${updateData.endAt.split(' ')[0]} 23:59`;
+      setUpdateData(prevData => ({
+        ...prevData,
+        period: 'SPECIFIC_TIME',
+        startAt: formattedStart,
+        endAt: formattedEnd,
+      }));
+    }
   };
 
   const onCancel = () => {
@@ -105,7 +113,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const onNotificationState = (value: number) => {
-    setUpdateData((prevData: SetScheduleData & SetBoardData) => {
+    setUpdateData((prevData: SetScheduleData & BoardData) => {
       return {
         ...prevData,
         alerts: [value],
@@ -141,14 +149,14 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
       />
       <ScheduleOptionSelect
         type="일정 시작 시간"
-        state={updateData.startAt}
+        state={updateData.period === 'ALL_DAY' ? start : updateData.startAt}
         event={toggleStartAt}
         iconName="time-outline"
         period={updateData.period}
       />
       <ScheduleOptionSelect
         type="일정 종료 시간"
-        state={updateData.endAt}
+        state={updateData.period === 'ALL_DAY' ? end : updateData.endAt}
         event={toggleEndAt}
         iconName="time-outline"
         period={updateData.period}
