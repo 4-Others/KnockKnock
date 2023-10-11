@@ -190,6 +190,12 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
   const closeModal = () => {
     closeBottomSheet.start(() => {
       setModalVisible(false);
+      if (type === 'board') {
+        setNewBoard({name: '', color: ''});
+        setSelectedColorIndex(-1);
+      } else if (type === 'notification') {
+        setSelectedNotification(null);
+      }
     });
   };
 

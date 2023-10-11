@@ -3,37 +3,63 @@ import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react
 import {variables} from '../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
+import Config from 'react-native-config';
+import {useSelector} from 'react-redux';
+import {deleteScheduleItem, patchScheduleItem} from '../api/scheduleApi';
 import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {Swipeable} from 'react-native-gesture-handler';
 
-const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) => {
+interface ScheduleItemProps {
+  items: any;
+  setItems: (newItems: ScheduleItems) => void;
+}
+
+const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
+  const url = Config.API_APP_KEY as string;
+  const token = useSelector((state: any) => state.user.token);
+
   // 빈 배열을 제거하는 함수
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
     .sort();
 
-  // 일정 완료 체크 토글 함수
-  const handleToggleComplete = (day: string, itemId: number) => {
-    const updatedItems = items[day].map((item: ScheduleData) => {
-      if (item.calendarId === itemId) {
-        return {...item, complete: !item.complete};
-      }
-      return item;
+  const handleToggleComplete = async (scheduleId: number, currentCompleteStatus: boolean) => {
+    const newCompleteStatus = !currentCompleteStatus;
+
+    const success = await patchScheduleItem(url, token, scheduleId, {
+      complete: newCompleteStatus,
     });
-    setItems({...items, [day]: updatedItems});
+    if (success) {
+      const newItems = {...items};
+      for (let date in newItems) {
+        newItems[date] = newItems[date].map((item: ScheduleData) => {
+          if (item.scheduleId === scheduleId) {
+            return {...item, complete: newCompleteStatus};
+          }
+          return item;
+        });
+      }
+      setItems(newItems);
+    } else {
+      console.error(`완료여부 변경 실패한 스케줄 ID: ${scheduleId}`);
+    }
   };
 
-  // 아이템 삭제 함수
-  const handleDelete = (itemId: number) => {
-    const updatedItems = {...items};
-
-    for (const day of itemsKeyArray) {
-      updatedItems[day] = updatedItems[day].filter(
-        (item: ScheduleData) => item.calendarId !== itemId,
-      );
+  const handleDelete = async (scheduleId: number) => {
+    const success = await deleteScheduleItem(url, token, scheduleId);
+    if (success) {
+      const updatedItems: ScheduleItems = {...items};
+      for (let date in updatedItems) {
+        updatedItems[date] = updatedItems[date].filter(
+          (item: ScheduleData) => item.scheduleId !== scheduleId,
+        );
+      }
+      setItems(updatedItems);
+      console.log('setItems: ', setItems);
+    } else {
+      console.error(`삭제 실패한 스케줄 ID: ${scheduleId}`);
     }
-    setItems(updatedItems);
   };
 
   return (
@@ -47,7 +73,7 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
               <ScheduleItem
                 item={item}
                 key={j}
-                onPress={() => handleToggleComplete(date, item.calendarId)}
+                onPress={handleToggleComplete}
                 onDelete={handleDelete}
               />
             ))}
@@ -57,7 +83,6 @@ const ScheduleList = (items: any, setItems: (newItems: ScheduleItems) => void) =
     </ScrollView>
   );
 };
-
 const ScheduleItem = ({item, onPress, onDelete}: any) => {
   const swipeableRef = useRef<Swipeable | null>(null);
   const resetSwipeable = () => {
@@ -73,12 +98,25 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
-        onDelete(item.calendarId);
+        onDelete(item.scheduleId);
         resetSwipeable();
       }}>
       <Text style={styles.deleteText}>Delete</Text>
     </TouchableOpacity>
   );
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    return dateStr.split(' ')[0];
+  };
+
+  const formatDateTime = (dateTimeStr: string) => {
+    if (!dateTimeStr) return '';
+    const [date, time] = dateTimeStr.split(' ');
+    return `${date} ${time.split(':')[0]}:${time.split(':')[1]}`;
+  };
+
+  const tagColor = item.tag && item.tag.color ? item.tag.color : '#757575';
 
   return (
     <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
@@ -90,15 +128,18 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
           endColor={'#ffffff05'}
           offset={[0, 1]}>
           <View style={styles.content}>
-            <View style={styles.colorChip}></View>
-            {/* <View style={[styles.colorChip, {backgroundColor: item.tag.color}]}></View> */}
+            <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
             <View>
               <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-                {item.name}
+                {item.title}
               </Text>
-              <Text style={styles.time}>{`${item.startAt.split(' ')[1]} ~ ${
-                item.endAt.split(' ')[1]
-              }`}</Text>
+              {item.period === 'ALL_DAY' ? (
+                <Text style={styles.time}>{formatDate(item.startAt)}</Text>
+              ) : (
+                <Text style={styles.time}>
+                  {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
+                </Text>
+              )}
             </View>
           </View>
           <TouchableOpacity

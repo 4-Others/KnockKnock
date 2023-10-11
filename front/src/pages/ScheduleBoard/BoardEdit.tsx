@@ -5,16 +5,31 @@ import {
   TextInput,
   Dimensions,
   View,
-  Image,
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {variables} from '../../style/variables';
+import {VariablesKeys} from '../../style/variables';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from '../../components/Header';
+
 const {width, height} = Dimensions.get('window');
 
 const BoardEdit = () => {
   const [contentTitle, setContentTitle] = useState('');
+  const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
+  const [updateBoard, setUpdateBoard] = useState({name: '', color: ''});
+
+  const handleBoardValue = (type: string, value: string) => {
+    setUpdateBoard({
+      ...updateBoard,
+      [type]: value,
+    });
+  };
+
+  const boardColors: string[] = Object.keys(variables)
+    .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
+    .map(key => variables[key as VariablesKeys] as string);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,44 +40,22 @@ const BoardEdit = () => {
           style={styles.contentTitleInput}
           onChangeText={text => setContentTitle(text)}
         />
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/invite_icon.png')} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>초대하기</Text>
-            <TouchableOpacity style={styles.selectContainer}>
-              <Text
-                style={[
-                  styles.placeHolder,
-                  {
-                    marginTop: 10,
-                  },
-                ]}>
-                초대할 지인의 메일을 입력하세요.
-              </Text>
-              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.contentInput}>
-          <View style={styles.iconContainer}>
-            <Image style={styles.icon} source={require('front/assets/image/color_icon.png')} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>스케줄 보드 컬러</Text>
-            <TouchableOpacity style={styles.selectContainer}>
-              <Text
-                style={[
-                  styles.placeHolder,
-                  {
-                    marginTop: 10,
-                  },
-                ]}>
-                원하시는 컬러를 선택하세요.
-              </Text>
-              <Image source={require('front/assets/image/back-btn.png')} style={styles.arrowIcon} />
-            </TouchableOpacity>
+        <View style={styles.boardColorContainer}>
+          <Text style={styles.subTitle}>보드 컬러</Text>
+          <View style={styles.colorChipContainer}>
+            {boardColors.map((color, i) => {
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={[styles.colorChip, {backgroundColor: color}]}
+                  onPress={() => {
+                    handleBoardValue('color', color);
+                    setSelectedColorIndex(i);
+                  }}>
+                  {i === selectedColorIndex ? <Icon name="check" style={styles.icon} /> : null}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </View>
@@ -78,57 +71,52 @@ const styles = StyleSheet.create({
     height: height,
   },
   contentLayout: {
+    marginTop: 24,
     marginRight: 24,
     marginLeft: 24,
-    marginTop: 24,
   },
   contentTitleInput: {
-    fontFamily: variables.font_3,
-    color: variables.text_2,
-    fontSize: 16,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
-    paddingBottom: 16,
+    fontSize: 16,
+    fontFamily: variables.font_3,
+    color: variables.text_2,
   },
-  icon: {
+  boardColorContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginTop: 20,
+    paddingBottom: 16,
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_1,
+  },
+  subTitle: {
+    marginBottom: 10,
+    paddingLeft: 6,
+    fontSize: 16,
+    fontFamily: variables.font_3,
+    color: variables.text_2,
+  },
+  colorChipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    paddingLeft: 2,
+  },
+  colorChip: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+    marginBottom: 14,
     width: 24,
     height: 24,
+    borderRadius: 30,
   },
-  contentInput: {
-    width: '100%',
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  iconContainer: {
-    marginRight: 30,
-  },
-  inputContainer: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: variables.line_1,
-    paddingBottom: 16,
-  },
-  inputTitle: {
-    fontFamily: variables.font_3,
-    color: variables.text_2,
-    fontSize: 16,
-  },
-  placeHolder: {
-    fontFamily: variables.font_3,
-    color: variables.text_6,
-    fontSize: 16,
-  },
-  arrowIcon: {
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    transform: [{scaleX: -1}],
-  },
-  selectContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  icon: {
+    fontSize: 14,
+    color: 'white',
   },
 });

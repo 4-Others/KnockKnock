@@ -75,11 +75,11 @@ const Search = () => {
         params: {
           keyword: searchData.keyword,
           startAt: `${searchData.startAt} 00:00:00`,
-          endAt: `${searchData.endAt} 00:00:00`,
+          endAt: `${searchData.endAt} 23:59:59`,
         },
       });
 
-      console.log(response.data);
+      console.log(response.data.body.data);
     } catch (error) {
       console.error('API 호출 중 오류 발생:', error);
     }

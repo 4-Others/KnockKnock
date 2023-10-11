@@ -1,16 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
-import {AxiosError} from 'axios';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
-import ScheduleItemlList from '../../components/ScheduleList';
+import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
 import {Shadow} from 'react-native-shadow-2';
 import {fetchScheduleItems} from '../../api/scheduleApi';
-import {refreshToken} from '../../api/refreshTokenApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
@@ -21,7 +19,7 @@ type ScheduleItems = Record<string, ScheduleData[]>;
 
 type RootStackParamList = {
   BoardEdit: undefined;
-  BoardDetail: {title: string; color: string};
+  BoardDetail: {title: string; color: string; number: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
@@ -31,48 +29,44 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
   const items = useSelector((state: any) => state.schedule.items);
-  const {title, color} = route.params;
-  const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleItems(newItems));
   };
-  const [scheduleCount, setScheduleCount] = useState(0);
-
-  const updateToken = (newToken: string) => {
-    dispatch({type: 'UPDATE_TOKEN', payload: newToken});
-  };
+  const {title, color, number} = route.params;
+  const dispatch = useDispatch();
 
   const loadScheduleItems = async () => {
     if (url) {
       try {
-        const newItems = await fetchScheduleItems(url, token);
-        let count = 0;
-        Object.keys(newItems).forEach(key => {
-          count += newItems[key].length;
-        });
-
-        setScheduleCount(count);
-        dispatch(setScheduleItems(newItems));
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response && axiosError.response.status === 401) {
-          const newToken = await refreshToken(url, token);
-          if (newToken) {
-            console.log('Success:', newToken);
-            updateToken(newToken);
-          }
+        const fetchedItems = await fetchScheduleItems(url, token);
+        if (title === '전체' && color === '#757575') {
+          return fetchedItems;
+        } else {
+          const filteredItems = Object.keys(fetchedItems).reduce<ScheduleItems>((acc, date) => {
+            acc[date] = fetchedItems[date].filter(
+              item => item.tag.name === title && item.tag.color === color,
+            );
+            return acc;
+          }, {});
+          return filteredItems;
         }
+      } catch (error) {
         console.error('Failed to load schedules:', error);
+        return null;
       }
-    } else {
-      console.error('URL is undefined');
     }
+    return null;
   };
 
   useEffect(() => {
-    loadScheduleItems();
-  }, []);
-
+    (async () => {
+      const newItems = await loadScheduleItems();
+      if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
+        dispatch(setScheduleItems(newItems));
+      }
+    })();
+  }, [items]);
+  console.log('items: ', JSON.stringify(items, null, 2));
   return (
     <SafeAreaView style={styles.container}>
       <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
@@ -87,11 +81,13 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
             <Text style={styles.title}>{title}</Text>
             <View style={styles.itemNumContainer}>
               <Text style={styles.textMemo}>total memo:</Text>
-              <Text style={styles.textNum}> {scheduleCount}</Text>
+              <Text style={styles.textNum}> {number}</Text>
             </View>
           </View>
         </Shadow>
-        <View style={styles.listContainer}>{ScheduleItemlList(items, setItems)}</View>
+        <View style={styles.listContainer}>
+          <ScheduleList items={items} setItems={setItems} />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
