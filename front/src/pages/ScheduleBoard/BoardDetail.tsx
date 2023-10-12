@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
@@ -28,12 +28,13 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
+  console.log(token);
+  const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const setItems = (newItems: ScheduleItems) => {
-    dispatch(setScheduleItems(newItems));
+    dispatch(setScheduleReducer(newItems));
   };
   const {title, color, number} = route.params;
-  const dispatch = useDispatch();
 
   const loadScheduleItems = async () => {
     if (url) {
@@ -62,7 +63,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
     (async () => {
       const newItems = await loadScheduleItems();
       if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
-        dispatch(setScheduleItems(newItems));
+        dispatch(setScheduleReducer(newItems));
       }
     })();
   }, [items]);

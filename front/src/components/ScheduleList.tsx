@@ -56,7 +56,6 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
         );
       }
       setItems(updatedItems);
-      console.log('setItems: ', setItems);
     } else {
       console.error(`삭제 실패한 스케줄 ID: ${scheduleId}`);
     }

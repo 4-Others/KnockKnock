@@ -4,7 +4,7 @@ import {View} from 'react-native-animatable';
 import Carousel from 'react-native-snap-carousel';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setBoardData} from '../../util/redux/boardSlice';
+import {setBoardReducer} from '../../util/redux/boardSlice';
 import {RootState} from '../../util/redux/store';
 import {fetchBoardData} from '../../api/boardApi';
 import {AuthProps} from '../../navigations/StackNavigator';
@@ -22,13 +22,14 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
   const boardData = useSelector((state: RootState) => state.board);
   const token = useSelector((state: any) => state.user.token);
   const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
-
+  console.log('boardData:', boardData); //!
   useEffect(() => {
     if (url) {
       const fetchData = async () => {
         try {
           const data = await fetchBoardData(url, token);
-          dispatch(setBoardData(data));
+          console.log('Fetched board data:', data); //!
+          dispatch(setBoardReducer(data));
         } catch (error) {
           console.error(error);
         }
@@ -45,6 +46,7 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
   }, [boardData]);
 
   useEffect(() => {
+    console.log('Checking boardData type:', Array.isArray(boardData), boardData); //!
     const activeIndex = boardData.findIndex(data => data.tagId === active);
     if (activeIndex !== -1) {
       carouselRef.current?.snapToItem(activeIndex, false);

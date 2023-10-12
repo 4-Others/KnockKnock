@@ -6,8 +6,14 @@ import {
   Dimensions,
   View,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
+import Config from 'react-native-config';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {patchBoardData} from '../../api/boardApi';
+import {setBoardReducer} from '../../util/redux/boardSlice';
 import {variables} from '../../style/variables';
 import {VariablesKeys} from '../../style/variables';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,30 +21,59 @@ import Header from '../../components/Header';
 
 const {width, height} = Dimensions.get('window');
 
-const BoardEdit = () => {
-  const [contentTitle, setContentTitle] = useState('');
-  const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
-  const [updateBoard, setUpdateBoard] = useState({name: '', color: ''});
+const BoardEdit = ({route}: any) => {
+  const url = Config.API_APP_KEY as string;
+  const user = useSelector((state: any) => state.user);
+  const initialData = route.params.item;
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [updateBoard, setUpdateBoard] = useState(initialData);
 
   const handleBoardValue = (type: string, value: string) => {
-    setUpdateBoard({
-      ...updateBoard,
+    setUpdateBoard((prevState: any) => ({
+      ...prevState,
       [type]: value,
-    });
+    }));
+  };
+
+  const handleEditBoard = async () => {
+    try {
+      const {tagId, ...finalUpdateBoard} = updateBoard;
+      const response = await patchBoardData(url, user.token, updateBoard.tagId, finalUpdateBoard);
+      if (response) {
+        dispatch(setBoardReducer(response));
+        console.log('보드 수정 성공!');
+        navigation.goBack();
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
+      );
+      console.log('Error editing data', error);
+    }
   };
 
   const boardColors: string[] = Object.keys(variables)
     .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
     .map(key => variables[key as VariablesKeys] as string);
 
+  const currentColorIndex = boardColors.indexOf(initialData.color);
+  const [selectedColorIndex, setSelectedColorIndex] = useState(currentColorIndex);
+  const [contentTitle, setContentTitle] = useState(initialData.name);
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="스케줄 보드 수정" />
+      <Header title="스케줄 보드 수정" nextFunc={handleEditBoard} />
       <View style={styles.contentLayout}>
         <TextInput
           placeholder="보드 이름을 입력해 주세요."
           style={styles.contentTitleInput}
-          onChangeText={text => setContentTitle(text)}
+          onChangeText={text => {
+            setContentTitle(text);
+            handleBoardValue('name', text);
+          }}
+          value={contentTitle}
         />
         <View style={styles.boardColorContainer}>
           <Text style={styles.subTitle}>보드 컬러</Text>

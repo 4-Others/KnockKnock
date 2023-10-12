@@ -103,6 +103,7 @@ const RenderBtn: React.FC<InputAreaProps & PasswordVisibleIcon> = props => {
       </TouchableOpacity>
     );
   }
+  return null;
 };
 
 export {InputArea, CheckBtn};

@@ -4,7 +4,7 @@ import Config from 'react-native-config';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {patchScheduleItem} from '../../api/scheduleApi';
 import {postBoardData} from '../../api/boardApi';
 import Header from '../../components/Header';
@@ -63,7 +63,7 @@ const ScheduleEdit = ({route}: any) => {
         console.log('finalUpdateData: ', JSON.stringify(finalUpdateData, null, 2));
         const result = await patchScheduleItem(url, user.token, updateData.id, updateData);
         if (typeof result !== 'boolean' && result !== undefined) {
-          dispatch(setScheduleItems(result));
+          dispatch(setScheduleReducer(result));
           console.log('스케줄 수정 성공!');
           navigation.goBack();
         } else {
