@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/home")
 public class HomeController {
-    @GetMapping
+    @GetMapping("/health")
     public ResponseEntity<?> getHome() {
         String home = "this is home";
         return ResponseEntity.ok().body(ApiResponse.success("성공", home));
