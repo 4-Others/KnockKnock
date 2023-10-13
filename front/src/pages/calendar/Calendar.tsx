@@ -9,7 +9,7 @@ import {Positions} from 'react-native-calendars/src/expandableCalendar';
 import axios from 'axios';
 import {convertItemList} from '../../util/dataConvert';
 import {ScheduleItems} from '../../util/redux/scheduleSlice';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import ScheduleList from '../../components/ScheduleList';
 import format from 'date-fns/format';
 
@@ -19,7 +19,7 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
-  const setItems = (newItems: ScheduleItems) => dispatch(setScheduleItems(newItems));
+  const setItems = (newItems: ScheduleItems) => dispatch(setScheduleReducer(newItems));
   const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
   console.log(Object.keys(calendarItems).length);
 

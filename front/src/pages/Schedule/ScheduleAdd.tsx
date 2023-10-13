@@ -94,14 +94,12 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
           if (!tagExists && postTag.name && postTag.color) {
             const boardResponse = await postBoardData(url, user.token, postTag);
             dispatch(postBoardReducer(boardResponse.body.data));
-            console.log('boardResponse: ', JSON.stringify(boardResponse, null, 2));
             const newBoardId = boardResponse.body.data.tagId;
             finalPostData.tagId = newBoardId;
           } else if (tagExists) {
             finalPostData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalPostData: ', JSON.stringify(finalPostData, null, 2));
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
         console.log('스케줄 등록 성공!');

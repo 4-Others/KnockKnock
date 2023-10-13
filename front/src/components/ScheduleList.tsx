@@ -14,7 +14,7 @@ import {Swipeable} from 'react-native-gesture-handler';
 interface ScheduleItemProps {
   items: any;
   setItems: (newItems: ScheduleItems) => void;
-  tagId: number;
+  tagId?: number;
 }
 
 const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => {
