@@ -15,10 +15,10 @@ export const scheduleSlice = createSlice({
   name: 'schedule',
   initialState,
   reducers: {
-    setScheduleItems: (state, action: PayloadAction<ScheduleItems>) => {
+    setScheduleReducer: (state, action: PayloadAction<ScheduleItems>) => {
       state.items = action.payload;
     },
-    addScheduleItem: (state, action: PayloadAction<ScheduleData>) => {
+    postScheduleReducer: (state, action: PayloadAction<ScheduleData>) => {
       const newItem = action.payload;
       if (!state.items[newItem.scheduleId]) {
         state.items[newItem.scheduleId] = [];
@@ -28,5 +28,5 @@ export const scheduleSlice = createSlice({
   },
 });
 
-export const {setScheduleItems, addScheduleItem} = scheduleSlice.actions;
+export const {setScheduleReducer, postScheduleReducer} = scheduleSlice.actions;
 export default scheduleSlice.reducer;

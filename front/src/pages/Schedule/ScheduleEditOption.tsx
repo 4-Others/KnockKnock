@@ -124,7 +124,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentLayout}>
       <TextInput
-        defaultValue={updateData.name}
+        defaultValue={updateData.title}
         placeholder="스케줄을 입력해 주세요."
         style={styles.contentTitleInput}
         onChangeText={text => setUpdateData(prevData => ({...prevData, title: text}))}

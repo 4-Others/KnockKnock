@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {variables} from '../../style/variables';
-import {PostBoardData, SetScheduleData} from '../../util/dataConvert';
+import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
 import Selector from '../../components/BottomSheet';
@@ -21,8 +21,8 @@ interface ScheduleOptionProps {
   url?: string;
   postSchedule: SetScheduleData;
   setPostSchedule: React.Dispatch<React.SetStateAction<SetScheduleData>>;
-  postTag: PostBoardData;
-  setPostTag: React.Dispatch<React.SetStateAction<PostBoardData>>;
+  postTag: SetBoardData;
+  setPostTag: React.Dispatch<React.SetStateAction<SetBoardData>>;
   getCurrentDateStartAndEnd?: any;
 }
 

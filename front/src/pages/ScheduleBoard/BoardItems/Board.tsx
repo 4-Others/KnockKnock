@@ -8,11 +8,18 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
+import Config from 'react-native-config';
+import {useSelector} from 'react-redux';
 import {variables} from '../../../style/variables';
+import {deleteBoardData} from '../../../api/boardApi';
+import {BoardItem} from '../../../util/dataConvert';
 import Icon from 'react-native-vector-icons/AntDesign';
+
+type BoardItems = BoardItem[];
 
 interface BoardItemProps {
   boardId: number;
@@ -20,11 +27,23 @@ interface BoardItemProps {
   number: number;
   color: string;
   active: number | null;
+  items: any;
+  setItems: (newItems: BoardItems) => void;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
-const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, active}) => {
+const Board: React.FC<BoardItemProps> = ({
+  boardId,
+  title,
+  number,
+  color,
+  active,
+  items,
+  setItems,
+}) => {
+  const url = Config.API_APP_KEY as string;
+  const user = useSelector((state: any) => state.user);
   const swipeRef = useRef<Swipeable>(null);
   const navigation = useNavigation<any>();
 
@@ -33,11 +52,56 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
   }, [active]);
 
   const handleEditPress = () => {
-    navigation.navigate('BoardEdit');
+    navigation.navigate('BoardEdit', {
+      item: {
+        tagId: boardId,
+        name: title,
+        color: color,
+      },
+    });
+  };
+
+  const handleDeletePress = async (boardId: number) => {
+    // const boardToDelete = items.find((item: BoardItem) => item.tagId === boardId);
+    // const scheduleCountForBoard = boardToDelete ? boardToDelete.scheduleCount : 0;
+
+    // if (scheduleCountForBoard > 0) {
+    //   Alert.alert(
+    //     'Warning',
+    //     `해당 보드에 ${scheduleCountForBoard}개의 스케줄이 있습니다. 모두 삭제하시겠습니까?`,
+    //     [
+    //       {
+    //         text: 'Cancel',
+    //         style: 'cancel',
+    //       },
+    //       {
+    //         text: 'OK',
+    //         onPress: async () => {
+    //           await deleteSchedulesWithTag(boardId);
+    //           const success = await deleteBoardData(url, user.token, boardId);
+    //           if (success) {
+    //             const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
+    //             setItems(updatedItems);
+    //           } else {
+    //             console.error(`삭제 실패한 보드 ID: ${boardId}`);
+    //           }
+    //         },
+    //       },
+    //     ],
+    //   );
+    // } else {
+    const success = await deleteBoardData(url, user.token, boardId);
+    if (success) {
+      const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
+      setItems(updatedItems);
+    } else {
+      console.error(`삭제 실패한 보드 ID: ${boardId}`);
+    }
+    // }
   };
 
   const handleBoardPress = () => {
-    navigation.navigate('BoardDetail', {title, color, number});
+    navigation.navigate('BoardDetail', {title, color, number, tagId: boardId});
   };
 
   const renderRightActions = (dragX: any) => {
@@ -52,7 +116,7 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
           <Icon name="edit" style={styles.buttonIcon} />
         </RectButton>
         <View style={styles.partition} />
-        <RectButton>
+        <RectButton onPress={() => handleDeletePress(boardId)}>
           <Icon name="delete" style={styles.buttonIcon} />
         </RectButton>
       </Animated.View>
@@ -98,7 +162,7 @@ const BoardItem: React.FC<BoardItemProps> = ({boardId, title, number, color, act
   );
 };
 
-export default BoardItem;
+export default Board;
 
 const styles = StyleSheet.create({
   fullWidth: {

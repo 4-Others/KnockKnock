@@ -9,7 +9,7 @@ import {ScheduleData} from '../../util/dataConvert';
 import {format} from 'date-fns';
 import ScheduleList from '../../components/ScheduleList';
 import {useDispatch} from 'react-redux';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 
 const {width, height} = Dimensions.get('window');
 
@@ -20,7 +20,7 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
   const items = useSelector((state: any) => state.schedule.items);
   const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
-    dispatch(setScheduleItems(newItems));
+    dispatch(setScheduleReducer(newItems));
   };
   const [scheduleCount, setScheduleCount] = useState(0);
 

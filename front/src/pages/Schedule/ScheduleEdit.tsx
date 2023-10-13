@@ -4,7 +4,7 @@ import Config from 'react-native-config';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {patchScheduleItem} from '../../api/scheduleApi';
 import {postBoardData} from '../../api/boardApi';
 import Header from '../../components/Header';
@@ -60,14 +60,16 @@ const ScheduleEdit = ({route}: any) => {
             finalUpdateData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalUpdateData: ', JSON.stringify(finalUpdateData, null, 2));
-        const result = await patchScheduleItem(url, user.token, updateData.id, updateData);
+        const result = await patchScheduleItem(
+          url,
+          user.token,
+          updateData.scheduleId,
+          finalUpdateData,
+        );
         if (typeof result !== 'boolean' && result !== undefined) {
-          dispatch(setScheduleItems(result));
-          console.log('스케줄 수정 성공!');
+          dispatch(setScheduleReducer(result));
           navigation.goBack();
-        } else {
-          console.log('예상치 못한 결과가 발생했습니다:', result);
+          console.log('스케줄 수정 성공!');
         }
       } catch (error) {
         Alert.alert(

@@ -6,6 +6,7 @@ import {useNavigation, StackActions} from '@react-navigation/native';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
 import {deleteScheduleItem, patchScheduleItem} from '../api/scheduleApi';
+import {deleteBoardData} from '../api/boardApi';
 import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {Swipeable} from 'react-native-gesture-handler';
@@ -13,50 +14,78 @@ import {Swipeable} from 'react-native-gesture-handler';
 interface ScheduleItemProps {
   items: any;
   setItems: (newItems: ScheduleItems) => void;
+  tagId?: number;
 }
 
-const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
+const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => {
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
+  const navigation = useNavigation();
 
-  // 빈 배열을 제거하는 함수
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
     .sort();
 
-  const handleToggleComplete = async (scheduleId: number, currentCompleteStatus: boolean) => {
-    const newCompleteStatus = !currentCompleteStatus;
-
-    const success = await patchScheduleItem(url, token, scheduleId, {
-      complete: newCompleteStatus,
-    });
-    if (success) {
-      const newItems = {...items};
-      for (let date in newItems) {
-        newItems[date] = newItems[date].map((item: ScheduleData) => {
-          if (item.scheduleId === scheduleId) {
-            return {...item, complete: newCompleteStatus};
-          }
-          return item;
-        });
+  const handleToggleComplete = async (scheduleId: number) => {
+    try {
+      let updatedItem: ScheduleData | null = null;
+      for (let date in items) {
+        const item = items[date].find((item: ScheduleData) => item.scheduleId === scheduleId);
+        if (item) {
+          updatedItem = {...item, complete: !item.complete};
+          break;
+        }
       }
-      setItems(newItems);
-    } else {
-      console.error(`완료여부 변경 실패한 스케줄 ID: ${scheduleId}`);
+      if (!updatedItem) {
+        console.error(`완료여부 변경 실패한 스케줄 ID: ${scheduleId}`);
+        return;
+      }
+
+      const result = await patchScheduleItem(url, token, scheduleId, updatedItem);
+      if (typeof result !== 'boolean' && result !== undefined) {
+        const updatedItems: ScheduleItems = {...items};
+        for (let date in updatedItems) {
+          updatedItems[date] = updatedItems[date].map((item: ScheduleData) =>
+            item.scheduleId === scheduleId ? updatedItem || item : item,
+          );
+        }
+        setItems(updatedItems);
+        console.log('완료여부 변경 성공!');
+      }
+    } catch (error) {
+      console.error('Error toggling schedule item:', error);
     }
   };
 
-  const handleDelete = async (scheduleId: number) => {
+  const handleDelete = async (scheduleId: number, tagId: number) => {
     const success = await deleteScheduleItem(url, token, scheduleId);
     if (success) {
       const updatedItems: ScheduleItems = {...items};
+      let isEmptyBoard = true;
       for (let date in updatedItems) {
         updatedItems[date] = updatedItems[date].filter(
           (item: ScheduleData) => item.scheduleId !== scheduleId,
         );
+        if (updatedItems[date].some(item => item.tag.tagId)) {
+          isEmptyBoard = false;
+        }
       }
       setItems(updatedItems);
-      console.log('setItems: ', setItems);
+      if (isEmptyBoard) {
+        const success = await deleteBoardData(url, token, tagId);
+        if (success) {
+          const updatedItems: ScheduleItems = {...items};
+          for (let date in items) {
+            updatedItems[date] = items[date].filter(
+              (item: ScheduleData) => item.tag.tagId !== tagId,
+            );
+          }
+          navigation.goBack();
+          setItems(updatedItems);
+        } else {
+          console.error(`자동 삭제 실패한 보드 ID: ${tagId}`);
+        }
+      }
     } else {
       console.error(`삭제 실패한 스케줄 ID: ${scheduleId}`);
     }
@@ -75,6 +104,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
                 key={j}
                 onPress={handleToggleComplete}
                 onDelete={handleDelete}
+                tagId={tagId}
               />
             ))}
           </View>
@@ -83,7 +113,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems}) => {
     </ScrollView>
   );
 };
-const ScheduleItem = ({item, onPress, onDelete}: any) => {
+const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
   const swipeableRef = useRef<Swipeable | null>(null);
   const resetSwipeable = () => {
     if (swipeableRef.current) {
@@ -98,7 +128,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
-        onDelete(item.scheduleId);
+        onDelete(item.scheduleId, tagId);
         resetSwipeable();
       }}>
       <Text style={styles.deleteText}>Delete</Text>
@@ -144,7 +174,7 @@ const ScheduleItem = ({item, onPress, onDelete}: any) => {
           </View>
           <TouchableOpacity
             style={item.complete ? styles.checkState : styles.unCheckState}
-            onPress={onPress}>
+            onPress={() => onPress(item.scheduleId)}>
             <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
           </TouchableOpacity>
         </Shadow>

@@ -29,6 +29,7 @@ export const fetchScheduleItems = async (url: string, token: string): Promise<Sc
     });
     return newItems;
   } catch (error) {
+    console.error('API call failed', error);
     throw error as AxiosError;
   }
 };
@@ -40,7 +41,7 @@ export const postScheduleItem = async (url: string, token: string, data: SetSche
     });
     return response.data;
   } catch (error) {
-    console.error('Error posting schedule:', error);
+    console.error('API call failed', error);
     throw error;
   }
 };
@@ -52,12 +53,12 @@ export const patchScheduleItem = async (
   data: any,
 ) => {
   try {
-    await axios.patch(`${url}/api/v1/schedule/${scheduleId}`, data, {
+    const response = await axios.patch(`${url}api/v1/schedule/${scheduleId}`, data, {
       headers: {Authorization: `Bearer ${token}`},
     });
-    console.log('스케줄 완료여부 변경!');
+    return response.data;
   } catch (error) {
-    console.error('스케줄 완료여부 변경 실패: ', error);
+    console.error('API call failed', error);
     return false;
   }
 };

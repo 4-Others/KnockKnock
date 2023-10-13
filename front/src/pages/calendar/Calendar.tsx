@@ -6,10 +6,7 @@ import ProfileHeader from '../../components/ProfileHeader';
 import {SafeAreaView, Platform, Dimensions, StyleSheet, View, Text} from 'react-native';
 import {variables} from '../../style/variables';
 import {Positions} from 'react-native-calendars/src/expandableCalendar';
-import axios from 'axios';
-import {convertItemList} from '../../util/dataConvert';
-import {ScheduleItems} from '../../util/redux/scheduleSlice';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
 import ScheduleList from '../../components/ScheduleList';
 import format from 'date-fns/format';
 import {fetchScheduleItems} from '../../api/scheduleApi';
@@ -117,7 +114,7 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
   const fetchData = async () => {
     if (url) {
       let newItems = await fetchScheduleItems(url, token);
-      dispatch(setScheduleItems(newItems));
+      dispatch(setScheduleReducer(newItems));
     }
   };
 

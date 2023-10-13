@@ -4,7 +4,7 @@ import {View} from 'react-native-animatable';
 import Carousel from 'react-native-snap-carousel';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setBoardData} from '../../util/redux/boardSlice';
+import {setBoardReducer} from '../../util/redux/boardSlice';
 import {RootState} from '../../util/redux/store';
 import {fetchBoardData} from '../../api/boardApi';
 import {AuthProps} from '../../navigations/StackNavigator';
@@ -28,7 +28,7 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
       const fetchData = async () => {
         try {
           const data = await fetchBoardData(url, token);
-          dispatch(setBoardData(data));
+          dispatch(setBoardReducer(data));
         } catch (error) {
           console.error(error);
         }
