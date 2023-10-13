@@ -12,6 +12,7 @@ import {ScheduleItems} from '../../util/redux/scheduleSlice';
 import {setScheduleItems} from '../../util/redux/scheduleSlice';
 import ScheduleList from '../../components/ScheduleList';
 import format from 'date-fns/format';
+import {fetchScheduleItems} from '../../api/scheduleApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -19,62 +20,131 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
-  const setItems = (newItems: ScheduleItems) => dispatch(setScheduleItems(newItems));
   const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
-  console.log(Object.keys(calendarItems).length);
+  const [selectDate, setSelectDate] = useState<string[]>([format(new Date(), 'yyyy-MM-dd')]);
 
   const selectedDateHandller = (dateString: string) => {
-    const newCalendarItems = items[dateString];
-    if (newCalendarItems) {
-      setCalendarItems({[dateString]: newCalendarItems});
-    } else setCalendarItems({});
+    const dates = selectDate.length;
+    if (dates <= 1) {
+      let currentDate = selectDate[0];
+      const dateArr = [];
+      let startDate = new Date(currentDate);
+      let endDate = new Date(dateString);
+
+      if (startDate.getMonth() !== endDate.getMonth()) {
+        setSelectDate([dateString]);
+      } else {
+        if (startDate > endDate) {
+          [startDate, endDate] = [endDate, startDate]; // startDate와 endDate를 교환
+        }
+
+        while (startDate <= endDate) {
+          dateArr.push(format(startDate, 'yyyy-MM-dd'));
+          startDate.setDate(startDate.getDate() + 1);
+        }
+
+        const newSelectDate = Array.from(new Set([...selectDate, ...dateArr])).sort();
+        setSelectDate(newSelectDate);
+      }
+    } else {
+      setSelectDate([dateString]);
+    }
   };
 
-  const fetchScheduleItems = async (year: number, month: number) => {
-    try {
-      const firstDay = format(new Date(year, month, 1), 'yyyy-MM-dd');
-      const nextMonth = new Date(year, month + 1, 1);
-      const lastDay = format(new Date(nextMonth.getTime() - 1), 'yyyy-MM-dd');
-      const params = {
-        keyword: '',
-        startAt: `${firstDay} 00:00:00`,
-        endAt: `${lastDay} 23:59:59`,
-      };
-      const res = await axios.get(`${url}api/v1/schedule/search`, {
-        headers: {Authorization: `Bearer ${token}`},
-        params,
+  const setNewCalendarItems = (selectDate: string[]) => {
+    let newCalendarItems = {};
+    selectDate.forEach(date => {
+      let calendarItem = items[date];
+      if (calendarItem) {
+        newCalendarItems = {...newCalendarItems, ...{[date]: calendarItem}};
+      }
+    });
+    setCalendarItems(newCalendarItems);
+  };
+
+  interface MarkedDate {
+    selected: boolean;
+    selectedColor: string;
+    selectedTextColor: string;
+    marked: boolean;
+    dots: {key: string; color: string; selectedDotColor?: string}[];
+  }
+
+  const getMarkedDates = (): Record<string, MarkedDate> => {
+    const markedDates: Record<string, MarkedDate> = {};
+    selectDate.forEach(dateKey => {
+      const date = dateKey;
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          selected: true,
+          selectedColor: 'white',
+          selectedTextColor: variables.main,
+          marked: true,
+          dots: [],
+        };
+      }
+    });
+    Object.keys(items).forEach(dateKey => {
+      const date = dateKey;
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          selected: selectDate.includes(date),
+          selectedColor: 'white',
+          selectedTextColor: variables.main,
+          marked: true,
+          dots: [],
+        };
+      }
+      const item = items[date];
+      const existingColors = new Set();
+
+      item.forEach((data: any, index: number) => {
+        const tag = data.tag;
+        if (!existingColors.has(tag.color)) {
+          const dot = {
+            key: String(index),
+            color: tag.color,
+            selectedDotColor: tag.color,
+          };
+          markedDates[date].dots.push(dot);
+          existingColors.add(tag.color);
+        }
       });
-      const resData = res.data.body.data;
-      setItems(convertItemList(resData));
-    } catch (error) {
-      console.error(error);
+    });
+    return markedDates;
+  };
+
+  const fetchData = async () => {
+    if (url) {
+      let newItems = await fetchScheduleItems(url, token);
+      dispatch(setScheduleItems(newItems));
     }
   };
 
   useEffect(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    fetchScheduleItems(year, month);
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    setNewCalendarItems(selectDate);
+  }, [selectDate]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ProfileHeader />
-      <CalendarProvider style={styles.calendarBackground} date={format(new Date(), 'yyyy-MM-dd')}>
+      <CalendarProvider style={styles.calendarBackground} date={selectDate[0]}>
         <ExpandableCalendar
           theme={them}
           initialPosition={Positions.OPEN}
           onDayPress={({dateString}) => selectedDateHandller(dateString)}
-          onMonthChange={({year, month}) => {
-            fetchScheduleItems(year, month);
-          }}
           initialNumToRender={5}
           windowSize={3}
           maxToRenderPerBatch={3}
           updateCellsBatchingPeriod={20}
           removeClippedSubviews={false}
           onEndReachedThreshold={0.1}
+          markingType={'multi-dot'}
+          markedDates={getMarkedDates()}
         />
         {Object.keys(calendarItems).length !== 0 ? (
           <ScheduleList
@@ -121,7 +191,5 @@ const them = {
   textDayFontWeight: 'bold' as any,
   dayTextColor: variables.text_7,
   todayTextColor: variables.board_6,
-  selectedDayBackgroundColor: variables.text_7,
-  selectedDayTextColor: variables.main,
   textDisabledColor: variables.text_6,
 };
