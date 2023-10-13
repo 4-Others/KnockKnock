@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
@@ -61,6 +62,34 @@ const Board: React.FC<BoardItemProps> = ({
   };
 
   const handleDeletePress = async (boardId: number) => {
+    // const boardToDelete = items.find((item: BoardItem) => item.tagId === boardId);
+    // const scheduleCountForBoard = boardToDelete ? boardToDelete.scheduleCount : 0;
+
+    // if (scheduleCountForBoard > 0) {
+    //   Alert.alert(
+    //     'Warning',
+    //     `해당 보드에 ${scheduleCountForBoard}개의 스케줄이 있습니다. 모두 삭제하시겠습니까?`,
+    //     [
+    //       {
+    //         text: 'Cancel',
+    //         style: 'cancel',
+    //       },
+    //       {
+    //         text: 'OK',
+    //         onPress: async () => {
+    //           await deleteSchedulesWithTag(boardId);
+    //           const success = await deleteBoardData(url, user.token, boardId);
+    //           if (success) {
+    //             const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
+    //             setItems(updatedItems);
+    //           } else {
+    //             console.error(`삭제 실패한 보드 ID: ${boardId}`);
+    //           }
+    //         },
+    //       },
+    //     ],
+    //   );
+    // } else {
     const success = await deleteBoardData(url, user.token, boardId);
     if (success) {
       const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
@@ -68,10 +97,11 @@ const Board: React.FC<BoardItemProps> = ({
     } else {
       console.error(`삭제 실패한 보드 ID: ${boardId}`);
     }
+    // }
   };
 
   const handleBoardPress = () => {
-    navigation.navigate('BoardDetail', {title, color, number});
+    navigation.navigate('BoardDetail', {title, color, number, tagId: boardId});
   };
 
   const renderRightActions = (dragX: any) => {

@@ -60,14 +60,16 @@ const ScheduleEdit = ({route}: any) => {
             finalUpdateData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalUpdateData: ', JSON.stringify(finalUpdateData, null, 2));
-        const result = await patchScheduleItem(url, user.token, updateData.id, updateData);
+        const result = await patchScheduleItem(
+          url,
+          user.token,
+          updateData.scheduleId,
+          finalUpdateData,
+        );
         if (typeof result !== 'boolean' && result !== undefined) {
           dispatch(setScheduleReducer(result));
-          console.log('스케줄 수정 성공!');
           navigation.goBack();
-        } else {
-          console.log('예상치 못한 결과가 발생했습니다:', result);
+          console.log('스케줄 수정 성공!');
         }
       } catch (error) {
         Alert.alert(

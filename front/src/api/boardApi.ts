@@ -8,10 +8,9 @@ export const fetchBoardData = async (url: string, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('Tag response: ', response.data.body.data);
     return response.data.body.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('API call failed', error);
     throw error;
   }
 };
@@ -24,7 +23,7 @@ export const postBoardData = async (url: string, token: string, tag: SetBoardDat
     console.log('Posting tag data:', JSON.stringify(tag));
     return response.data;
   } catch (error) {
-    console.error('Error posting tag:', error);
+    console.error('API call failed', error);
     throw error;
   }
 };
@@ -44,7 +43,7 @@ export const patchBoardData = async (
     console.log('보드 수정 성공!');
     return response.data;
   } catch (error) {
-    console.error('보드 수정 실패: ', error);
+    console.error('API call failed', error);
     throw error;
   }
 };
