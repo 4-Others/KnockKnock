@@ -52,7 +52,6 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
       Object.keys(newItems).forEach(key => {
         count += newItems[key].length;
       });
-      console.log(JSON.stringify(newItems, null, 2));
       setScheduleCount(count);
       setItems(newItems);
     } catch (error: any) {
