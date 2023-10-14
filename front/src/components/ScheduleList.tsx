@@ -57,7 +57,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     }
   };
 
-  const handleDelete = async (scheduleId: number, tagId: number) => {
+  const handleDelete = async (scheduleId: number, tagId?: number) => {
     const success = await deleteScheduleItem(url, token, scheduleId);
     if (success) {
       const updatedItems: ScheduleItems = {...items};
@@ -71,7 +71,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
         }
       }
       setItems(updatedItems);
-      if (isEmptyBoard) {
+      if (isEmptyBoard && tagId) {
         const success = await deleteBoardData(url, token, tagId);
         if (success) {
           const updatedItems: ScheduleItems = {...items};

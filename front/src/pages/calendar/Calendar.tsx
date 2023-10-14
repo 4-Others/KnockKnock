@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {ExpandableCalendar, CalendarProvider} from 'react-native-calendars';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,13 +13,12 @@ import {fetchScheduleItems} from '../../api/scheduleApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const Calendar: React.FC<AuthProps> = ({url}) => {
+const Calendar: React.FC<AuthProps> = ({url, route}) => {
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
   const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
   const [selectDate, setSelectDate] = useState<string[]>([format(new Date(), 'yyyy-MM-dd')]);
-
   const selectedDateHandller = (dateString: string) => {
     const dates = selectDate.length;
     if (dates <= 1) {
@@ -48,7 +47,7 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
     }
   };
 
-  const setNewCalendarItems = (selectDate: string[]) => {
+  const setNewCalendarItems = (items: ScheduleItems, selectDate: string[]) => {
     let newCalendarItems = {};
     selectDate.forEach(date => {
       let calendarItem = items[date];
@@ -67,7 +66,7 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
     dots: {key: string; color: string; selectedDotColor?: string}[];
   }
 
-  const getMarkedDates = (): Record<string, MarkedDate> => {
+  const getMarkedDates = useMemo(() => {
     const markedDates: Record<string, MarkedDate> = {};
     selectDate.forEach(dateKey => {
       const date = dateKey;
@@ -94,10 +93,9 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
       }
       const item = items[date];
       const existingColors = new Set();
-
       item.forEach((data: any, index: number) => {
         const tag = data.tag;
-        if (!existingColors.has(tag.color)) {
+        if (tag && !existingColors.has(tag.color)) {
           const dot = {
             key: String(index),
             color: tag.color,
@@ -109,22 +107,25 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
       });
     });
     return markedDates;
-  };
+  }, [calendarItems]);
 
   const fetchData = async () => {
-    if (url) {
-      let newItems = await fetchScheduleItems(url, token);
-      dispatch(setScheduleReducer(newItems));
+    try {
+      if (url) {
+        let newItems = await fetchScheduleItems(url, token);
+        dispatch(setScheduleReducer(newItems));
+        setNewCalendarItems(newItems, selectDate);
+      }
+    } catch (error) {
+      console.error('Failed to load calendar in ScheduleItems:', error);
+      return null;
     }
+    return null;
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    setNewCalendarItems(selectDate);
-  }, [selectDate]);
+  }, [items, selectDate]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -134,19 +135,13 @@ const Calendar: React.FC<AuthProps> = ({url}) => {
           theme={them}
           initialPosition={Positions.OPEN}
           onDayPress={({dateString}) => selectedDateHandller(dateString)}
-          initialNumToRender={5}
-          windowSize={3}
-          maxToRenderPerBatch={3}
-          updateCellsBatchingPeriod={20}
-          removeClippedSubviews={false}
-          onEndReachedThreshold={0.1}
           markingType={'multi-dot'}
-          markedDates={getMarkedDates()}
+          markedDates={getMarkedDates}
         />
         {Object.keys(calendarItems).length !== 0 ? (
           <ScheduleList
             items={calendarItems}
-            setItems={(newItems: ScheduleItems) => setCalendarItems(newItems)}
+            setItems={(newItems: ScheduleItems) => dispatch(setScheduleReducer(newItems))}
           />
         ) : (
           <View style={styles.noneDataContainer}>
@@ -189,4 +184,6 @@ const them = {
   dayTextColor: variables.text_7,
   todayTextColor: variables.board_6,
   textDisabledColor: variables.text_6,
+  selectedDayBackgroundColor: 'white',
+  selectedDayTextColor: variables.main,
 };
