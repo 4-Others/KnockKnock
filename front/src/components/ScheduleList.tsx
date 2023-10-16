@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
-import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
@@ -57,7 +56,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     }
   };
 
-  const handleDelete = async (scheduleId: number, tagId: number) => {
+  const handleDelete = async (scheduleId: number, tagId?: number) => {
     const success = await deleteScheduleItem(url, token, scheduleId);
     if (success) {
       const updatedItems: ScheduleItems = {...items};
@@ -71,7 +70,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
         }
       }
       setItems(updatedItems);
-      if (isEmptyBoard) {
+      if (tagId && isEmptyBoard) {
         const success = await deleteBoardData(url, token, tagId);
         if (success) {
           const updatedItems: ScheduleItems = {...items};
@@ -151,33 +150,26 @@ const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
   return (
     <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
       <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
-        <Shadow
-          style={styles.todo}
-          distance={8}
-          startColor={'#00000010'}
-          endColor={'#ffffff05'}
-          offset={[0, 1]}>
-          <View style={styles.content}>
-            <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
-            <View>
-              <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-                {item.title}
+        <View style={styles.content}>
+          <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
+          <View>
+            <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
+              {item.title}
+            </Text>
+            {item.period === 'ALL_DAY' ? (
+              <Text style={styles.time}>{formatDate(item.startAt)}</Text>
+            ) : (
+              <Text style={styles.time}>
+                {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
               </Text>
-              {item.period === 'ALL_DAY' ? (
-                <Text style={styles.time}>{formatDate(item.startAt)}</Text>
-              ) : (
-                <Text style={styles.time}>
-                  {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
-                </Text>
-              )}
-            </View>
+            )}
           </View>
-          <TouchableOpacity
-            style={item.complete ? styles.checkState : styles.unCheckState}
-            onPress={() => onPress(item.scheduleId)}>
-            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-          </TouchableOpacity>
-        </Shadow>
+        </View>
+        <TouchableOpacity
+          style={item.complete ? styles.checkState : styles.unCheckState}
+          onPress={() => onPress(item.scheduleId)}>
+          <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
+        </TouchableOpacity>
       </TouchableOpacity>
     </Swipeable>
   );
@@ -189,18 +181,30 @@ export const styles = StyleSheet.create({
   scheduleListContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingLeft: 24,
-    paddingRight: 24,
     marginBottom: 30,
   },
   listDateTitle: {
-    fontFamily: variables.font_3,
-    color: variables.text_5,
+    fontFamily: variables.font_2,
+    color: variables.text_4,
     fontSize: 14,
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 26,
+    paddingBottom: 5,
+    paddingLeft: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_2,
   },
-  item: {marginBottom: 10},
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingRight: 24,
+    paddingBottom: 10,
+    paddingLeft: 24,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_2,
+  },
   todo: {
     width: '100%',
     flexDirection: 'row',

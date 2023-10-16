@@ -41,11 +41,26 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
 
   const handleTogglePeriod = (value: boolean) => {
     const {start, end} = getCurrentDateStartAndEnd();
+    let newStartAt = start;
+    let newEndAt = end;
+
+    if (!value) {
+      const currentDate = new Date();
+      newStartAt = `${start} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`;
+      newEndAt = `${end} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`;
+    }
+
     setPostSchedule(prevData => ({
       ...prevData,
       period: value ? 'ALL_DAY' : 'SPECIFIC_TIME',
-      startAt: value ? start : prevData.startAt,
-      endAt: value ? end : prevData.endAt,
+      startAt: newStartAt,
+      endAt: newEndAt,
     }));
   };
 
@@ -81,13 +96,13 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const toggleStartAt = () => {
-    setVisible(!visible);
     setTimeType('start');
+    setVisible(prevVisible => !prevVisible);
   };
 
   const toggleEndAt = () => {
-    setVisible(!visible);
     setTimeType('end');
+    setVisible(prevVisible => !prevVisible);
   };
 
   const parseDate = (dateString: string) => {
