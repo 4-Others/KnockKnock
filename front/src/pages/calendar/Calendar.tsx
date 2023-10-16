@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo, useRef} from 'react';
 import {ExpandableCalendar, CalendarProvider} from 'react-native-calendars';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {useSelector, useDispatch} from 'react-redux';
@@ -17,6 +17,7 @@ const Calendar: React.FC<AuthProps> = ({url, route}) => {
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
+  const prevItemsRef = useRef(items);
   const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
   const [selectDate, setSelectDate] = useState<string[]>([format(new Date(), 'yyyy-MM-dd')]);
   const selectedDateHandller = (dateString: string) => {
@@ -125,7 +126,7 @@ const Calendar: React.FC<AuthProps> = ({url, route}) => {
 
   useEffect(() => {
     fetchData();
-  }, [items, selectDate]);
+  }, [selectDate]);
 
   return (
     <SafeAreaView style={styles.container}>
