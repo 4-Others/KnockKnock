@@ -20,6 +20,13 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
   const navigation = useNavigation();
+  const [openSwipeable, setOpenSwipeable] = React.useState<Swipeable | null>(null);
+
+  const handleCloseSwipeable = () => {
+    if (openSwipeable) {
+      openSwipeable.close();
+    }
+  };
 
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
@@ -104,6 +111,8 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
                 onPress={handleToggleComplete}
                 onDelete={handleDelete}
                 tagId={tagId}
+                onOpenSwipeable={setOpenSwipeable}
+                onCloseSwipeable={handleCloseSwipeable}
               />
             ))}
           </View>
@@ -112,27 +121,29 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     </ScrollView>
   );
 };
-const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
+const ScheduleItem = ({item, onPress, onDelete, tagId, onOpenSwipeable, onCloseSwipeable}: any) => {
   const swipeableRef = useRef<Swipeable | null>(null);
-  const resetSwipeable = () => {
-    if (swipeableRef.current) {
-      swipeableRef.current.close();
-    }
-  };
   const navigation = useNavigation();
+
   const goToScheduleEdit = () => {
     navigation.dispatch(StackActions.push('ScheduleEdit', {item}));
   };
+
   const renderRightActions = () => (
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
         onDelete(item.scheduleId, tagId);
-        resetSwipeable();
+        onCloseSwipeable();
       }}>
-      <Text style={styles.deleteText}>Delete</Text>
+      <Text style={styles.deleteText}>삭제</Text>
     </TouchableOpacity>
   );
+
+  const handleSwipeableOpen = () => {
+    onOpenSwipeable(swipeableRef.current);
+    onCloseSwipeable();
+  };
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
@@ -148,7 +159,10 @@ const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
   const tagColor = item.tag && item.tag.color ? item.tag.color : '#757575';
 
   return (
-    <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      onSwipeableOpen={handleSwipeableOpen}>
       <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
         <View style={styles.content}>
           <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
@@ -269,10 +283,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: variables.Mater_14,
-    padding: 14,
-    marginBottom: 10,
-    marginLeft: 20,
-    borderRadius: 6,
+    marginRight: 10,
+    marginLeft: 4,
+    paddingHorizontal: 16,
+    height: '100%',
+    borderRadius: 5,
   },
   deleteText: {
     color: 'white',

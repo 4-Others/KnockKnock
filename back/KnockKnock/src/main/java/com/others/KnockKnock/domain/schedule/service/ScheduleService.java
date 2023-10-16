@@ -42,7 +42,7 @@ public class ScheduleService {
                                     .period(Period.valueOf(requestBody.getPeriod()))
                                     .content(requestBody.getContent())
                                     .startAt(LocalDateTime.parse(requestBody.getStartAt(), timeFormatter))
-                                    .endAt(LocalDateTime.parse(requestBody.getStartAt(), timeFormatter))
+                                    .endAt(LocalDateTime.parse(requestBody.getEndAt(), timeFormatter))
                                     .alerts(requestBody.getAlerts())
                                     .complete(requestBody.getComplete())
                                     .user(user);

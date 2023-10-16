@@ -1,8 +1,5 @@
 import React, {useState} from 'react';
 import {StyleSheet, SafeAreaView, View, TextInput} from 'react-native';
-import axios from 'axios';
-import {useSelector} from 'react-redux';
-import Config from 'react-native-config';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {variables} from '../../style/variables';
 import {SearchData} from '../../util/dataConvert';
@@ -39,7 +36,6 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
 
   const handleConfirm = (date: Date) => {
     onCancel();
-
     setSearchData(prevState => ({
       ...prevState,
       [timeType === 'start' ? 'startAt' : 'endAt']: dateFormat(date),
