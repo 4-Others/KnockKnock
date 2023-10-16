@@ -50,7 +50,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     period: 'ALL_DAY',
     startAt: start,
     endAt: end,
-    alerts: [],
+    alerts: [0],
     complete: false,
   };
   const tagData: SetBoardData = {
