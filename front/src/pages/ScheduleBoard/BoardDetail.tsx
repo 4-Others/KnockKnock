@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
-import {setScheduleItems} from '../../util/redux/scheduleSlice';
+import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
@@ -18,8 +18,14 @@ type navigationProp = StackNavigationProp<RootStackParamList, 'BoardEdit'>;
 type ScheduleItems = Record<string, ScheduleData[]>;
 
 type RootStackParamList = {
-  BoardEdit: undefined;
-  BoardDetail: {title: string; color: string; number: number};
+  BoardEdit: {
+    item: {
+      tagId: number;
+      name: string;
+      color: string;
+    };
+  };
+  BoardDetail: {title: string; color: string; number: number; tagId: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
@@ -28,12 +34,21 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
+  const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const setItems = (newItems: ScheduleItems) => {
-    dispatch(setScheduleItems(newItems));
+    dispatch(setScheduleReducer(newItems));
   };
-  const {title, color, number} = route.params;
-  const dispatch = useDispatch();
+  const {title, color, number, tagId} = route.params;
+  const handleEditPress = () => {
+    navigation.navigate('BoardEdit', {
+      item: {
+        tagId: tagId,
+        name: title,
+        color: color,
+      },
+    });
+  };
 
   const loadScheduleItems = async () => {
     if (url) {
@@ -62,14 +77,16 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
     (async () => {
       const newItems = await loadScheduleItems();
       if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
-        dispatch(setScheduleItems(newItems));
+        dispatch(setScheduleReducer(newItems));
       }
     })();
   }, [items]);
-  console.log('items: ', JSON.stringify(items, null, 2));
+
+  console.log('items:', JSON.stringify(items, null, 2)); //!
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="스케줄 보드" type="edit" nextFunc={() => navigation.navigate('BoardEdit')} />
+      <Header title="스케줄 보드" type="edit" nextFunc={handleEditPress} />
       <ScrollView style={styles.ScheduleItemList}>
         <Shadow
           style={styles.shadow}
@@ -86,7 +103,7 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
           </View>
         </Shadow>
         <View style={styles.listContainer}>
-          <ScheduleList items={items} setItems={setItems} />
+          <ScheduleList items={items} setItems={setItems} tagId={tagId} />
         </View>
       </ScrollView>
     </SafeAreaView>

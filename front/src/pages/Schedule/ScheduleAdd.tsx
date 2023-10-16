@@ -4,12 +4,13 @@ import Config from 'react-native-config';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
-import {addScheduleItem} from '../../util/redux/scheduleSlice';
+import {postBoardReducer} from '../../util/redux/boardSlice';
+import {postScheduleReducer} from '../../util/redux/scheduleSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {postScheduleItem} from '../../api/scheduleApi';
 import {postBoardData} from '../../api/boardApi';
+import {postScheduleItem} from '../../api/scheduleApi';
 import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleAddOption from './ScheduleAddOption';
@@ -92,16 +93,15 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
           if (!tagExists && postTag.name && postTag.color) {
             const boardResponse = await postBoardData(url, user.token, postTag);
-            console.log('boardResponse: ', JSON.stringify(boardResponse, null, 2));
+            dispatch(postBoardReducer(boardResponse.body.data));
             const newBoardId = boardResponse.body.data.tagId;
             finalPostData.tagId = newBoardId;
           } else if (tagExists) {
             finalPostData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalPostData: ', JSON.stringify(finalPostData, null, 2));
         const response = await postScheduleItem(url, user.token, finalPostData);
-        dispatch(addScheduleItem(response));
+        dispatch(postScheduleReducer(response));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           title: postTag.name,

@@ -1,18 +1,158 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ExpandableCalendar, CalendarProvider} from 'react-native-calendars';
 import {AuthProps} from '../../navigations/StackNavigator';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ProfileHeader from '../../components/ProfileHeader';
-import {SafeAreaView, View, Platform, Dimensions, StyleSheet} from 'react-native';
+import {SafeAreaView, Platform, Dimensions, StyleSheet, View, Text} from 'react-native';
+import {variables} from '../../style/variables';
+import {Positions} from 'react-native-calendars/src/expandableCalendar';
+import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
+import ScheduleList from '../../components/ScheduleList';
+import format from 'date-fns/format';
+import {fetchScheduleItems} from '../../api/scheduleApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const Calendar: React.FC<AuthProps> = ({url, navigation, route}) => {
+const Calendar: React.FC<AuthProps> = ({url}) => {
+  const dispatch = useDispatch();
+  const items = useSelector((state: any) => state.schedule.items);
+  const token = useSelector((state: any) => state.user.token);
+  const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
+  const [selectDate, setSelectDate] = useState<string[]>([format(new Date(), 'yyyy-MM-dd')]);
+
+  const selectedDateHandller = (dateString: string) => {
+    const dates = selectDate.length;
+    if (dates <= 1) {
+      let currentDate = selectDate[0];
+      const dateArr = [];
+      let startDate = new Date(currentDate);
+      let endDate = new Date(dateString);
+
+      if (startDate.getMonth() !== endDate.getMonth()) {
+        setSelectDate([dateString]);
+      } else {
+        if (startDate > endDate) {
+          [startDate, endDate] = [endDate, startDate]; // startDate와 endDate를 교환
+        }
+
+        while (startDate <= endDate) {
+          dateArr.push(format(startDate, 'yyyy-MM-dd'));
+          startDate.setDate(startDate.getDate() + 1);
+        }
+
+        const newSelectDate = Array.from(new Set([...selectDate, ...dateArr])).sort();
+        setSelectDate(newSelectDate);
+      }
+    } else {
+      setSelectDate([dateString]);
+    }
+  };
+
+  const setNewCalendarItems = (selectDate: string[]) => {
+    let newCalendarItems = {};
+    selectDate.forEach(date => {
+      let calendarItem = items[date];
+      if (calendarItem) {
+        newCalendarItems = {...newCalendarItems, ...{[date]: calendarItem}};
+      }
+    });
+    setCalendarItems(newCalendarItems);
+  };
+
+  interface MarkedDate {
+    selected: boolean;
+    selectedColor: string;
+    selectedTextColor: string;
+    marked: boolean;
+    dots: {key: string; color: string; selectedDotColor?: string}[];
+  }
+
+  const getMarkedDates = (): Record<string, MarkedDate> => {
+    const markedDates: Record<string, MarkedDate> = {};
+    selectDate.forEach(dateKey => {
+      const date = dateKey;
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          selected: true,
+          selectedColor: 'white',
+          selectedTextColor: variables.main,
+          marked: true,
+          dots: [],
+        };
+      }
+    });
+    Object.keys(items).forEach(dateKey => {
+      const date = dateKey;
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          selected: selectDate.includes(date),
+          selectedColor: 'white',
+          selectedTextColor: variables.main,
+          marked: true,
+          dots: [],
+        };
+      }
+      const item = items[date];
+      const existingColors = new Set();
+
+      item.forEach((data: any, index: number) => {
+        const tag = data.tag;
+        if (!existingColors.has(tag.color)) {
+          const dot = {
+            key: String(index),
+            color: tag.color,
+            selectedDotColor: tag.color,
+          };
+          markedDates[date].dots.push(dot);
+          existingColors.add(tag.color);
+        }
+      });
+    });
+    return markedDates;
+  };
+
+  const fetchData = async () => {
+    if (url) {
+      let newItems = await fetchScheduleItems(url, token);
+      dispatch(setScheduleReducer(newItems));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setNewCalendarItems(selectDate);
+  }, [selectDate]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ProfileHeader />
-      <CalendarProvider date="2023-10-01" style={styles.calendarContainer}>
-        <ExpandableCalendar style={{flex: 1}} />
+      <CalendarProvider style={styles.calendarBackground} date={selectDate[0]}>
+        <ExpandableCalendar
+          theme={them}
+          initialPosition={Positions.OPEN}
+          onDayPress={({dateString}) => selectedDateHandller(dateString)}
+          initialNumToRender={5}
+          windowSize={3}
+          maxToRenderPerBatch={3}
+          updateCellsBatchingPeriod={20}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
+          markingType={'multi-dot'}
+          markedDates={getMarkedDates()}
+        />
+        {Object.keys(calendarItems).length !== 0 ? (
+          <ScheduleList
+            items={calendarItems}
+            setItems={(newItems: ScheduleItems) => setCalendarItems(newItems)}
+          />
+        ) : (
+          <View style={styles.noneDataContainer}>
+            <Text>일정이 없습니다.</Text>
+          </View>
+        )}
       </CalendarProvider>
     </SafeAreaView>
   );
@@ -29,7 +169,24 @@ const styles = StyleSheet.create({
       android: {top: (deviceWidth - 240) / 5},
     }),
   },
-  calendarContainer: {
+  calendarBackground: {
     marginTop: 20,
+    flex: 1,
+  },
+  noneDataContainer: {
+    marginTop: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
+
+const them = {
+  calendarBackground: variables.main,
+  arrowColor: variables.text_7,
+  monthTextColor: variables.text_7,
+  textDayFontWeight: 'bold' as any,
+  dayTextColor: variables.text_7,
+  todayTextColor: variables.board_6,
+  textDisabledColor: variables.text_6,
+};
