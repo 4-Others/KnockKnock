@@ -59,18 +59,22 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
 
   const handleConfirm = (date: Date) => {
     onCancel();
-    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(
-      2,
-      '0',
-    )}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const formattedDate =
+      updateData.period === 'ALL_DAY'
+        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+            date.getDate(),
+          ).padStart(2, '0')}`
+        : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+            date.getDate(),
+          ).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(
+            date.getMinutes(),
+          ).padStart(2, '0')}`;
 
     if (timeType === 'start') {
       setUpdateData(prevData => ({
         ...prevData,
         startAt: formattedDate,
+        endAt: formattedDate,
       }));
     } else if (timeType === 'end') {
       if (new Date(formattedDate) < new Date(updateData.startAt)) {
@@ -152,14 +156,12 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
         state={updateData.period === 'ALL_DAY' ? start : updateData.startAt}
         event={toggleStartAt}
         iconName="time-outline"
-        period={updateData.period}
       />
       <ScheduleOptionSelect
         type="일정 종료 시간"
         state={updateData.period === 'ALL_DAY' ? end : updateData.endAt}
         event={toggleEndAt}
         iconName="time-outline"
-        period={updateData.period}
       />
       <KeyboardAvoidingView
         style={styles.contentInput}
@@ -189,8 +191,8 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
         type="notification"
       />
       <DateTimePickerModal
-        isVisible={visible && updateData.period === 'SPECIFIC_TIME'}
-        mode={'datetime'}
+        isVisible={visible}
+        mode={updateData.period === 'ALL_DAY' ? 'date' : 'datetime'}
         onConfirm={handleConfirm}
         onCancel={onCancel}
         date={date}

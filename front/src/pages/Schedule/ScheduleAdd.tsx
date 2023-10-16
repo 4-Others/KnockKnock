@@ -101,7 +101,6 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         }
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
-        console.log('finalPostData:', JSON.stringify(finalPostData, null, 2));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           title: postTag.name,
