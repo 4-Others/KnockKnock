@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {Text, StyleSheet, SafeAreaView, Dimensions, View} from 'react-native';
-import {useSelector} from 'react-redux';
+import {Text, StyleSheet, SafeAreaView, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
 import Header from '../../components/Header';
 import {variables} from '../../style/variables';
 import {AuthProps} from '../../navigations/StackNavigator';
@@ -8,21 +9,15 @@ import axios from 'axios';
 import {ScheduleData} from '../../util/dataConvert';
 import {format} from 'date-fns';
 import ScheduleList from '../../components/ScheduleList';
-import {useDispatch} from 'react-redux';
-import {setScheduleReducer} from '../../util/redux/scheduleSlice';
-
-const {width, height} = Dimensions.get('window');
-
-type ScheduleItems = Record<string, ScheduleData[]>;
 
 const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
-  const user = useSelector((state: any) => state.user);
   const items = useSelector((state: any) => state.schedule.items);
   const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
   };
-  const [scheduleCount, setScheduleCount] = useState(0);
+  const user = useSelector((state: any) => state.user);
+  const [count, setCount] = useState(0);
 
   const fetchSearchData = async () => {
     try {
@@ -48,33 +43,44 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
         }
         newItems[dateKey].push(item);
       });
-      let count = 0;
-      Object.keys(newItems).forEach(key => {
-        count += newItems[key].length;
-      });
-      setScheduleCount(count);
       setItems(newItems);
     } catch (error: any) {
-      console.log('search 실패', error);
+      console.error('search 실패', error);
     }
+  };
+
+  const itemCount = (items: ScheduleItems) => {
+    let count = 0;
+    Object.keys(items).forEach(key => {
+      count += items[key].length;
+    });
+    setCount(count);
   };
 
   useEffect(() => {
     fetchSearchData();
   }, []);
 
+  useEffect(() => {
+    itemCount(items);
+  }, [items]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="검색" type="none" nextFunc={() => navigation.navigate('BoardEdit')} />
       <View style={styles.contentInfo}>
-        <Text style={styles.title}>{`${route.params.keyword}에 대한 검색 결과입니다.`}</Text>
+        <Text style={styles.title}>
+          {route.params.keyword
+            ? `${route.params.keyword}에 대한 검색 결과입니다.`
+            : '기간 검색 결과입니다.'}
+        </Text>
       </View>
       <View style={styles.itemNumContainer}>
-        <Text style={styles.countText}>{`total memo: ${scheduleCount}`}</Text>
+        <Text style={styles.countText}>{`total memo: ${count}`}</Text>
       </View>
       <View style={styles.listContainer}>
         {Object.keys(items).length > 0 ? (
-          <ScheduleList items={items} setItems={setItems} />
+          <ScheduleList items={items} setItems={(newItems: ScheduleItems) => setItems(newItems)} />
         ) : (
           <EmptySearch />
         )}
@@ -128,6 +134,7 @@ const styles = StyleSheet.create({
     paddingBottom: 150,
   },
   emptyViewLayout: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
