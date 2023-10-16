@@ -19,8 +19,8 @@ const Notifications = () => {
           const response = await axios.get(`${url}api/v1/notification`, {
             headers: {Authorization: `Bearer ${user.token}`},
           });
-          setNotificationDatas(response.data);
-          console.log(notificationDatas);
+          setNotificationDatas(response.data.body.data);
+          console.log(response.data.body.data);
         } else {
           console.error('No token found.');
         }
