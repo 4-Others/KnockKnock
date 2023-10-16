@@ -81,6 +81,7 @@ const StackSearch = () => {
       <Stack.Screen name="SearchResult" options={{headerShown: false}}>
         {props => <SearchResult {...props} url={url} />}
       </Stack.Screen>
+      <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };
