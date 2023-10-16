@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
-import {Shadow} from 'react-native-shadow-2';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
@@ -21,6 +20,13 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
   const navigation = useNavigation();
+  const [openSwipeable, setOpenSwipeable] = React.useState<Swipeable | null>(null);
+
+  const handleCloseSwipeable = () => {
+    if (openSwipeable) {
+      openSwipeable.close();
+    }
+  };
 
   const itemsKeyArray = Object.keys(items)
     .filter((date: string) => items[date].length > 0)
@@ -71,7 +77,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
         }
       }
       setItems(updatedItems);
-      if (isEmptyBoard && tagId) {
+      if (tagId && isEmptyBoard) {
         const success = await deleteBoardData(url, token, tagId);
         if (success) {
           const updatedItems: ScheduleItems = {...items};
@@ -105,6 +111,8 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
                 onPress={handleToggleComplete}
                 onDelete={handleDelete}
                 tagId={tagId}
+                onOpenSwipeable={setOpenSwipeable}
+                onCloseSwipeable={handleCloseSwipeable}
               />
             ))}
           </View>
@@ -113,27 +121,29 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     </ScrollView>
   );
 };
-const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
+const ScheduleItem = ({item, onPress, onDelete, tagId, onOpenSwipeable, onCloseSwipeable}: any) => {
   const swipeableRef = useRef<Swipeable | null>(null);
-  const resetSwipeable = () => {
-    if (swipeableRef.current) {
-      swipeableRef.current.close();
-    }
-  };
   const navigation = useNavigation();
+
   const goToScheduleEdit = () => {
     navigation.dispatch(StackActions.push('ScheduleEdit', {item}));
   };
+
   const renderRightActions = () => (
     <TouchableOpacity
       style={styles.deleteArea}
       onPress={() => {
         onDelete(item.scheduleId, tagId);
-        resetSwipeable();
+        onCloseSwipeable();
       }}>
-      <Text style={styles.deleteText}>Delete</Text>
+      <Text style={styles.deleteText}>삭제</Text>
     </TouchableOpacity>
   );
+
+  const handleSwipeableOpen = () => {
+    onOpenSwipeable(swipeableRef.current);
+    onCloseSwipeable();
+  };
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
@@ -149,35 +159,31 @@ const ScheduleItem = ({item, onPress, onDelete, tagId}: any) => {
   const tagColor = item.tag && item.tag.color ? item.tag.color : '#757575';
 
   return (
-    <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      onSwipeableOpen={handleSwipeableOpen}>
       <TouchableOpacity style={styles.item} onPress={goToScheduleEdit}>
-        <Shadow
-          style={styles.todo}
-          distance={8}
-          startColor={'#00000010'}
-          endColor={'#ffffff05'}
-          offset={[0, 1]}>
-          <View style={styles.content}>
-            <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
-            <View>
-              <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
-                {item.title}
+        <View style={styles.content}>
+          <View style={[styles.colorChip, {backgroundColor: tagColor}]}></View>
+          <View>
+            <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
+              {item.title}
+            </Text>
+            {item.period === 'ALL_DAY' ? (
+              <Text style={styles.time}>{formatDate(item.startAt)}</Text>
+            ) : (
+              <Text style={styles.time}>
+                {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
               </Text>
-              {item.period === 'ALL_DAY' ? (
-                <Text style={styles.time}>{formatDate(item.startAt)}</Text>
-              ) : (
-                <Text style={styles.time}>
-                  {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
-                </Text>
-              )}
-            </View>
+            )}
           </View>
-          <TouchableOpacity
-            style={item.complete ? styles.checkState : styles.unCheckState}
-            onPress={() => onPress(item.scheduleId)}>
-            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
-          </TouchableOpacity>
-        </Shadow>
+        </View>
+        <TouchableOpacity
+          style={item.complete ? styles.checkState : styles.unCheckState}
+          onPress={() => onPress(item.scheduleId)}>
+          <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
+        </TouchableOpacity>
       </TouchableOpacity>
     </Swipeable>
   );
@@ -189,18 +195,30 @@ export const styles = StyleSheet.create({
   scheduleListContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingLeft: 24,
-    paddingRight: 24,
     marginBottom: 30,
   },
   listDateTitle: {
-    fontFamily: variables.font_3,
-    color: variables.text_5,
+    fontFamily: variables.font_2,
+    color: variables.text_4,
     fontSize: 14,
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 26,
+    paddingBottom: 5,
+    paddingLeft: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_2,
   },
-  item: {marginBottom: 10},
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingRight: 24,
+    paddingBottom: 10,
+    paddingLeft: 24,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_2,
+  },
   todo: {
     width: '100%',
     flexDirection: 'row',
@@ -265,10 +283,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: variables.Mater_14,
-    padding: 14,
-    marginBottom: 10,
-    marginLeft: 20,
-    borderRadius: 6,
+    marginRight: 10,
+    marginLeft: 4,
+    paddingHorizontal: 16,
+    height: '100%',
+    borderRadius: 5,
   },
   deleteText: {
     color: 'white',

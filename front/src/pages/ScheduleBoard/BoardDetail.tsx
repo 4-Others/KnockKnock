@@ -7,7 +7,6 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
-import {Shadow} from 'react-native-shadow-2';
 import {fetchScheduleItems} from '../../api/scheduleApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
@@ -81,27 +80,23 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
       }
     })();
   }, [items]);
-
   console.log('items:', JSON.stringify(items, null, 2)); //!
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="스케줄 보드" type="edit" nextFunc={handleEditPress} />
+      {title === '전체' ? (
+        <Header title="스케줄 보드" type="none" />
+      ) : (
+        <Header title="스케줄 보드" type="edit" nextFunc={handleEditPress} />
+      )}
       <ScrollView style={styles.ScheduleItemList}>
-        <Shadow
-          style={styles.shadow}
-          distance={8}
-          startColor={'#00000010'}
-          endColor={'#ffffff05'}
-          offset={[0, 1]}>
-          <View style={[styles.contentInfo, {backgroundColor: color}]}>
-            <Text style={styles.title}>{title}</Text>
-            <View style={styles.itemNumContainer}>
-              <Text style={styles.textMemo}>total memo:</Text>
-              <Text style={styles.textNum}> {number}</Text>
-            </View>
+        <View style={[styles.contentInfo, {backgroundColor: color}]}>
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.itemNumContainer}>
+            <Text style={styles.textMemo}>total memo:</Text>
+            <Text style={styles.textNum}> {number}</Text>
           </View>
-        </Shadow>
+        </View>
         <View style={styles.listContainer}>
           <ScheduleList items={items} setItems={setItems} tagId={tagId} />
         </View>
@@ -125,16 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginRight: 12,
-    marginLeft: 12,
     paddingTop: 12,
     paddingRight: 20,
     paddingBottom: 10,
-    paddingLeft: 36,
-    borderRadius: 12,
-  },
-  shadow: {
-    width: '100%',
+    paddingLeft: 24,
   },
   title: {
     fontFamily: variables.font_3,
@@ -158,9 +147,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    marginTop: 10,
-    marginRight: 12,
-    marginLeft: 12,
+    marginTop: 8,
     paddingBottom: 150,
   },
 });
