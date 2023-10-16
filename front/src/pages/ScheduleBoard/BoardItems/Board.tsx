@@ -62,42 +62,22 @@ const Board: React.FC<BoardItemProps> = ({
   };
 
   const handleDeletePress = async (boardId: number) => {
-    // const boardToDelete = items.find((item: BoardItem) => item.tagId === boardId);
-    // const scheduleCountForBoard = boardToDelete ? boardToDelete.scheduleCount : 0;
+    const boardToDelete = items.find((item: BoardItem) => item.tagId === boardId);
 
-    // if (scheduleCountForBoard > 0) {
-    //   Alert.alert(
-    //     'Warning',
-    //     `해당 보드에 ${scheduleCountForBoard}개의 스케줄이 있습니다. 모두 삭제하시겠습니까?`,
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         style: 'cancel',
-    //       },
-    //       {
-    //         text: 'OK',
-    //         onPress: async () => {
-    //           await deleteSchedulesWithTag(boardId);
-    //           const success = await deleteBoardData(url, user.token, boardId);
-    //           if (success) {
-    //             const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
-    //             setItems(updatedItems);
-    //           } else {
-    //             console.error(`삭제 실패한 보드 ID: ${boardId}`);
-    //           }
-    //         },
-    //       },
-    //     ],
-    //   );
-    // } else {
-    const success = await deleteBoardData(url, user.token, boardId);
-    if (success) {
-      const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
-      setItems(updatedItems);
+    if (boardToDelete.scheduleCount > 0) {
+      Alert.alert(
+        'Alert',
+        `해당 보드에 ${boardToDelete.scheduleCount}개의 스케줄이 있어\n보드를 삭제할 수 없습니다.`,
+      );
     } else {
-      console.error(`삭제 실패한 보드 ID: ${boardId}`);
+      const success = await deleteBoardData(url, user.token, boardId);
+      if (success) {
+        const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
+        setItems(updatedItems);
+      } else {
+        console.error(`삭제 실패한 보드 ID: ${boardId}`);
+      }
     }
-    // }
   };
 
   const handleBoardPress = () => {

@@ -20,7 +20,6 @@ type RootStackParamList = {
 };
 type ScheduleAddNavigationProp = StackNavigationProp<RootStackParamList>;
 
-//? 스케줄 추가하는 스크린
 const ScheduleAdd: React.FC<AuthProps> = () => {
   const url = Config.API_APP_KEY;
   const navigation = useNavigation<ScheduleAddNavigationProp>();
@@ -102,6 +101,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         }
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
+        console.log('finalPostData:', JSON.stringify(finalPostData, null, 2));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           title: postTag.name,

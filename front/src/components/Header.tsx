@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontFamily: variables.font_2,
     color: variables.text_2,
     fontSize: 18,
-    marginLeft: 10,
+    marginLeft: 5,
   },
   left: {
     justifyContent: 'space-between',
