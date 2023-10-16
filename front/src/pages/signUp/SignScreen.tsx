@@ -1,13 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {variables} from '../../style/variables';
@@ -16,23 +8,6 @@ import {InputArea, CheckBtn} from './SignUpComponent';
 import {GradientButton_L} from '../../components/GradientButton';
 import {loginPost} from '../../api/authApi';
 import {setLogin} from '../../util/redux/userSlice';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-type InputValue = {
-  id: string;
-  password: string;
-  comparePassword: string;
-  username: string;
-  email: string;
-  birth: string;
-  pushAgree: boolean;
-  verifyKey: string;
-};
-
-type Complete = {
-  emailAPI: boolean;
-  verifyKeyAPI: boolean;
-};
 
 type SignScreenProps = {
   route: any;

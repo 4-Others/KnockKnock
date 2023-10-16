@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
   KeyboardTypeOptions,
 } from 'react-native';
 import {variables} from '../../style/variables';
-import {isPasswordValid, isEmaildValid} from '../../util/authUtil';
 
 interface InputAreaProps {
   type: string;
