@@ -87,10 +87,10 @@ const StackSearch = () => {
   return (
     <Stack.Navigator initialRouteName="SearchOption">
       <Stack.Screen name="SearchOption" options={{headerShown: false}}>
-        {props => <Search {...props} />}
+        {props => <Search {...props} url={url} />}
       </Stack.Screen>
       <Stack.Screen name="SearchResult" options={{headerShown: false}}>
-        {props => <SearchResult {...props} url={url} />}
+        {props => <SearchResult {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>

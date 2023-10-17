@@ -6,19 +6,29 @@ import {SearchData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import {AuthProps} from '../../navigations/StackNavigator';
+import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
+import {ScheduleData} from '../../util/dataConvert';
+import {format} from 'date-fns';
 
-const Search: React.FC<AuthProps> = ({navigation}) => {
+const Search: React.FC<AuthProps> = ({url, navigation}) => {
   const dateFormat = (date: Date) => date.toISOString().split('T')[0];
-
   const data: SearchData = {
     keyword: '',
     startAt: dateFormat(new Date()),
     endAt: dateFormat(new Date()),
   };
-
   const [visible, setVisible] = useState(false);
   const [timeType, setTimeType] = useState('');
   const [searchData, setSearchData] = useState(data);
+  const {keyword, startAt, endAt} = searchData;
+  const items = useSelector((state: any) => state.schedule.items);
+  const dispatch = useDispatch();
+  const setItems = (newItems: ScheduleItems) => {
+    dispatch(setScheduleReducer(newItems));
+  };
+  const user = useSelector((state: any) => state.user);
 
   const toggleStartAt = () => {
     setVisible(!visible);
@@ -43,11 +53,42 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
   };
 
   const searchSchedule = () => {
-    navigation.navigate('SearchResult', {
-      keyword: searchData.keyword,
-      startAt: `${searchData.startAt} 00:00:00`,
-      endAt: `${searchData.endAt} 00:00:00`,
-    });
+    fetchSearchData();
+    navigation.navigate('SearchResult', {keyword});
+  };
+
+  const fetchSearchData = async () => {
+    try {
+      const res = await axios.get(`${url}api/v1/schedule/search`, {
+        headers: {Authorization: `Bearer ${user.token}`},
+        params: {
+          keyword,
+          startAt: `${startAt} 00:00:00`,
+          endAt: `${endAt} 23:59:59`,
+        },
+      });
+      const fetchedData = res.data.body.data;
+
+      const newItems: ScheduleItems = {};
+
+      fetchedData.forEach((item: ScheduleData) => {
+        if (item.tag === null) {
+          item.tag = {
+            name: '전체',
+            color: '#757575',
+            tagId: 0,
+          };
+        }
+        const dateKey = format(new Date(item.startAt), 'yyyy-MM-dd');
+        if (!newItems[dateKey]) {
+          newItems[dateKey] = [];
+        }
+        newItems[dateKey].push(item);
+      });
+      setItems(newItems);
+    } catch (error: any) {
+      console.error('search 실패', error);
+    }
   };
 
   return (
