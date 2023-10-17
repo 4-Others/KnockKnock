@@ -57,7 +57,9 @@ const StackSchedule = () => {
       <Stack.Screen name="Profile" options={{headerShown: false}}>
         {props => <Profile {...props} url={url} />}
       </Stack.Screen>
-      <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
+      <Stack.Screen name="ProfileEdit" options={{headerShown: false}}>
+        {props => <ProfileEdit {...props} url={url} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
