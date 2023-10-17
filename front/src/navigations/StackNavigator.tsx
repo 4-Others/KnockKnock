@@ -15,6 +15,7 @@ import SignUpTab from '../pages/signUp/SignUpTab';
 import TabNavigator from './TabNavigator';
 import Search from '../pages/search/Search';
 import SearchResult from '../pages/search/SearchResult';
+import {ForgotId, ForgotPw} from '../pages/login/Forgot';
 
 export interface AuthProps {
   route: any;
@@ -33,6 +34,12 @@ const AuthStack: React.FC = () => {
       </Stack.Screen>
       <Stack.Screen name="Login" options={{headerShown: false}}>
         {props => <Login {...props} url={url} />}
+      </Stack.Screen>
+      <Stack.Screen name="ForgotId" options={{headerShown: false}}>
+        {props => <ForgotId {...props} url={url} />}
+      </Stack.Screen>
+      <Stack.Screen name="ForgotPw" options={{headerShown: false}}>
+        {props => <ForgotPw {...props} url={url} />}
       </Stack.Screen>
       <Stack.Screen name="SignUpTab" options={{headerShown: false}}>
         {props => <SignUpTab {...props} url={url} />}
