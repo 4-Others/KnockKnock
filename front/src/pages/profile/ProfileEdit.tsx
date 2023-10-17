@@ -19,6 +19,8 @@ import {useSelector} from 'react-redux';
 import {validErrorMessage} from '../../util/authUtil';
 import {AuthProps} from '../../navigations/StackNavigator';
 import axios from 'axios';
+import {GradientButton_L} from '../../components/GradientButton';
+import {storageResetValue} from '../../util/authUtil';
 
 const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
   const initialUserInfo = useSelector((state: any) => state.user);
@@ -28,13 +30,13 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
   const [visible, setVisible] = useState(false);
   const {username, id, birth, pushAgree} = userInfo;
   const {password, passwordConfirm} = passwordInfo;
+  const header = {
+    headers: {Authorization: `Bearer ${initialUserInfo.token}`},
+  };
 
   const changeProfileFetch = async () => {
     try {
       if (url) {
-        const header = {
-          headers: {Authorization: `Bearer ${initialUserInfo.token}`},
-        };
         const changeUserInfo = {
           username: username !== '' ? username : initialUserInfo.username,
           id: id !== '' ? id : initialUserInfo.id,
@@ -96,6 +98,15 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
     }
   };
 
+  const cancellationUser = async () => {
+    try {
+      const res = await axios.delete(`${url}api/v1/users/delete`, header);
+      if (res) Alert.alert('회원탈퇴가 완료되었습니다.');
+    } catch (error) {
+      if (error) Alert.alert('회원탈퇴가 실패하었습니다.');
+    }
+  };
+
   useEffect(() => {
     const {username, id, birth, pushAgree} = initialUserInfo;
     setUserInfo({username, id, birth, pushAgree});
@@ -110,95 +121,107 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
           navigation.goBack();
         }}
       />
-      <ScrollView style={styles.contentLayout}>
-        <View style={styles.listContainer}>
-          <Text style={styles.inputTitle}>프로필</Text>
-          <View style={styles.inputContainer}>
-            <View style={styles.inputItem}>
-              <Text style={styles.default}>{id}</Text>
-            </View>
-            <View style={styles.inputItem}>
-              <TextInput
-                placeholder="변경할 닉네임을 입력해 주세요."
-                placeholderTextColor={variables.text_5}
-                style={styles.input}
-                onChangeText={text => changeUserInfoValue('username', text)}
-                value={username}
-                autoCapitalize="none"
-              />
-              <TouchableOpacity onPress={() => handleReset('username')}>
-                <Icon name="close-circle-outline" style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputItem}>
-              <TouchableOpacity onPress={showDatePicker} style={styles.datePicker}>
-                <TextInput
-                  placeholder="변경할 생년월일을 입력해 주세요."
-                  placeholderTextColor={variables.text_5}
-                  style={styles.input}
-                  editable={false}
-                  value={birth}
-                />
-                <Icon name="calendar-range" style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputItemLast}>
-              <TextInput
-                placeholder={pushAgree ? '푸시 알림 ON' : '푸시 알림 OFF'}
-                placeholderTextColor={pushAgree ? variables.text_2 : variables.text_5}
-                style={styles.input}
-                editable={false}
-              />
-              <Switch
-                value={pushAgree ? pushAgree : false}
-                onValueChange={() => changeUserInfoValue('pushAgree', !pushAgree)}
-                color={variables.main}
-                style={styles.toggle}
-              />
-            </View>
-          </View>
+      <View style={styles.contentLayout}>
+        <ScrollView>
           <View style={styles.listContainer}>
-            <Text style={styles.inputTitle}>비밀번호 변경</Text>
+            <Text style={styles.inputTitle}>프로필</Text>
             <View style={styles.inputContainer}>
               <View style={styles.inputItem}>
+                <Text style={styles.default}>{id}</Text>
+              </View>
+              <View style={styles.inputItem}>
                 <TextInput
-                  placeholder="변경할 비밀번호"
+                  placeholder="변경할 닉네임을 입력해 주세요."
                   placeholderTextColor={variables.text_5}
-                  secureTextEntry={encryption}
                   style={styles.input}
-                  onChangeText={text => changeUserInfoValue('password', text)}
-                  value={password}
+                  onChangeText={text => changeUserInfoValue('username', text)}
+                  value={username}
+                  autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={handleVisible}>
-                  {encryption ? (
-                    <Icon name="eye-off-outline" style={styles.icon} />
-                  ) : (
-                    <Icon name="eye-outline" style={styles.icon} />
-                  )}
+                <TouchableOpacity onPress={() => handleReset('username')}>
+                  <Icon name="close-circle-outline" style={styles.icon} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.inputItem}>
+                <TouchableOpacity onPress={showDatePicker} style={styles.datePicker}>
+                  <TextInput
+                    placeholder="변경할 생년월일을 입력해 주세요."
+                    placeholderTextColor={variables.text_5}
+                    style={styles.input}
+                    editable={false}
+                    value={birth}
+                  />
+                  <Icon name="calendar-range" style={styles.icon} />
                 </TouchableOpacity>
               </View>
               <View style={styles.inputItemLast}>
                 <TextInput
-                  placeholder="변경할 비밀번호 확인"
-                  placeholderTextColor={variables.text_5}
-                  secureTextEntry={encryption}
+                  placeholder={pushAgree ? '푸시 알림 ON' : '푸시 알림 OFF'}
+                  placeholderTextColor={pushAgree ? variables.text_2 : variables.text_5}
                   style={styles.input}
-                  onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
-                  value={passwordConfirm}
+                  editable={false}
                 />
-                <TouchableOpacity onPress={handleVisible}>
-                  {encryption ? (
-                    <Icon name="eye-off-outline" style={styles.icon} />
-                  ) : (
-                    <Icon name="eye-outline" style={styles.icon} />
-                  )}
-                </TouchableOpacity>
+                <Switch
+                  value={pushAgree ? pushAgree : false}
+                  onValueChange={() => changeUserInfoValue('pushAgree', !pushAgree)}
+                  color={variables.main}
+                  style={styles.toggle}
+                />
               </View>
             </View>
-            {<Text style={styles.errormessage}>{passwordError(password, passwordConfirm)}</Text>}
+            <View style={styles.listContainer}>
+              <Text style={styles.inputTitle}>비밀번호 변경</Text>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputItem}>
+                  <TextInput
+                    placeholder="변경할 비밀번호"
+                    placeholderTextColor={variables.text_5}
+                    secureTextEntry={encryption}
+                    style={styles.input}
+                    onChangeText={text => changeUserInfoValue('password', text)}
+                    value={password}
+                  />
+                  <TouchableOpacity onPress={handleVisible}>
+                    {encryption ? (
+                      <Icon name="eye-off-outline" style={styles.icon} />
+                    ) : (
+                      <Icon name="eye-outline" style={styles.icon} />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.inputItemLast}>
+                  <TextInput
+                    placeholder="변경할 비밀번호 확인"
+                    placeholderTextColor={variables.text_5}
+                    secureTextEntry={encryption}
+                    style={styles.input}
+                    onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
+                    value={passwordConfirm}
+                  />
+                  <TouchableOpacity onPress={handleVisible}>
+                    {encryption ? (
+                      <Icon name="eye-off-outline" style={styles.icon} />
+                    ) : (
+                      <Icon name="eye-outline" style={styles.icon} />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {<Text style={styles.errormessage}>{passwordError(password, passwordConfirm)}</Text>}
+            </View>
           </View>
+        </ScrollView>
+        <View style={styles.bottomButton}>
+          <GradientButton_L
+            text="회원 탈퇴"
+            onPress={() => {
+              storageResetValue();
+              cancellationUser();
+              navigation.navigate('AuthSplach');
+            }}
+          />
         </View>
-      </ScrollView>
+      </View>
       <DateTimePickerModal
         isVisible={visible}
         mode="date"
@@ -216,15 +239,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentLayout: {
+    flex: 1,
     marginRight: 24,
     marginLeft: 24,
-    ...Platform.select({
-      ios: {paddingBottom: 200},
-      android: {paddingBottom: 220},
-    }),
   },
   listContainer: {
-    flex: 1,
     justifyContent: 'center',
     marginTop: 24,
   },
@@ -259,7 +278,7 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     marginLeft: 2,
-    marginBottom: 6,
+    marginBottom: 10,
     fontFamily: variables.font_3,
     color: variables.text_4,
     fontSize: 16,
@@ -304,5 +323,8 @@ const styles = StyleSheet.create({
     color: variables.board_8,
     fontSize: 15,
     marginTop: 5,
+  },
+  bottomButton: {
+    marginTop: 'auto',
   },
 });
