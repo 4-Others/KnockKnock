@@ -5,49 +5,15 @@ import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice'
 import Header from '../../components/Header';
 import {variables} from '../../style/variables';
 import {AuthProps} from '../../navigations/StackNavigator';
-import axios from 'axios';
-import {ScheduleData} from '../../util/dataConvert';
-import {format} from 'date-fns';
 import ScheduleList from '../../components/ScheduleList';
 
-const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
+const SearchResult: React.FC<AuthProps> = ({navigation, route}) => {
   const items = useSelector((state: any) => state.schedule.items);
   const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
   };
-  const user = useSelector((state: any) => state.user);
   const [count, setCount] = useState(0);
-
-  const fetchSearchData = async () => {
-    try {
-      const res = await axios.get(`${url}api/v1/schedule/search`, {
-        headers: {Authorization: `Bearer ${user.token}`},
-        params: route.params,
-      });
-      const fetchedData = res.data.body.data;
-
-      const newItems: ScheduleItems = {};
-
-      fetchedData.forEach((item: ScheduleData) => {
-        if (item.tag === null) {
-          item.tag = {
-            name: '전체',
-            color: '#757575',
-            tagId: 0,
-          };
-        }
-        const dateKey = format(new Date(item.startAt), 'yyyy-MM-dd');
-        if (!newItems[dateKey]) {
-          newItems[dateKey] = [];
-        }
-        newItems[dateKey].push(item);
-      });
-      setItems(newItems);
-    } catch (error: any) {
-      console.error('search 실패', error);
-    }
-  };
 
   const itemCount = (items: ScheduleItems) => {
     let count = 0;
@@ -58,10 +24,6 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
   };
 
   useEffect(() => {
-    fetchSearchData();
-  }, []);
-
-  useEffect(() => {
     itemCount(items);
   }, [items]);
 
@@ -70,9 +32,7 @@ const SearchResult: React.FC<AuthProps> = ({url, navigation, route}) => {
       <Header title="검색" type="none" nextFunc={() => navigation.navigate('BoardEdit')} />
       <View style={styles.contentInfo}>
         <Text style={styles.title}>
-          {route.params.keyword
-            ? `${route.params.keyword}에 대한 검색 결과입니다.`
-            : '기간 검색 결과입니다.'}
+          {route.keyword ? `${route.keyword}에 대한 검색 결과입니다.` : '기간 검색 결과입니다.'}
         </Text>
       </View>
       <View style={styles.itemNumContainer}>
