@@ -15,6 +15,7 @@ import SignUpTab from '../pages/signUp/SignUpTab';
 import TabNavigator from './TabNavigator';
 import Search from '../pages/search/Search';
 import SearchResult from '../pages/search/SearchResult';
+import {ForgotId, ForgotPw} from '../pages/login/Forgot';
 
 export interface AuthProps {
   route: any;
@@ -33,6 +34,12 @@ const AuthStack: React.FC = () => {
       </Stack.Screen>
       <Stack.Screen name="Login" options={{headerShown: false}}>
         {props => <Login {...props} url={url} />}
+      </Stack.Screen>
+      <Stack.Screen name="ForgotId" options={{headerShown: false}}>
+        {props => <ForgotId {...props} url={url} />}
+      </Stack.Screen>
+      <Stack.Screen name="ForgotPw" options={{headerShown: false}}>
+        {props => <ForgotPw {...props} url={url} />}
       </Stack.Screen>
       <Stack.Screen name="SignUpTab" options={{headerShown: false}}>
         {props => <SignUpTab {...props} url={url} />}
@@ -57,7 +64,9 @@ const StackSchedule = () => {
       <Stack.Screen name="Profile" options={{headerShown: false}}>
         {props => <Profile {...props} url={url} />}
       </Stack.Screen>
-      <Stack.Screen name="ProfileEdit" component={ProfileEdit} options={{headerShown: false}} />
+      <Stack.Screen name="ProfileEdit" options={{headerShown: false}}>
+        {props => <ProfileEdit {...props} url={url} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -78,10 +87,10 @@ const StackSearch = () => {
   return (
     <Stack.Navigator initialRouteName="SearchOption">
       <Stack.Screen name="SearchOption" options={{headerShown: false}}>
-        {props => <Search {...props} />}
+        {props => <Search {...props} url={url} />}
       </Stack.Screen>
       <Stack.Screen name="SearchResult" options={{headerShown: false}}>
-        {props => <SearchResult {...props} url={url} />}
+        {props => <SearchResult {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
     </Stack.Navigator>
