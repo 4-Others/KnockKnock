@@ -74,7 +74,7 @@ public class ScheduleService {
                                                     : findSchedule.getStartAt()
                                        )
                                        .endAt(requestBody.getEndAt() != null
-                                                  ? LocalDateTime.parse(requestBody.getStartAt(), timeFormatter)
+                                                  ? LocalDateTime.parse(requestBody.getEndAt(), timeFormatter)
                                                   : findSchedule.getEndAt()
                                        )
                                        .alerts(requestBody.getAlerts())

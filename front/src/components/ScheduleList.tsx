@@ -170,8 +170,12 @@ const ScheduleItem = ({item, onPress, onDelete, tagId, onOpenSwipeable, onCloseS
             <Text style={[styles.title, item.complete ? styles.check : styles.unCheck]}>
               {item.title}
             </Text>
-            {item.period === 'ALL_DAY' ? (
+            {item.period === 'ALL_DAY' && formatDate(item.startAt) === formatDate(item.endAt) ? (
               <Text style={styles.time}>{formatDate(item.startAt)}</Text>
+            ) : item.period === 'ALL_DAY' ? (
+              <Text style={styles.time}>
+                {formatDate(item.startAt)} ~ {formatDate(item.endAt)}
+              </Text>
             ) : (
               <Text style={styles.time}>
                 {formatDateTime(item.startAt)} ~ {formatDateTime(item.endAt)}
