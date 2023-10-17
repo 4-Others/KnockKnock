@@ -19,28 +19,26 @@ import {deleteBoardData} from '../../../api/boardApi';
 import {BoardItem} from '../../../util/dataConvert';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-type BoardItems = BoardItem[];
-
 interface BoardItemProps {
-  boardId: number;
-  title: string;
-  number: number;
+  tagId: number;
+  name: string;
+  scheduleCount: number;
   color: string;
   active: number | null;
-  items: any;
-  setItems: (newItems: BoardItems) => void;
+  boardData: BoardItem[];
+  setBoardData: (newData: BoardItem[]) => void;
 }
 
 const deviceWidth = Dimensions.get('window').width;
 
 const Board: React.FC<BoardItemProps> = ({
-  boardId,
-  title,
-  number,
+  tagId,
+  name,
+  scheduleCount,
   color,
   active,
-  items,
-  setItems,
+  boardData,
+  setBoardData,
 }) => {
   const url = Config.API_APP_KEY as string;
   const user = useSelector((state: any) => state.user);
@@ -54,16 +52,20 @@ const Board: React.FC<BoardItemProps> = ({
   const handleEditPress = () => {
     navigation.navigate('BoardEdit', {
       item: {
-        tagId: boardId,
-        name: title,
+        tagId: tagId,
+        name: name,
         color: color,
       },
     });
   };
 
   const handleDeletePress = async (boardId: number) => {
-    const boardToDelete = items.find((item: BoardItem) => item.tagId === boardId);
+    const boardToDelete = boardData.find((item: BoardItem) => item.tagId === boardId);
 
+    if (!boardToDelete) {
+      console.error(`보드 ID를 찾을 수 없습니다!: ${boardId}`);
+      return;
+    }
     if (boardToDelete.scheduleCount > 0) {
       Alert.alert(
         'Alert',
@@ -72,8 +74,8 @@ const Board: React.FC<BoardItemProps> = ({
     } else {
       const success = await deleteBoardData(url, user.token, boardId);
       if (success) {
-        const updatedItems = items.filter((item: BoardItem) => item.tagId !== boardId);
-        setItems(updatedItems);
+        const updatedItems = boardData.filter((item: BoardItem) => item.tagId !== boardId);
+        setBoardData(updatedItems);
       } else {
         console.error(`삭제 실패한 보드 ID: ${boardId}`);
       }
@@ -81,7 +83,7 @@ const Board: React.FC<BoardItemProps> = ({
   };
 
   const handleBoardPress = () => {
-    navigation.navigate('BoardDetail', {title, color, number, tagId: boardId});
+    navigation.navigate('BoardDetail', {name, color, scheduleCount, tagId: tagId});
   };
 
   const renderRightActions = (dragX: any) => {
@@ -96,7 +98,7 @@ const Board: React.FC<BoardItemProps> = ({
           <Icon name="edit" style={styles.buttonIcon} />
         </RectButton>
         <View style={styles.partition} />
-        <RectButton onPress={() => handleDeletePress(boardId)}>
+        <RectButton onPress={() => handleDeletePress(tagId)}>
           <Icon name="delete" style={styles.buttonIcon} />
         </RectButton>
       </Animated.View>
@@ -105,21 +107,21 @@ const Board: React.FC<BoardItemProps> = ({
 
   return (
     <View style={styles.fullWidth}>
-      {title === '전체' && color === '#757575' ? (
+      {name === '전체' && color === '#757575' ? (
         <TouchableOpacity onPress={handleBoardPress}>
           <ImageBackground
             source={require('../../../../assets/image/card_graphic.png')}
             style={[styles.container, {backgroundColor: color}]}>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.title}>{name}</Text>
             <View style={styles.textContainer}>
               <Text style={styles.total}>total list</Text>
-              <Text style={styles.number}>{number}</Text>
+              <Text style={styles.number}>{scheduleCount}</Text>
             </View>
           </ImageBackground>
         </TouchableOpacity>
       ) : (
         <Swipeable
-          key={boardId}
+          key={tagId}
           ref={swipeRef}
           friction={2}
           rightThreshold={10}
@@ -129,10 +131,10 @@ const Board: React.FC<BoardItemProps> = ({
             <ImageBackground
               source={require('../../../../assets/image/card_graphic.png')}
               style={[styles.container, {backgroundColor: color}]}>
-              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.title}>{name}</Text>
               <View style={styles.textContainer}>
                 <Text style={styles.total}>total list</Text>
-                <Text style={styles.number}>{number}</Text>
+                <Text style={styles.number}>{scheduleCount}</Text>
               </View>
             </ImageBackground>
           </TouchableOpacity>

@@ -32,9 +32,9 @@ export interface SetScheduleData {
 }
 
 export type BoardItem = {
-  tagId: number;
   name: string;
   color: string;
+  tagId: number;
   scheduleCount: number;
 };
 
@@ -50,6 +50,7 @@ export type SetBoardData = {
   name: string;
   color: string;
   tagId?: number;
+  scheduleCount?: number;
 };
 
 export interface SearchData {

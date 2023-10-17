@@ -24,7 +24,7 @@ type RootStackParamList = {
       color: string;
     };
   };
-  BoardDetail: {title: string; color: string; number: number; tagId: number};
+  BoardDetail: {name: string; color: string; scheduleCount: number; tagId: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
@@ -38,12 +38,12 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
   };
-  const {title, color, number, tagId} = route.params;
+  const {name, color, scheduleCount, tagId} = route.params;
   const handleEditPress = () => {
     navigation.navigate('BoardEdit', {
       item: {
         tagId: tagId,
-        name: title,
+        name: name,
         color: color,
       },
     });
@@ -53,12 +53,12 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
     if (url) {
       try {
         const fetchedItems = await fetchScheduleItems(url, token);
-        if (title === '전체' && color === '#757575') {
+        if (name === '전체' && color === '#757575') {
           return fetchedItems;
         } else {
           const filteredItems = Object.keys(fetchedItems).reduce<ScheduleItems>((acc, date) => {
             acc[date] = fetchedItems[date].filter(
-              item => item.tag.name === title && item.tag.color === color,
+              item => item.tag.name === name && item.tag.color === color,
             );
             return acc;
           }, {});
@@ -84,17 +84,17 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {title === '전체' ? (
+      {name === '전체' ? (
         <Header title="스케줄 보드" type="none" />
       ) : (
         <Header title="스케줄 보드" type="edit" nextFunc={handleEditPress} />
       )}
       <ScrollView style={styles.ScheduleItemList}>
         <View style={[styles.contentInfo, {backgroundColor: color}]}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{name}</Text>
           <View style={styles.itemNumContainer}>
             <Text style={styles.textMemo}>total memo:</Text>
-            <Text style={styles.textNum}> {number}</Text>
+            <Text style={styles.textNum}> {scheduleCount}</Text>
           </View>
         </View>
         <View style={styles.listContainer}>

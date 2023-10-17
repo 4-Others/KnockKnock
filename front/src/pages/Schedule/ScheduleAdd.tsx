@@ -16,7 +16,7 @@ import Header from '../../components/Header';
 import ScheduleAddOption from './ScheduleAddOption';
 
 type RootStackParamList = {
-  BoardDetail: {title: string; color: string};
+  BoardDetail: {name: string; color: string; scheduleCount: number};
 };
 type ScheduleAddNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -55,6 +55,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   const tagData: SetBoardData = {
     name: '전체',
     color: '#757575',
+    scheduleCount: 1,
   };
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
@@ -103,8 +104,9 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         dispatch(postScheduleReducer(response));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
-          title: postTag.name,
+          name: postTag.name,
           color: postTag.color,
+          scheduleCount: postTag.scheduleCount ?? 0,
         });
       } catch (error) {
         Alert.alert(
