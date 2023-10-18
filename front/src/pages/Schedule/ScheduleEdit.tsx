@@ -5,8 +5,10 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
+import {postBoardReducer, setBoardReducer} from '../../util/redux/boardSlice';
 import {patchScheduleItem} from '../../api/scheduleApi';
-import {postBoardData} from '../../api/boardApi';
+import {fetchBoardData, postBoardData} from '../../api/boardApi';
+import {SetBoardData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleEditOption from './ScheduleEditOption';
 
@@ -49,13 +51,18 @@ const ScheduleEdit = ({route}: any) => {
 
     if (url) {
       try {
+        let boardResponse;
+
         if (updateData.tag.name !== '전체') {
           const tagExists = boardData.find(
             (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
           );
 
           if (!tagExists && updateData.tag.name && updateData.tag.color) {
-            await postBoardData(url, user.token, updateData.tag);
+            boardResponse = await postBoardData(url, user.token, updateData.tag);
+            dispatch(postBoardReducer(boardResponse.body.data));
+            const newBoardId = boardResponse.body.data.tagId;
+            finalUpdateData.tagId = newBoardId;
           } else if (tagExists) {
             finalUpdateData.tagId = tagExists.tagId;
           }
@@ -68,6 +75,9 @@ const ScheduleEdit = ({route}: any) => {
         );
         if (typeof result !== 'boolean' && result !== undefined) {
           dispatch(setScheduleReducer(result));
+          const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
+          dispatch(setBoardReducer(tagResponse));
+
           console.log('스케줄 수정 성공!');
           navigation.goBack();
         }

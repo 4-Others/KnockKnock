@@ -2,6 +2,7 @@ import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {variables} from '../../style/variables';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import KakaoLogins from '@react-native-seoul/kakao-login';
 
 GoogleSignin.configure({
   webClientId: '340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com',
@@ -24,6 +25,16 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
     }
   };
 
+  const KakaoSignIn = async () => {
+    try {
+      const token = await KakaoLogins.login();
+      console.log('Kakao Sign-In Success:', token);
+      onLogin(true);
+    } catch (error) {
+      console.log('Kakao Sign-In Error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -35,7 +46,7 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
         <TouchableOpacity onPress={GoogleSignIn}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={KakaoSignIn}>
           <Image source={require('front/assets/image/kakao_login.png')} style={styles.logo} />
         </TouchableOpacity>
       </View>

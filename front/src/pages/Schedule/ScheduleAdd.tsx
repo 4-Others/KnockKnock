@@ -4,12 +4,12 @@ import Config from 'react-native-config';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
-import {postBoardReducer} from '../../util/redux/boardSlice';
+import {postBoardReducer, setBoardReducer} from '../../util/redux/boardSlice';
 import {postScheduleReducer} from '../../util/redux/scheduleSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {postBoardData} from '../../api/boardApi';
+import {fetchBoardData, postBoardData} from '../../api/boardApi';
 import {postScheduleItem} from '../../api/scheduleApi';
 import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import Header from '../../components/Header';
@@ -55,7 +55,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   const tagData: SetBoardData = {
     name: '전체',
     color: '#757575',
-    scheduleCount: 1,
+    scheduleCount: 0,
     tagId: 0,
   };
   const user = useSelector((state: any) => state.user);
@@ -105,12 +105,23 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         console.log('finalPostData:', JSON.stringify(finalPostData, null, 2)); //!
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
+        const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
+        dispatch(setBoardReducer(tagResponse));
+
+        const selectedTag = tagResponse.find(
+          tag => tag.name === postTag.name && tag.color === postTag.color,
+        );
+        if (!selectedTag) {
+          console.error('보드 정보를 찾을 수 없습니다!');
+          return;
+        }
+
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
-          name: postTag.name,
-          color: postTag.color,
-          tagId: finalPostData.tagId ?? 0,
-          scheduleCount: postTag.scheduleCount ?? 0,
+          name: selectedTag.name,
+          color: selectedTag.color,
+          tagId: selectedTag.tagId ?? 0,
+          scheduleCount: selectedTag.scheduleCount ?? 0,
         });
       } catch (error) {
         Alert.alert(

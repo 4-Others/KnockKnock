@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
 import {useNavigation, RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
+import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
@@ -24,21 +25,27 @@ type RootStackParamList = {
       color: string;
     };
   };
-  BoardDetail: {name: string; color: string; scheduleCount: number; tagId: number};
+  BoardDetail: {name: string; color: string; tagId: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
 const BoardDetail: React.FC<AuthProps> = ({url}) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
-  const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
   };
-  const {name, color, scheduleCount, tagId} = route.params;
+  const {tagId} = route.params;
+  const boardData = useSelector((state: RootState) => state.board);
+  const boardSelected = boardData.find((board: {tagId: number}) => board.tagId === tagId);
+  const scheduleCount = boardSelected ? boardSelected.scheduleCount : 0;
+  const name = boardSelected ? boardSelected.name : '전체';
+  const color = boardSelected ? boardSelected.color : '#757575';
+
   const handleEditPress = () => {
     navigation.navigate('BoardEdit', {
       item: {
