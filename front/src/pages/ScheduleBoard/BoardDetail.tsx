@@ -1,13 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
-import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
+import {useNavigation, RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
-import {fetchScheduleItems} from '../../api/scheduleApi';
+import {fetchScheduleItems, fetchScheduleWithTag} from '../../api/scheduleApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
@@ -52,34 +52,28 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const loadScheduleItems = async () => {
     if (url) {
       try {
-        const fetchedItems = await fetchScheduleItems(url, token);
+        let fetchedItems: ScheduleItems = {};
         if (name === '전체' && color === '#757575') {
-          return fetchedItems;
+          fetchedItems = await fetchScheduleItems(url, token);
         } else {
-          const filteredItems = Object.keys(fetchedItems).reduce<ScheduleItems>((acc, date) => {
-            acc[date] = fetchedItems[date].filter(
-              item => item.tag.name === name && item.tag.color === color,
-            );
-            return acc;
-          }, {});
-          return filteredItems;
+          fetchedItems = await fetchScheduleWithTag(url, token, tagId);
         }
+        return fetchedItems;
       } catch (error) {
         console.error('Failed to load schedules:', error);
-        return null;
       }
     }
-    return null;
+    return {};
   };
 
-  useEffect(() => {
-    (async () => {
-      const newItems = await loadScheduleItems();
-      if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const newItems = await loadScheduleItems();
         dispatch(setScheduleReducer(newItems));
-      }
-    })();
-  }, [items]);
+      })();
+    }, [tagId]),
+  );
   console.log('items:', JSON.stringify(items, null, 2)); //!
 
   return (

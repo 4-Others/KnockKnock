@@ -16,7 +16,7 @@ import Header from '../../components/Header';
 import ScheduleAddOption from './ScheduleAddOption';
 
 type RootStackParamList = {
-  BoardDetail: {name: string; color: string; scheduleCount: number};
+  BoardDetail: {name: string; color: string; scheduleCount: number; tagId: number};
 };
 type ScheduleAddNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -49,13 +49,14 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     period: 'ALL_DAY',
     startAt: start,
     endAt: end,
-    alerts: [0],
+    alerts: [],
     complete: false,
   };
   const tagData: SetBoardData = {
     name: '전체',
     color: '#757575',
     scheduleCount: 1,
+    tagId: 0,
   };
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
@@ -86,13 +87,14 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
 
     if (url) {
       try {
+        let boardResponse;
+
         if (postTag.name !== '전체') {
           const tagExists = boardData.find(
             (tag: any) => tag.name === postTag.name && tag.color === postTag.color,
           );
-
           if (!tagExists && postTag.name && postTag.color) {
-            const boardResponse = await postBoardData(url, user.token, postTag);
+            boardResponse = await postBoardData(url, user.token, postTag);
             dispatch(postBoardReducer(boardResponse.body.data));
             const newBoardId = boardResponse.body.data.tagId;
             finalPostData.tagId = newBoardId;
@@ -100,12 +102,14 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
             finalPostData.tagId = tagExists.tagId;
           }
         }
+        console.log('finalPostData:', JSON.stringify(finalPostData, null, 2)); //!
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
         console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           name: postTag.name,
           color: postTag.color,
+          tagId: finalPostData.tagId ?? 0,
           scheduleCount: postTag.scheduleCount ?? 0,
         });
       } catch (error) {

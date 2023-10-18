@@ -31,6 +31,21 @@ export interface SetScheduleData {
   name?: string;
 }
 
+export type ScheduleWithTagResponse = {
+  header: {
+    code: number;
+    message: string;
+  };
+  body: {
+    data: {
+      tagId: number;
+      name: string;
+      color: string;
+      schedules: ScheduleData;
+    };
+  };
+};
+
 export type BoardItem = {
   name: string;
   color: string;
