@@ -68,8 +68,8 @@ const ScheduleEdit = ({route}: any) => {
         );
         if (typeof result !== 'boolean' && result !== undefined) {
           dispatch(setScheduleReducer(result));
-          navigation.goBack();
           console.log('스케줄 수정 성공!');
+          navigation.goBack();
         }
       } catch (error) {
         Alert.alert(

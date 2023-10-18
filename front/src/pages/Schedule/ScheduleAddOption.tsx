@@ -70,18 +70,22 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
 
   const handleConfirm = (date: Date) => {
     onCancel();
-    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(
-      2,
-      '0',
-    )}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const formattedDate =
+      postSchedule.period === 'ALL_DAY'
+        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+            date.getDate(),
+          ).padStart(2, '0')}`
+        : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+            date.getDate(),
+          ).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(
+            date.getMinutes(),
+          ).padStart(2, '0')}`;
 
     if (timeType === 'start') {
       setPostSchedule(prevData => ({
         ...prevData,
         startAt: formattedDate,
+        endAt: formattedDate,
       }));
     } else if (timeType === 'end') {
       if (new Date(formattedDate) < new Date(postSchedule.startAt)) {
@@ -96,13 +100,13 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
   };
 
   const toggleStartAt = () => {
+    setVisible(!visible);
     setTimeType('start');
-    setVisible(prevVisible => !prevVisible);
   };
 
   const toggleEndAt = () => {
+    setVisible(!visible);
     setTimeType('end');
-    setVisible(prevVisible => !prevVisible);
   };
 
   const parseDate = (dateString: string) => {
@@ -160,14 +164,12 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
         state={postSchedule.startAt}
         event={toggleStartAt}
         iconName="time-outline"
-        period={postSchedule.period}
       />
       <ScheduleOptionSelect
         type="일정 종료 시간"
         state={postSchedule.endAt}
         event={toggleEndAt}
         iconName="time-outline"
-        period={postSchedule.period}
       />
       <KeyboardAvoidingView
         style={styles.contentInput}
@@ -197,8 +199,8 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
         type="notification"
       />
       <DateTimePickerModal
-        isVisible={visible && postSchedule.period === 'SPECIFIC_TIME'}
-        mode={'datetime'}
+        isVisible={visible}
+        mode={postSchedule.period === 'ALL_DAY' ? 'date' : 'datetime'}
         onConfirm={handleConfirm}
         onCancel={onCancel}
         date={date}

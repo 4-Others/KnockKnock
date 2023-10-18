@@ -210,8 +210,6 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
   const [error, setError] = useState('');
   const {id, email, password} = userInfo;
 
-  console.log(userInfo);
-
   const changeInputText = (type: string, text: string) => {
     setUserInfo({
       ...userInfo,

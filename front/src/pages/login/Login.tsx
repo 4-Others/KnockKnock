@@ -3,8 +3,15 @@ import Oauth2 from './Oauth2';
 import {GradientButton_L} from '../../components/GradientButton';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
-import {View, StyleSheet, Text, Image, TextInput, TouchableOpacity, StatusBar} from 'react-native';
-import axios from 'axios';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import {isPasswordValid} from '../../util/authUtil';
 import {storageSetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
@@ -50,9 +57,11 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
   }, [password, id]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <Image source={require('front/assets/image/SymbolLogo.png')} style={styles.symbolLogo} />
+    <SafeAreaView style={styles.container}>
+      <Image
+        source={require('front/assets/image/SymbolLogo.png')}
+        style={{width: 180, height: 80, marginBottom: 30}}
+      />
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.inputArea, styles.inputBottomLine]}
@@ -83,20 +92,34 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       </View>
       {errorMessage && <Text style={styles.alertText}>{errorMessage}</Text>}
       <View style={styles.loginMenu}>
-        <TouchableOpacity
-          style={styles.autoLogin}
-          onPress={() => {
-            setAutoLogin(on => !on);
-          }}>
+        <View style={{display: 'flex', flexDirection: 'row'}}>
           <TouchableOpacity
+            style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() => {
               setAutoLogin(on => !on);
-            }}
-            style={autoLogin ? styles.checkState : styles.unCheckState}>
-            <Image style={styles.checkIcon} source={require('front/assets/image/check.png')} />
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setAutoLogin(on => !on);
+              }}
+              style={autoLogin ? styles.checkState : styles.unCheckState}>
+              <Image
+                style={{width: 10, height: 6}}
+                source={require('front/assets/image/check.png')}
+              />
+            </TouchableOpacity>
+            <Text style={styles.loginMenuText}>자동 로그인</Text>
           </TouchableOpacity>
-          <Text style={styles.checkBoxBtn}>자동 로그인</Text>
-        </TouchableOpacity>
+        </View>
+        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotId')}>
+            <Text style={styles.loginMenuText}>아이디 찾기</Text>
+          </TouchableOpacity>
+          <View style={styles.textLine} />
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPw')}>
+            <Text style={styles.loginMenuText}>비밀번호 찾기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <GradientButton_L text="로그인" onPress={loginAuth} />
       <View style={styles.textBtns}>
@@ -110,11 +133,32 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
           throw new Error('Error!');
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginTop: 24,
+    marginRight: 24,
+    marginLeft: 24,
+  },
+  loginMenu: {
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  autoLogin: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
   checkState: {
     width: 18,
     height: 18,
@@ -132,28 +176,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 2,
   },
-  checkIcon: {
-    width: 10,
-    height: 6,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingTop: 24,
-    paddingRight: 24,
-    paddingLeft: 24,
-  },
   text: {
     fontFamily: 'Pretendard-Medium',
     color: variables.main,
     fontSize: 30,
-  },
-  symbolLogo: {
-    width: 180,
-    height: 80,
-    marginBottom: 30,
   },
   inputContainer: {
     borderColor: variables.line_1,
@@ -176,19 +202,6 @@ const styles = StyleSheet.create({
     borderBottomColor: variables.line_1,
     borderBottomWidth: 1,
   },
-  loginMenu: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  autoLogin: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   textBtns: {
     display: 'flex',
     flexDirection: 'row',
@@ -207,11 +220,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: variables.text_4,
   },
-  checkBoxBtn: {
-    fontFamily: variables.font_4,
+  loginMenuText: {
+    fontFamily: variables.font_3,
     fontSize: 14,
     color: variables.text_4,
     marginLeft: 10,
+  },
+  textLine: {
+    width: 1,
+    height: 14,
+    marginLeft: 10,
+    borderLeftWidth: 1,
+    borderLeftColor: variables.text_6,
   },
   alertText: {
     width: '100%',

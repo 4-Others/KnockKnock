@@ -1,14 +1,14 @@
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
-  Dimensions,
+  ScrollView,
   View,
   Image,
   Text,
-  Platform,
-  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {variables} from '../../style/variables';
@@ -17,10 +17,9 @@ import {GradientButton_L} from '../../components/GradientButton';
 import {storageResetValue} from '../../util/authUtil';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {useDispatch, useSelector} from 'react-redux';
-import axios from 'axios';
-import {setProfile} from '../../util/redux/userSlice';
-
-const {width, height} = Dimensions.get('window');
+import {RootState} from '../../util/redux/store';
+import {updateProfile} from '../../util/redux/userSlice';
+import {VariablesKeys} from '../../style/variables';
 
 type navigationProp = StackNavigationProp<RootStackParamList, 'ProfileEdit'>;
 
@@ -28,18 +27,20 @@ type RootStackParamList = {
   ProfileEdit: undefined;
 };
 
-const Profile: React.FC<AuthProps> = ({url, navigation}) => {
+type boardDetailParams = {title: string; color: string; number: number; tagId: number};
+
+const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
   const navigationEdit = useNavigation<navigationProp>();
   const user = useSelector((state: any) => state.user);
+  const boardData = useSelector((state: RootState) => state.board);
   const dispatch = useDispatch();
-  console.log(user);
-
   const fetchUserInfo = async () => {
     try {
       const res = await axios.get(`${url}api/v1/users`, {
         headers: {Authorization: `Bearer ${user.token}`},
       });
-      dispatch(setProfile({...user, ...res.data.body.data}));
+      const {birth, id, pushAgree, username} = res.data.body.data;
+      dispatch(updateProfile({birth, id, pushAgree, username}));
     } catch (error) {
       console.error('userInfo 불러오기 실패');
     }
@@ -49,9 +50,13 @@ const Profile: React.FC<AuthProps> = ({url, navigation}) => {
     navigationEdit.navigate('ProfileEdit');
   };
 
+  const handleBoardPress = (params: boardDetailParams) => {
+    navigation.navigate('BoardDetail', params);
+  };
+
   useEffect(() => {
     fetchUserInfo();
-  }, []);
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,10 +69,40 @@ const Profile: React.FC<AuthProps> = ({url, navigation}) => {
               source={require('front/assets/image/DefaultIMG.png')}
             />
           </View>
-          <Text style={styles.profileName}>{user.username}</Text>
+          <Text style={styles.profileName}>{user.id}</Text>
           <Text style={styles.profileMail}>{user.email}</Text>
         </View>
-        <View style={styles.buttonContainer}>
+        <View style={styles.userInfoContainer}>
+          <Text style={styles.userInfoSubTitle}>{`내 보드 (${boardData.length})`}</Text>
+          <ScrollView horizontal={true} style={styles.boardList}>
+            {boardData && boardData.length > 0 ? (
+              boardData.map(data => {
+                const {color, tagId, scheduleCount, name} = data;
+                const params = {color, tagId, title: name, number: scheduleCount};
+                let colorValue: any = color;
+                if (colorValue.startsWith('variables.')) {
+                  let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;
+                  colorValue = variables[colorKey];
+                }
+                return (
+                  <TouchableOpacity
+                    style={[styles.boardSeclector, {backgroundColor: colorValue}]}
+                    onPress={() => handleBoardPress(params)}
+                    key={tagId}>
+                    <Text style={styles.menuText}>{name}</Text>
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <Text style={styles.boardSeclector}>보드가 없습니다.</Text>
+            )}
+          </ScrollView>
+          <Text style={styles.userInfoSubTitle}>이름</Text>
+          <Text>{user.username}</Text>
+          <Text style={styles.userInfoSubTitle}>생년월일</Text>
+          <Text>{user.birth}</Text>
+        </View>
+        <View style={styles.bottomButton}>
           <GradientButton_L
             text="로그아웃"
             onPress={() => {
@@ -127,7 +162,36 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: variables.text_4,
   },
-  buttonContainer: {
-    bottom: 0,
+  bottomButton: {
+    marginTop: 'auto',
+  },
+  userInfoContainer: {
+    flexDirection: 'column',
+    // marginTop: 20,
+  },
+  boardList: {
+    flexDirection: 'row',
+  },
+  boardSeclector: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 26,
+    paddingLeft: 12,
+    paddingRight: 12,
+    marginRight: 6,
+    borderRadius: 30,
+  },
+  menuText: {
+    fontFamily: variables.font_3,
+    fontSize: 14,
+    lineHeight: 16,
+    color: 'white',
+  },
+  userInfoSubTitle: {
+    fontFamily: variables.font_3,
+    fontSize: 16,
+    color: variables.text_3,
+    marginTop: 30,
+    marginBottom: 10,
   },
 });

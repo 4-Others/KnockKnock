@@ -3,33 +3,69 @@ import {
   SafeAreaView,
   Text,
   TextInput,
-  Dimensions,
   View,
   ScrollView,
   TouchableOpacity,
+  Alert,
   Platform,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Switch} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import ImageUploader from '../../components/ImageUploader';
+import {useSelector} from 'react-redux';
+import {validErrorMessage} from '../../util/authUtil';
+import {AuthProps} from '../../navigations/StackNavigator';
+import axios from 'axios';
+import {GradientButton_L} from '../../components/GradientButton';
+import {storageResetValue} from '../../util/authUtil';
 
-const {width, height} = Dimensions.get('window');
-
-const ProfileEdit = () => {
-  const [username, setUsername] = useState('');
-  const [formContent, setFormContent] = useState('');
+const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
+  const initialUserInfo = useSelector((state: any) => state.user);
+  const [userInfo, setUserInfo] = useState({username: '', id: '', birth: '', pushAgree: false});
+  const [passwordInfo, setPasswordInfo] = useState({password: '', passwordConfirm: ''});
   const [encryption, setEncryption] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [openBD, setOpenBD] = useState(false);
-  const [pushAlarm, setPushAlarm] = useState(true);
+  const {username, id, birth, pushAgree} = userInfo;
+  const {password, passwordConfirm} = passwordInfo;
+  const header = {
+    headers: {Authorization: `Bearer ${initialUserInfo.token}`},
+  };
 
-  const handleReset = () => {
-    setUsername('');
+  const changeProfileFetch = async () => {
+    try {
+      if (url) {
+        const changeUserInfo = {
+          username: username !== '' ? username : initialUserInfo.username,
+          id: id !== '' ? id : initialUserInfo.id,
+          birth: birth !== '' ? birth : initialUserInfo.birth,
+          pushAgree,
+        };
+        const userInfoRes = await axios.patch(`${url}api/v1/users`, changeUserInfo, header);
+        if (password.length > 0 && passwordConfirm.length > 0) {
+          const passwordRes = await axios.patch(
+            `${url}api/v1/users/password`,
+            {newPassword: passwordConfirm},
+            header,
+          );
+        }
+        Alert.alert('회원정보가 변경되었습니다.');
+      }
+    } catch (error) {
+      console.error('회원정보 변경 실패');
+    }
+  };
+
+  const changeUserInfoValue = (type: string, value: string | Boolean) => {
+    type.includes('password')
+      ? setPasswordInfo({...passwordInfo, [type]: value})
+      : setUserInfo({...userInfo, [type]: value});
+  };
+
+  const handleReset = (type: string) => {
+    changeUserInfoValue(type, '');
   };
 
   const handleVisible = () => {
@@ -43,7 +79,7 @@ const ProfileEdit = () => {
     const day = String(dateString.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
 
-    setSelectedDate(formattedDate);
+    changeUserInfoValue('birth', formattedDate);
     setVisible(false);
   };
 
@@ -55,35 +91,82 @@ const ProfileEdit = () => {
     setVisible(true);
   };
 
-  const handleOpenBD = () => {
-    setOpenBD(!openBD);
+  const passwordError = (password: string, compare: string) => {
+    if (password.length > 0) {
+      if (compare.length > 0) return validErrorMessage.comparePassword(password, compare);
+      return validErrorMessage.password(password);
+    }
   };
 
-  const handlePushAlarm = () => {
-    setPushAlarm(!pushAlarm);
+  const cancellationUser = async () => {
+    try {
+      const res = await axios.delete(`${url}api/v1/users/delete`, header);
+      if (res) Alert.alert('회원탈퇴가 완료되었습니다.');
+    } catch (error) {
+      if (error) Alert.alert('회원탈퇴가 실패하었습니다.');
+    }
   };
+
+  useEffect(() => {
+    const {username, id, birth, pushAgree} = initialUserInfo;
+    setUserInfo({username, id, birth, pushAgree});
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="프로필 편집" />
+      <Header
+        title="프로필 편집"
+        nextFunc={() => {
+          changeProfileFetch();
+          navigation.goBack();
+        }}
+      />
       <View style={styles.contentLayout}>
-        <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={styles.contentContainer}>
-            <ImageUploader />
-            <View style={styles.listContainer}>
-              <Text style={styles.inputTitle}>닉네임</Text>
-              <View style={styles.inputSingleContainer}>
+        <ScrollView>
+          <View style={styles.listContainer}>
+            <Text style={styles.inputTitle}>프로필</Text>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputItem}>
+                <Text style={styles.default}>{id}</Text>
+              </View>
+              <View style={styles.inputItem}>
                 <TextInput
-                  placeholder="변경할 닉네임을 입력해주세요."
+                  placeholder="변경할 닉네임을 입력해 주세요."
                   placeholderTextColor={variables.text_5}
                   style={styles.input}
-                  onChangeText={text => setUsername(text)}
+                  onChangeText={text => changeUserInfoValue('username', text)}
                   value={username}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={handleReset}>
+                <TouchableOpacity onPress={() => handleReset('username')}>
                   <Icon name="close-circle-outline" style={styles.icon} />
                 </TouchableOpacity>
+              </View>
+              <View style={styles.inputItem}>
+                <TouchableOpacity onPress={showDatePicker} style={styles.datePicker}>
+                  <TextInput
+                    placeholder="변경할 생년월일을 입력해 주세요."
+                    placeholderTextColor={variables.text_5}
+                    style={styles.input}
+                    editable={false}
+                    value={birth}
+                  />
+                  <Icon name="calendar-range" style={styles.icon} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.inputItemLast}>
+                <TextInput
+                  placeholder={pushAgree ? '푸시 알림 ON' : '푸시 알림 OFF'}
+                  placeholderTextColor={pushAgree ? variables.text_2 : variables.text_5}
+                  style={styles.input}
+                  editable={false}
+                />
+                <Switch
+                  value={pushAgree ? pushAgree : false}
+                  onValueChange={() => changeUserInfoValue('pushAgree', !pushAgree)}
+                  color={variables.main}
+                  style={styles.toggle}
+                />
               </View>
             </View>
             <View style={styles.listContainer}>
@@ -91,27 +174,12 @@ const ProfileEdit = () => {
               <View style={styles.inputContainer}>
                 <View style={styles.inputItem}>
                   <TextInput
-                    placeholder="기존 비밀번호"
-                    placeholderTextColor={variables.text_5}
-                    secureTextEntry={encryption}
-                    style={styles.input}
-                    onChangeText={text => setFormContent(text)}
-                  />
-                  <TouchableOpacity onPress={handleVisible}>
-                    {encryption ? (
-                      <Icon name="eye-off-outline" style={styles.icon} />
-                    ) : (
-                      <Icon name="eye-outline" style={styles.icon} />
-                    )}
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.inputItem}>
-                  <TextInput
                     placeholder="변경할 비밀번호"
                     placeholderTextColor={variables.text_5}
                     secureTextEntry={encryption}
                     style={styles.input}
-                    onChangeText={text => setFormContent(text)}
+                    onChangeText={text => changeUserInfoValue('password', text)}
+                    value={password}
                   />
                   <TouchableOpacity onPress={handleVisible}>
                     {encryption ? (
@@ -127,7 +195,8 @@ const ProfileEdit = () => {
                     placeholderTextColor={variables.text_5}
                     secureTextEntry={encryption}
                     style={styles.input}
-                    onChangeText={text => setFormContent(text)}
+                    onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
+                    value={passwordConfirm}
                   />
                   <TouchableOpacity onPress={handleVisible}>
                     {encryption ? (
@@ -138,57 +207,20 @@ const ProfileEdit = () => {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
-            <View style={styles.listContainer}>
-              <Text style={styles.inputTitle}>생년월일</Text>
-              <View style={styles.inputContainer}>
-                <View style={styles.inputItem}>
-                  <TouchableOpacity onPress={showDatePicker} style={styles.datePicker}>
-                    <TextInput
-                      placeholder="임의"
-                      placeholderTextColor={variables.text_5}
-                      style={styles.input}
-                      editable={false}
-                      value={selectedDate}
-                    />
-                    <Icon name="calendar-range" style={styles.icon} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.inputItemLast}>
-                  <TextInput
-                    placeholder="생일공개"
-                    placeholderTextColor={openBD ? variables.text_2 : variables.text_5}
-                    style={styles.input}
-                    editable={false}
-                  />
-                  <Switch
-                    value={openBD}
-                    onValueChange={handleOpenBD}
-                    color={variables.main}
-                    style={styles.toggle}
-                  />
-                </View>
-              </View>
-            </View>
-            <View style={styles.listContainer}>
-              <Text style={styles.inputTitle}>알림설정</Text>
-              <View style={styles.inputSingleContainer}>
-                <TextInput
-                  placeholder={pushAlarm ? '푸시 알림 ON' : '푸시 알림 OFF'}
-                  placeholderTextColor={pushAlarm ? variables.text_2 : variables.text_5}
-                  style={styles.input}
-                  editable={false}
-                />
-                <Switch
-                  value={pushAlarm}
-                  onValueChange={handlePushAlarm}
-                  color={variables.main}
-                  style={styles.toggle}
-                />
-              </View>
+              {<Text style={styles.errormessage}>{passwordError(password, passwordConfirm)}</Text>}
             </View>
           </View>
         </ScrollView>
+        <View style={styles.bottomButton}>
+          <GradientButton_L
+            text="회원 탈퇴"
+            onPress={() => {
+              storageResetValue();
+              cancellationUser();
+              navigation.navigate('AuthSplach');
+            }}
+          />
+        </View>
       </View>
       <DateTimePickerModal
         isVisible={visible}
@@ -204,29 +236,16 @@ export default ProfileEdit;
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    flex: 1,
   },
   contentLayout: {
+    flex: 1,
     marginRight: 24,
     marginLeft: 24,
   },
-  scroll: {
-    ...Platform.select({
-      ios: {paddingBottom: 200},
-      android: {paddingBottom: 220},
-    }),
-  },
-  contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 40,
-    paddingBottom: 20,
-    width: '100%',
-  },
   listContainer: {
+    justifyContent: 'center',
     marginTop: 24,
-    width: '100%',
   },
   inputContainer: {
     alignItems: 'center',
@@ -259,7 +278,7 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     marginLeft: 2,
-    marginBottom: 6,
+    marginBottom: 10,
     fontFamily: variables.font_3,
     color: variables.text_4,
     fontSize: 16,
@@ -271,6 +290,15 @@ const styles = StyleSheet.create({
     width: 260,
     fontFamily: variables.font_3,
     color: variables.text_2,
+    fontSize: 17,
+  },
+  default: {
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 20,
+    width: 260,
+    fontFamily: variables.font_3,
+    color: variables.text_4,
     fontSize: 17,
   },
   icon: {
@@ -289,5 +317,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+  },
+  errormessage: {
+    fontFamily: variables.font_3,
+    color: variables.board_8,
+    fontSize: 15,
+    marginTop: 5,
+  },
+  bottomButton: {
+    marginTop: 'auto',
   },
 });
