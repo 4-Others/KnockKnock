@@ -7,9 +7,6 @@ const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {
-    // setBoardReducer: (state, action: PayloadAction<BoardItem[]>) => {
-    //   return action.payload;
-    // },
     setBoardReducer: (state, action: PayloadAction<any>) => {
       if (Array.isArray(action.payload)) {
         return action.payload;

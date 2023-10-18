@@ -3,11 +3,12 @@ import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react
 import {variables} from '../style/variables';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import Config from 'react-native-config';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {deleteScheduleItem, patchScheduleItem} from '../api/scheduleApi';
-import {deleteBoardData} from '../api/boardApi';
+import {deleteBoardData, fetchBoardData} from '../api/boardApi';
 import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
+import {setBoardReducer} from '../util/redux/boardSlice';
 import {Swipeable} from 'react-native-gesture-handler';
 
 interface ScheduleItemProps {
@@ -17,9 +18,10 @@ interface ScheduleItemProps {
 }
 
 const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
-  const navigation = useNavigation();
   const [openSwipeable, setOpenSwipeable] = React.useState<Swipeable | null>(null);
 
   const handleCloseSwipeable = () => {
@@ -63,34 +65,37 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     }
   };
 
-  const handleDelete = async (scheduleId: number, tagId?: number) => {
+  const handleDelete = async (scheduleId: number) => {
     const success = await deleteScheduleItem(url, token, scheduleId);
     if (success) {
       const updatedItems: ScheduleItems = {...items};
-      let isEmptyBoard = true;
       for (let date in updatedItems) {
         updatedItems[date] = updatedItems[date].filter(
           (item: ScheduleData) => item.scheduleId !== scheduleId,
         );
-        if (updatedItems[date].some(item => item.tag.tagId)) {
-          isEmptyBoard = false;
-        }
       }
       setItems(updatedItems);
-      if (tagId && isEmptyBoard) {
-        const success = await deleteBoardData(url, token, tagId);
-        if (success) {
-          const updatedItems: ScheduleItems = {...items};
-          for (let date in items) {
-            updatedItems[date] = items[date].filter(
-              (item: ScheduleData) => item.tag.tagId !== tagId,
-            );
+
+      try {
+        const tagResponse = await fetchBoardData(url, token);
+        dispatch(setBoardReducer(tagResponse));
+        const boardToDelete = tagResponse.find(
+          (board: {scheduleCount: number; name: string}) =>
+            board.scheduleCount === 0 && board.name !== '전체',
+        );
+
+        if (boardToDelete) {
+          const deleteSuccess = await deleteBoardData(url, token, boardToDelete.tagId);
+          if (deleteSuccess) {
+            const updatedTagResponse = await fetchBoardData(url, token);
+            dispatch(setBoardReducer(updatedTagResponse));
+            navigation.goBack();
+          } else {
+            console.error(`보드 삭제 실패: ${boardToDelete.tagId}`);
           }
-          navigation.goBack();
-          setItems(updatedItems);
-        } else {
-          console.error(`자동 삭제 실패한 보드 ID: ${tagId}`);
         }
+      } catch (error) {
+        console.error('보드 데이터 갱신 중 에러 발생:', error);
       }
     } else {
       console.error(`삭제 실패한 스케줄 ID: ${scheduleId}`);
@@ -122,8 +127,8 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
   );
 };
 const ScheduleItem = ({item, onPress, onDelete, tagId, onOpenSwipeable, onCloseSwipeable}: any) => {
-  const swipeableRef = useRef<Swipeable | null>(null);
   const navigation = useNavigation();
+  const swipeableRef = useRef<Swipeable | null>(null);
 
   const goToScheduleEdit = () => {
     navigation.dispatch(StackActions.push('ScheduleEdit', {item}));
