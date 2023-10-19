@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,7 +38,7 @@ public class UserDto {
 
         private String username;
 
-        @JsonFormat(pattern = "yyyyMMdd")
+        @DateTimeFormat(pattern = "yyyyMMdd")
         private LocalDate birth;
 
         private boolean pushAgree;
@@ -86,7 +88,7 @@ public class UserDto {
     @NoArgsConstructor
     public static class UpdateProfile {
         private String username;
-        @JsonFormat(pattern = "yyyyMMdd")
+        @DateTimeFormat(pattern = "yyyyMMdd")
         private LocalDate birth;
         private Boolean pushAgree;
     }
