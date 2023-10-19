@@ -13,11 +13,12 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_SECRET}
+            redirect-uri: "https://knockknockofficial.shop:443/login/oauth2/code/google"
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            redirect-uri: "https://knockknockofficial.shop:443/{action}/oauth2/code/{registrationId}"
             client-authentication-method: post
             authorization-grant-type: authorization_code
             scope: profile_image, account_email
