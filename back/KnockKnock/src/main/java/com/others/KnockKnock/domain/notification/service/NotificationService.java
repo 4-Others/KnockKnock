@@ -108,7 +108,7 @@ public class NotificationService {
     private ServerSentEvent<List<NotificationDto.Response>> streamEventDeliveredButNotRead(Long userId) {
         return ServerSentEvent.<List<NotificationDto.Response>>builder()
                    .id("NOT-READ")
-                   .event("user-event-notification")
+                   .event("message")
                    .data(findAllByUserIdAndDeliveredButNotRead(userId))
                    .build();
     }
@@ -116,7 +116,7 @@ public class NotificationService {
     private ServerSentEvent<List<NotificationDto.Response>> streamEventNotDelivered(Long userId, Object sequence, String notifyAt) {
         return ServerSentEvent.<List<NotificationDto.Response>>builder()
                    .id(String.valueOf(sequence))
-                   .event("user-event-notification")
+                   .event("message")
                    .data(findAllByUserIdAndNotDelivered(userId, notifyAt))
                    .build();
     }
