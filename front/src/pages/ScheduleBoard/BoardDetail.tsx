@@ -1,13 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Text, StyleSheet, SafeAreaView, Dimensions, View, ScrollView} from 'react-native';
-import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
+import {useNavigation, RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
+import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
-import {fetchScheduleItems} from '../../api/scheduleApi';
+import {fetchScheduleItems, fetchScheduleWithTag} from '../../api/scheduleApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
 
@@ -24,26 +25,32 @@ type RootStackParamList = {
       color: string;
     };
   };
-  BoardDetail: {title: string; color: string; number: number; tagId: number};
+  BoardDetail: {name: string; color: string; tagId: number};
 };
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
 const BoardDetail: React.FC<AuthProps> = ({url}) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
   const token = useSelector((state: any) => state.user.token);
-  const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
   };
-  const {title, color, number, tagId} = route.params;
+  const {tagId} = route.params;
+  const boardData = useSelector((state: RootState) => state.board);
+  const boardSelected = boardData.find((board: {tagId: number}) => board.tagId === tagId);
+  const scheduleCount = boardSelected ? boardSelected.scheduleCount : 0;
+  const name = boardSelected ? boardSelected.name : '전체';
+  const color = boardSelected ? boardSelected.color : '#757575';
+
   const handleEditPress = () => {
     navigation.navigate('BoardEdit', {
       item: {
         tagId: tagId,
-        name: title,
+        name: name,
         color: color,
       },
     });
@@ -52,49 +59,43 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   const loadScheduleItems = async () => {
     if (url) {
       try {
-        const fetchedItems = await fetchScheduleItems(url, token);
-        if (title === '전체' && color === '#757575') {
-          return fetchedItems;
+        let fetchedItems: ScheduleItems = {};
+        if (name === '전체' && color === '#757575') {
+          fetchedItems = await fetchScheduleItems(url, token);
         } else {
-          const filteredItems = Object.keys(fetchedItems).reduce<ScheduleItems>((acc, date) => {
-            acc[date] = fetchedItems[date].filter(
-              item => item.tag.name === title && item.tag.color === color,
-            );
-            return acc;
-          }, {});
-          return filteredItems;
+          fetchedItems = await fetchScheduleWithTag(url, token, tagId);
         }
+        return fetchedItems;
       } catch (error) {
         console.error('Failed to load schedules:', error);
-        return null;
       }
     }
-    return null;
+    return {};
   };
 
-  useEffect(() => {
-    (async () => {
-      const newItems = await loadScheduleItems();
-      if (newItems && JSON.stringify(items) !== JSON.stringify(newItems)) {
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const newItems = await loadScheduleItems();
         dispatch(setScheduleReducer(newItems));
-      }
-    })();
-  }, [items]);
+      })();
+    }, [tagId]),
+  );
   console.log('items:', JSON.stringify(items, null, 2)); //!
 
   return (
     <SafeAreaView style={styles.container}>
-      {title === '전체' ? (
+      {name === '전체' ? (
         <Header title="스케줄 보드" type="none" />
       ) : (
         <Header title="스케줄 보드" type="edit" nextFunc={handleEditPress} />
       )}
       <ScrollView style={styles.ScheduleItemList}>
         <View style={[styles.contentInfo, {backgroundColor: color}]}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{name}</Text>
           <View style={styles.itemNumContainer}>
             <Text style={styles.textMemo}>total memo:</Text>
-            <Text style={styles.textNum}> {number}</Text>
+            <Text style={styles.textNum}> {scheduleCount}</Text>
           </View>
         </View>
         <View style={styles.listContainer}>

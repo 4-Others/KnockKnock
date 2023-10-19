@@ -45,7 +45,7 @@ public class User{
     private String password;
 
     @Column(name = "BIRTH")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyyMMdd")
     private LocalDate birth;
 
     @Column(name = "PUSH_AGREE")

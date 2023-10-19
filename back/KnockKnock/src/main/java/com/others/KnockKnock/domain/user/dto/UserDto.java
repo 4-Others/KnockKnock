@@ -36,7 +36,7 @@ public class UserDto {
 
         private String username;
 
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        @JsonFormat(pattern = "yyyyMMdd")
         private LocalDate birth;
 
         private boolean pushAgree;
@@ -86,7 +86,7 @@ public class UserDto {
     @NoArgsConstructor
     public static class UpdateProfile {
         private String username;
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        @JsonFormat(pattern = "yyyyMMdd")
         private LocalDate birth;
         private Boolean pushAgree;
     }
