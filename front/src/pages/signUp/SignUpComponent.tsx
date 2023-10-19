@@ -20,6 +20,7 @@ interface InputAreaProps {
   disabled?: boolean;
   errorMessage?: string;
   keyType?: KeyboardTypeOptions;
+  maxLength?: number;
 }
 
 interface PasswordVisibleIcon {
@@ -53,7 +54,7 @@ const CheckBtn: React.FC<CheckBtnProps> = ({text, link, on, onPress}) => {
 };
 const InputArea: React.FC<InputAreaProps> = props => {
   const [masking, setMasking] = useState(true);
-  const {type, input, setInput, errorMessage, keyType} = props;
+  const {type, input, setInput, errorMessage, keyType, maxLength} = props;
   const isPasswordInput = type.includes('비밀번호');
 
   return (
@@ -66,6 +67,7 @@ const InputArea: React.FC<InputAreaProps> = props => {
           onChangeText={setInput}
           secureTextEntry={isPasswordInput ? masking : false}
           keyboardType={keyType}
+          maxLength={maxLength ? maxLength : undefined}
         />
         <RenderBtn {...{...props, masking, setMasking}} />
       </View>

@@ -130,8 +130,8 @@ const SignPersonalInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
         type="생년월일"
         input={birth}
         setInput={text => changeInputText('birth', text)}
-        keyType="numeric"
         errorMessage={validErrorMessage.birth(birth)}
+        maxLength={8}
       />
       <View style={styles.bottomButton}>
         <GradientButton_L
@@ -245,12 +245,13 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
         } catch (emailError: any) {
           const res = JSON.parse(emailError.request.response);
           setError(res.message);
-          console.log(res);
+          console.error('이메일 발송 실패', res);
         }
       }
     } catch (error: any) {
       const res = JSON.parse(error.request.response);
       setError(res.message);
+      console.error('유저정보 발송 실패', res, userInfo);
     }
   };
 
@@ -261,9 +262,10 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
   useEffect(() => {
     if (route.params) {
       const {birth, pushAgree, username, password} = route.params.userData;
+      const sendDataBirth = `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`;
       setUserInfo({
         ...userInfo,
-        birth,
+        birth: sendDataBirth,
         pushAgree,
         username,
         password,
