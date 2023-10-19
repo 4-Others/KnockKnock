@@ -1,35 +1,44 @@
 import React, {useEffect, useState} from 'react';
-import axios from 'axios';
 import {StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
+import EventSource, {EventSourceListener} from 'react-native-sse';
 
-const Notifications = () => {
+const Notifications: React.FC = () => {
   const [notificationDatas, setNotificationDatas] = useState([]);
   const url = Config.API_APP_KEY;
-  const user = useSelector((state: any) => state.user);
+  const token = useSelector((state: any) => state.user.token);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (user && user.token) {
-          const response = await axios.get(`${url}api/v1/notification`, {
-            headers: {Authorization: `Bearer ${user.token}`},
-          });
-          setNotificationDatas(response.data.body.data);
-          console.log(response.data.body.data);
-        } else {
-          console.error('No token found.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
+    const streamUrl = `${url}api/v1/notification/stream`;
+    const option = {
+      method: 'GET',
+      headers: {Authorization: `Bearer ${token}`},
+      debug: true,
+    };
+    const eventSource = new EventSource(streamUrl, option);
+    const listener: EventSourceListener = event => {
+      if (event.type === 'open') {
+        console.log('Open SSE connection.');
+      } else if (event.type === 'message') {
+        console.log('Connection', event);
+      } else if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
       }
     };
+    eventSource.addEventListener('open', listener);
+    eventSource.addEventListener('message', listener);
+    eventSource.addEventListener('error', listener);
 
-    fetchData();
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
   }, []);
 
   return (

@@ -52,6 +52,7 @@
     "react-native-scrollable-tab-view": "^1.0.0",
     "react-native-shadow-2": "^7.0.8",
     "react-native-snap-carousel": "^3.9.1",
+    "react-native-sse": "^1.1.0",
     "react-native-svg": "^13.9.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-swipe-list-view": "^3.2.9",
