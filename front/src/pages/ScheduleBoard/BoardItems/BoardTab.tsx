@@ -5,8 +5,7 @@ import {
   MaterialTopTabNavigationProp,
 } from '@react-navigation/material-top-tabs';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../util/redux/store';
+import {BoardItem} from '../../../util/dataConvert';
 
 const Tab = createMaterialTopTabNavigator();
 type TabNavProp = MaterialTopTabNavigationProp<{[key: string]: undefined}>;
@@ -14,13 +13,13 @@ type TabNavProp = MaterialTopTabNavigationProp<{[key: string]: undefined}>;
 const DisplayNone = () => null;
 
 type BoardTabProps = {
+  boardData: BoardItem[];
   active: number | null;
   onActiveChange: (newValue: number) => void;
 };
 
-const BoardTab = ({active, onActiveChange}: BoardTabProps) => {
+const BoardTab = ({boardData, active, onActiveChange}: BoardTabProps) => {
   const navigation = useNavigation<TabNavProp>();
-  const boardData = useSelector((state: RootState) => state.board);
 
   useEffect(() => {
     const activeTab = boardData.find(data => data.tagId === active);

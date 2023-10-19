@@ -19,9 +19,13 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
   const carouselRef = useRef<Carousel<BoardItem>>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const boardData = useSelector((state: RootState) => state.board);
   const token = useSelector((state: any) => state.user.token);
+  const boardData = useSelector((state: RootState) => state.board);
+  const setBoardData = (newItems: BoardItem[]) => {
+    dispatch(setBoardReducer(newItems));
+  };
   const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
+  console.log(boardData); //!
 
   useEffect(() => {
     if (url) {
@@ -62,9 +66,15 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ProfileHeader />
-      <BoardTab active={active} onActiveChange={handleActiveChange} />
+      <BoardTab boardData={boardData} active={active} onActiveChange={handleActiveChange} />
       <View style={styles.body}>
-        <BoardPack active={active} onActiveChange={handleActiveChange} carouselRef={carouselRef} />
+        <BoardPack
+          boardData={boardData}
+          setBoardData={setBoardData}
+          active={active}
+          onActiveChange={handleActiveChange}
+          carouselRef={carouselRef}
+        />
       </View>
     </SafeAreaView>
   );
