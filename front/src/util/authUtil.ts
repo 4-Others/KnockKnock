@@ -12,23 +12,19 @@ const isEmaildValid = (text: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
 
 //! 생년월일 유효성 검사
 const isBirthValid = (text: string) => {
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!regex.test(text)) {
-    return false;
-  }
-  const date = new Date(text);
-  if (isNaN(date.getTime())) {
-    return false;
-  }
+  if (text.length !== 8) return false;
 
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  // 월은 0부터 시작하므로 +1
-  const day = date.getDate();
+  const year = parseInt(text.slice(0, 4), 10);
+  const month = parseInt(text.slice(4, 6), 10);
+  const day = parseInt(text.slice(6, 8), 10);
 
-  if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > 31) {
-    return false;
-  }
+  if (isNaN(year) || isNaN(month) || isNaN(day)) return false;
+
+  if (year < 1900 || year > new Date().getFullYear()) return false;
+  if (month < 1 || month > 12) return false;
+
+  const lastDayOfMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > lastDayOfMonth) return false;
 
   return true;
 };
@@ -91,7 +87,7 @@ const validErrorMessage = {
     if (input !== compare && input.length > 0) return '비밀번호가 일치하지 않습니다.';
   },
   birth: (input: string) => {
-    if (!isBirthValid(input) && input.length > 0) return 'YYYY-MM-DD 형식으로 입력하세요.';
+    if (!isBirthValid(input) && input.length > 0) return '유효한 생년월일 8자리를 입력하세요.';
   },
   email: (input: string) => {
     if (!isEmaildValid(input) && input.length > 0) return '유효하지 않은 이메일입니다.';
