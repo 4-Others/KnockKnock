@@ -109,7 +109,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
             finalPostData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalPostData:', JSON.stringify(finalPostData, null, 2)); //!
+
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
         const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
@@ -123,7 +123,6 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
           return;
         }
 
-        console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           name: selectedTag.name,
           color: selectedTag.color,

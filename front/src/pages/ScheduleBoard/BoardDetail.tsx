@@ -81,7 +81,6 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
       })();
     }, [tagId]),
   );
-  console.log('items:', JSON.stringify(items, null, 2)); //!
 
   return (
     <SafeAreaView style={styles.container}>

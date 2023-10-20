@@ -87,8 +87,7 @@ const ScheduleEdit = ({route}: any) => {
             finalUpdateData.tagId = tagExists.tagId;
           }
         }
-        console.log('scheduleId:', updateData.scheduleId); //!
-        console.log('finalUpdateData:', JSON.stringify(finalUpdateData, null, 2)); //!
+
         const result = await patchScheduleItem(
           url,
           user.token,
@@ -100,7 +99,6 @@ const ScheduleEdit = ({route}: any) => {
           const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
           dispatch(setBoardReducer(tagResponse));
 
-          console.log('스케줄 수정 성공!');
           navigation.goBack();
         }
       } catch (error) {
