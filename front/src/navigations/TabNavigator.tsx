@@ -71,7 +71,6 @@ const TabNavigator = () => {
             setLastTab('Schedule Board');
           },
         }}
-        options={{unmountOnBlur: true}}
       />
       <Tab.Screen
         name="Schedule Calendar"

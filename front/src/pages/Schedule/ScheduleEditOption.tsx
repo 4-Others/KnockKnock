@@ -21,9 +21,15 @@ interface ScheduleOptionProps {
   url?: string;
   updateData: SetScheduleData & BoardData;
   setUpdateData: React.Dispatch<React.SetStateAction<SetScheduleData & BoardData>>;
+  onNotificationChange: (notifications: number[] | null) => void;
 }
 
-const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpdateData}) => {
+const ScheduleOption: React.FC<ScheduleOptionProps> = ({
+  url,
+  updateData,
+  setUpdateData,
+  onNotificationChange,
+}) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -116,15 +122,6 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
     }));
   };
 
-  const onNotificationState = (value: number) => {
-    setUpdateData((prevData: SetScheduleData & BoardData) => {
-      return {
-        ...prevData,
-        alerts: [value],
-      };
-    });
-  };
-
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentLayout}>
       <TextInput
@@ -141,7 +138,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
       />
       <ScheduleOptionSelect
         type="알림 시간"
-        state={updateData.alerts.join()}
+        state={updateData.alerts.length ? updateData.alerts.join(',  ') + '분 전' : ''}
         event={() => setNotificationIsOpen(prevState => !prevState)}
         iconName="notifications-outline"
       />
@@ -175,6 +172,10 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
             defaultValue={updateData.content}
             placeholder="자세한 내용을 기록하려면 입력하세요"
             onChangeText={text => setUpdateData(prevData => ({...prevData, content: text}))}
+            multiline={true}
+            numberOfLines={4}
+            returnKeyType="default"
+            textAlignVertical="top"
           />
         </View>
       </KeyboardAvoidingView>
@@ -187,7 +188,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({url, updateData, setUpda
       <Selector
         modalVisible={notificationIsOpen}
         setModalVisible={setNotificationIsOpen}
-        onData={onNotificationState}
+        onData={onNotificationChange}
         type="notification"
       />
       <DateTimePickerModal
@@ -236,17 +237,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   contentText: {
-    padding: 0,
-    paddingTop: 10,
-    marginBottom: 10,
-    height: 30,
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: variables.line_2,
     fontFamily: variables.font_4,
     color: variables.text_3,
     fontSize: 14,
-    ...Platform.select({
-      ios: {marginTop: 10},
-      android: {marginTop: 0},
-    }),
   },
   icon: {
     fontSize: 24,

@@ -10,7 +10,7 @@ type ScheduleState = {
 const initialState: ScheduleState = {
   items: {},
 };
-console.log('Inside scheduleSlice');
+
 export const scheduleSlice = createSlice({
   name: 'schedule',
   initialState,
