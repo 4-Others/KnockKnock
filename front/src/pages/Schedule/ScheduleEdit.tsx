@@ -20,7 +20,24 @@ const ScheduleEdit = ({route}: any) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const initialData = route.params.item;
-  const [updateData, setUpdateData] = useState(initialData);
+
+  const [updateData, setUpdateData] = useState(() => {
+    if (initialData.period === 'SPECIFIC_TIME') {
+      return {
+        ...initialData,
+        startAt: initialData.startAt.substring(0, 16),
+        endAt: initialData.endAt.substring(0, 16),
+      };
+    }
+    return initialData;
+  });
+
+  const handleNotificationChange = (selectedAlerts: number[] | null) => {
+    setUpdateData((prevState: number[]) => ({
+      ...prevState,
+      alerts: selectedAlerts ? [...selectedAlerts] : [],
+    }));
+  };
 
   const handleEditSchedule = async () => {
     if (!updateData.title || !updateData.tag) {
@@ -33,9 +50,12 @@ const ScheduleEdit = ({route}: any) => {
     if (updateData.period === 'ALL_DAY') {
       formattedStartAt = `${updateData.startAt.split(' ')[0]} 00:00:00`;
       formattedEndAt = `${updateData.endAt.split(' ')[0]} 23:59:59`;
-    } else {
+    } else if (updateData.period === 'SPECIFIC_TIME') {
       formattedStartAt = `${updateData.startAt}:00`;
       formattedEndAt = `${updateData.endAt}:00`;
+    } else {
+      formattedStartAt = updateData.startAt;
+      formattedEndAt = updateData.endAt;
     }
 
     const finalUpdateData = {
@@ -67,6 +87,8 @@ const ScheduleEdit = ({route}: any) => {
             finalUpdateData.tagId = tagExists.tagId;
           }
         }
+        console.log('scheduleId:', updateData.scheduleId); //!
+        console.log('finalUpdateData:', JSON.stringify(finalUpdateData, null, 2)); //!
         const result = await patchScheduleItem(
           url,
           user.token,
@@ -102,7 +124,12 @@ const ScheduleEdit = ({route}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header title="스케줄 편집" nextFunc={handleEditSchedule} />
-      <ScheduleEditOption url={url} updateData={updateData} setUpdateData={setUpdateData} />
+      <ScheduleEditOption
+        url={url}
+        updateData={updateData}
+        setUpdateData={setUpdateData}
+        onNotificationChange={handleNotificationChange}
+      />
     </SafeAreaView>
   );
 };

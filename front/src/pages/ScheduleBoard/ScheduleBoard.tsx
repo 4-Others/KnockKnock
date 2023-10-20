@@ -25,7 +25,6 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
     dispatch(setBoardReducer(newItems));
   };
   const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
-  console.log(boardData); //!
 
   useEffect(() => {
     if (url) {

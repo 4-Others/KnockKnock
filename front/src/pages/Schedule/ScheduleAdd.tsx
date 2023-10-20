@@ -63,6 +63,13 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   const [postSchedule, setPostSchedule] = useState(scheduleData);
   const [postTag, setPostTag] = useState(tagData);
 
+  const handleNotificationChange = (selectedAlerts: number[] | null) => {
+    setPostSchedule(prevState => ({
+      ...prevState,
+      alerts: selectedAlerts ? [...selectedAlerts] : [],
+    }));
+  };
+
   const handleAddSchedule = async () => {
     if (!postSchedule.title || !postTag) {
       Alert.alert('일정과 보드를 작성해주세요.');
@@ -152,6 +159,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         postTag={postTag}
         setPostTag={setPostTag}
         getCurrentDateStartAndEnd={getCurrentDateStartAndEnd}
+        onNotificationChange={handleNotificationChange}
       />
     </SafeAreaView>
   );
