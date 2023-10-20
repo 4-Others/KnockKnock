@@ -45,7 +45,7 @@ spring:
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            redirect-uri: "{baseurl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
@@ -57,7 +57,7 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
 cors:
-  allowed-origins: 'https://knockknockofficial.shop'
+  allowed-origins: 'https://knockknockofficial.shop:443'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: '*'
   max-age: 3600
@@ -67,6 +67,6 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris: https://knockknockofficial.shop
+    authorizedRedirectUris: https://knockknockofficial.shop:443
     #oauth/redirect
     #프론트 페이지만들어지면 여기다가 넣기

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -45,7 +46,7 @@ public class User{
     private String password;
 
     @Column(name = "BIRTH")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyyMMdd")
     private LocalDate birth;
 
     @Column(name = "PUSH_AGREE")
