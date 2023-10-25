@@ -46,7 +46,7 @@ spring:
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: "https://knockknockofficial.shop/login/oauth2/code/kakao"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
