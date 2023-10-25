@@ -80,6 +80,7 @@ const TabNavigator = () => {
             setLastTab('Schedule Calendar');
           },
         }}
+        options={{unmountOnBlur: true}}
       />
       <Tab.Screen
         name="Add"
@@ -107,6 +108,7 @@ const TabNavigator = () => {
             setLastTab('Search');
           },
         }}
+        options={{unmountOnBlur: true}}
       />
       <Tab.Screen
         name="Notifications"
@@ -116,7 +118,7 @@ const TabNavigator = () => {
             setLastTab('Notifications');
           },
         }}
-        options={{tabBarBadge: 3}}
+        options={{tabBarBadge: 3, unmountOnBlur: true}}
       />
     </Tab.Navigator>
   );

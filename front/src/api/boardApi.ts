@@ -20,7 +20,6 @@ export const postBoardData = async (url: string, token: string, tag: SetBoardDat
     const response = await axios.post(`${url}api/v1/tags`, tag, {
       headers: {Authorization: `Bearer ${token}`},
     });
-    console.log('Posting tag data:', JSON.stringify(tag));
     return response.data;
   } catch (error) {
     console.error('API call failed', error);
@@ -40,7 +39,6 @@ export const patchBoardData = async (
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('보드 수정 성공!');
     return response.data;
   } catch (error) {
     console.error('API call failed', error);

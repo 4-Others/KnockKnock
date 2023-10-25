@@ -12,7 +12,7 @@ interface inputProps {
 
 const ScheduleOptionSelect: React.FC<inputProps> = ({type, state, event, iconName}) => {
   const colorChipRender = () => {
-    if (state && typeof state !== 'string') {
+    if (state && typeof state === 'object' && 'color' in state) {
       let colorValue: any = state.color;
       if (colorValue.startsWith('variables.')) {
         let colorKey = colorValue.substring('variables.'.length) as VariablesKeys;

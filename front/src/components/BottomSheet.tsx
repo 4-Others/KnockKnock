@@ -26,11 +26,11 @@ type SelectorProps = {
   type: 'board' | 'notification'; // 타입을 구분하기 위한 프로퍼티 추가
 };
 
-//? modalBottomSheet 레이아웃
 const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onData, type}) => {
   const [newBoard, setNewBoard] = useState({name: '', color: ''});
   const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
-  const [selectedNotification, setSelectedNotification] = useState<number | null>(null);
+  const [selectedNotifications, setSelectedNotifications] = useState<number[] | null>([]);
+  const [notificationsColor, setNotificationsColor] = useState<number[] | null>([]);
   const boardData = useSelector((state: RootState) => state.board);
 
   const handleBoardValue = (type: string, value: string) => {
@@ -76,13 +76,12 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
   ).current;
 
   const RenderBoardList = () => {
-    //? board 컬러 리스트 배열 생성
     const boardColors: string[] = Object.keys(variables)
       .filter(key => key.startsWith('board_') || key.startsWith('Mater_'))
       .map(key => variables[key as VariablesKeys] as string);
 
     return (
-      <View style={styles.renderBoardContainer}>
+      <View style={styles.boardContainer}>
         <Text style={styles.title}>스케줄 보드</Text>
         <ScrollView horizontal={true}>
           {boardData && boardData.length > 0 ? (
@@ -128,7 +127,7 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
                   handleBoardValue('color', color);
                   setSelectedColorIndex(i);
                 }}>
-                {i === selectedColorIndex ? <Icon name="check" style={styles.icon} /> : null}
+                {i === selectedColorIndex ? <Icon name="check" style={styles.check} /> : null}
               </TouchableOpacity>
             );
           })}
@@ -149,36 +148,71 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
     );
   };
 
-  const notificatioData = [30, 60, 90, 120, 1440];
+  const notificatioData = [5, 10, 30, 60, 90, 120];
 
-  const handleSelectNotification = (period: number) => {
-    setSelectedNotification(prev => {
-      const newPeriod = prev === period ? null : period;
-      onData(newPeriod === null ? '' : newPeriod);
-      return newPeriod;
-    });
+  const handleSelectNotification = (alarmTimes: number) => {
+    let updatedAlerts: number[] = [];
+    if (selectedNotifications) {
+      if (selectedNotifications.includes(alarmTimes)) {
+        updatedAlerts = selectedNotifications.filter(item => item !== alarmTimes);
+      } else {
+        updatedAlerts = [...selectedNotifications, alarmTimes];
+      }
+    }
+    setSelectedNotifications(updatedAlerts.sort((a, b) => a - b));
+    onData(updatedAlerts.sort((a, b) => a - b));
   };
 
   useEffect(() => {
-    if (selectedNotification !== null) {
-      onData(selectedNotification === null ? '' : selectedNotification);
+    setNotificationsColor(selectedNotifications);
+  }, [selectedNotifications]);
+
+  useEffect(() => {
+    if (modalVisible) {
+      setSelectedNotifications([]);
+      setNotificationsColor([]);
     }
-  }, [selectedNotification]);
+  }, [modalVisible]);
 
   const RenderNotificationList = () => {
-    return notificatioData.map((data, index) => {
-      const isSelected = selectedNotification === data;
-      return (
+    return (
+      <View>
+        <View style={styles.ButtonContainer}>
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={() => {
+              setSelectedNotifications([]);
+              onData([]);
+            }}>
+            <Text>알림 초기화</Text>
+            <Icon name={'refresh'} style={styles.refresh} />
+          </TouchableOpacity>
+        </View>
+        {notificatioData.map((alarmTimes, index) => {
+          let isSelected;
+          if (notificationsColor) {
+            isSelected = notificationsColor.includes(alarmTimes);
+          }
+          return (
+            <TouchableOpacity
+              style={[styles.itemSelectMenu, isSelected ? styles.selectedPeriod : {}]}
+              key={index}
+              onPress={() => {
+                handleSelectNotification(alarmTimes);
+              }}>
+              <Text>{`${alarmTimes}분 전`}</Text>
+            </TouchableOpacity>
+          );
+        })}
         <TouchableOpacity
-          style={[styles.itemSelectMenu, isSelected ? styles.selectedPeriod : {}]}
-          key={index}
+          style={styles.alarmButton}
           onPress={() => {
-            handleSelectNotification(data);
+            setModalVisible(false);
           }}>
-          <Text>{`${data}분 전`}</Text>
+          <Text>선택 완료</Text>
         </TouchableOpacity>
-      );
-    });
+      </View>
+    );
   };
 
   useEffect(() => {
@@ -193,8 +227,6 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
       if (type === 'board') {
         setNewBoard({name: '', color: ''});
         setSelectedColorIndex(-1);
-      } else if (type === 'notification') {
-        setSelectedNotification(null);
       }
     });
   };
@@ -208,9 +240,7 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
         <Animated.View
           style={{...styles.bottomSheetContainer, transform: [{translateY: translateY}]}}
           {...panResponders.panHandlers}>
-          {type === 'board' // 타입에 따라 다른 데이터 표시
-            ? RenderBoardList()
-            : RenderNotificationList()}
+          {type === 'board' ? RenderBoardList() : RenderNotificationList()}
         </Animated.View>
       </View>
     </Modal>
@@ -231,20 +261,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    paddingTop: 20,
     paddingBottom: 20,
   },
   itemSelectMenu: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingLeft: 10,
+    paddingLeft: 28,
     paddingTop: 10,
     paddingBottom: 10,
   },
-  renderBoardContainer: {
-    paddingLeft: 20,
+  boardContainer: {
+    paddingTop: 20,
     paddingRight: 20,
+    paddingLeft: 20,
   },
   title: {
     fontFamily: variables.font_2,
@@ -281,7 +311,7 @@ const styles = StyleSheet.create({
   },
   colorChipContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // 텍스트를 다음 줄로 넘기기 위해 필요한 속성
+    flexWrap: 'wrap',
     marginTop: 10,
   },
   colorChip: {
@@ -303,7 +333,48 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  icon: {
+  ButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginRight: 20,
+    marginLeft: 20,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: variables.line_1,
+  },
+  alarmButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: variables.line_1,
+    marginTop: 10,
+    marginRight: 20,
+    marginBottom: 10,
+    marginLeft: 20,
+  },
+  refreshButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 2,
+    width: 120,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: variables.line_1,
+    backgroundColor: variables.back_1,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  refresh: {
+    marginLeft: 2,
+    paddingTop: 4,
+    fontSize: 18,
+  },
+  check: {
     color: 'white',
     fontSize: 14,
   },

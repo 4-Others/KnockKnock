@@ -1,72 +1,105 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
-import {Shadow} from 'react-native-shadow-2';
 import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
-import EventSource, {EventSourceListener} from 'react-native-sse';
+import {notificationListener} from '../../api/notificationApi';
+
+export interface notificationData {
+  createdAt: string;
+  delivered: boolean;
+  modifiedAt: string;
+  notificationId: number;
+  notifyAt: string;
+  read: null;
+  title: string;
+}
 
 const Notifications: React.FC = () => {
-  const [notificationDatas, setNotificationDatas] = useState([]);
-  const url = Config.API_APP_KEY;
+  const [notificationDatas, setNotificationDatas] = useState<notificationData[]>([]);
+  const url = `${Config.API_APP_KEY}api/v1/notification`;
   const token = useSelector((state: any) => state.user.token);
 
-  useEffect(() => {
-    const streamUrl = `${url}api/v1/notification/stream`;
-    const option = {
-      method: 'GET',
-      headers: {Authorization: `Bearer ${token}`},
-      debug: true,
+  function formatDateString(inputDateString: string): string {
+    const inputDate = new Date(inputDateString);
+    const options: Intl.DateTimeFormatOptions = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     };
-    const eventSource = new EventSource(streamUrl, option);
-    const listener: EventSourceListener = event => {
-      if (event.type === 'open') {
-        console.log('Open SSE connection.');
-      } else if (event.type === 'message') {
-        console.log('Connection', event);
-      } else if (event.type === 'error') {
-        console.error('Connection error:', event.message);
-      } else if (event.type === 'exception') {
-        console.error('Error:', event.message, event.error);
-      }
-    };
-    eventSource.addEventListener('open', listener);
-    eventSource.addEventListener('message', listener);
-    eventSource.addEventListener('error', listener);
 
-    return () => {
-      eventSource.removeAllEventListeners();
-      eventSource.close();
-    };
-  }, []);
+    const formattedDate = inputDate.toLocaleDateString('ko', options);
+
+    // 날짜 문자열을 "오전" 또는 "오후"로 변경
+    let timePart = formattedDate.replace(
+      /(\d{1,2}\/\d{1,2}\/)(\d{2},) (\d{1,2}:\d{2})/,
+      (match, p1, p2, p3) => {
+        const hour = parseInt(p3.split(':')[0], 10);
+        return p3;
+      },
+    );
+
+    timePart = timePart.replace(/(\d{1,2}\/)(\d{1,2}\/)(\d{2},)/, (match, p1, p2, p3) => {
+      const month = parseInt(p1, 10);
+      const day = parseInt(p2, 10);
+      return `${month}.${day}`;
+    });
+
+    return timePart;
+  }
+
+  useEffect(() => {
+    notificationListener.getNotification(url, token).then(items => setNotificationDatas(items));
+  }, [notificationListener.deleteNotification]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <Header title="알림" type="alarm" />
       <ScrollView style={styles.scheduleListContainer}>
-        {/* {notificationDatas.map((data, i) => {
-          return (
-            <View key={i}>
-              <Text style={styles.listDateTitle}>{data.date.replace(/-/g, '.')}</Text>
-              {data.contents.map((item, key) => (
-                <TouchableOpacity style={styles.item} key={key}>
-                  <Shadow
-                    style={styles.todo}
-                    distance={4}
-                    startColor={'#00000010'}
-                    endColor={'#ffffff05'}
-                    offset={[0, 0.2]}>
-                    <View style={styles.content}>
-                      <Text style={styles.text}>{item.title}</Text>
-                      <Text style={styles.time}>{item.notifyAt}</Text>
-                    </View>
-                  </Shadow>
-                </TouchableOpacity>
-              ))}
-            </View>
-          );
-        })} */}
+        {notificationDatas.length > 0 ? (
+          notificationDatas.map(data => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  notificationListener.deleteNotification(
+                    url,
+                    token,
+                    [data.notificationId],
+                    setNotificationDatas,
+                    notificationDatas,
+                  )
+                }
+                style={styles.notificationContainer}
+                key={data.notificationId}>
+                <View
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: variables.line_2,
+                    paddingBottom: 10,
+                    marginBottom: 10,
+                  }}>
+                  <Text style={styles.notificationTitle}>{data.title}</Text>
+                  <Text style={styles.notificationCreateDateText}>{`${formatDateString(
+                    data.modifiedAt,
+                  )}부터 ${formatDateString(data.notifyAt)}까지`}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={styles.notificationText}>일정이 등록되었습니다.</Text>
+                  <Text style={styles.notificationCreateDateText}>
+                    {formatDateString(data.createdAt)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        ) : (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text>알림이 없습니다.</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -76,16 +109,30 @@ export default Notifications;
 
 const styles = StyleSheet.create({
   scheduleListContainer: {
-    backgroundColor: '#fff',
-    paddingLeft: 24,
-    paddingRight: 24,
+    backgroundColor: variables.back_1,
+    padding: 24,
   },
-  listDateTitle: {
+  notificationContainer: {
+    flex: 1,
+    backgroundColor: variables.back_2,
+    padding: 16,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  notificationTitle: {
+    fontFamily: variables.font_2,
+    color: variables.text_3,
+    fontSize: 16,
+  },
+  notificationText: {
     fontFamily: variables.font_3,
-    color: variables.text_5,
+    color: variables.text_4,
     fontSize: 14,
-    marginTop: 20,
-    marginBottom: 20,
+  },
+  notificationCreateDateText: {
+    fontFamily: variables.font_3,
+    color: variables.text_6,
+    fontSize: 14,
   },
   item: {marginBottom: 10},
   todo: {

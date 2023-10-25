@@ -63,6 +63,13 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
   const [postSchedule, setPostSchedule] = useState(scheduleData);
   const [postTag, setPostTag] = useState(tagData);
 
+  const handleNotificationChange = (selectedAlerts: number[] | null) => {
+    setPostSchedule(prevState => ({
+      ...prevState,
+      alerts: selectedAlerts ? [...selectedAlerts] : [],
+    }));
+  };
+
   const handleAddSchedule = async () => {
     if (!postSchedule.title || !postTag) {
       Alert.alert('일정과 보드를 작성해주세요.');
@@ -102,7 +109,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
             finalPostData.tagId = tagExists.tagId;
           }
         }
-        console.log('finalPostData:', JSON.stringify(finalPostData, null, 2)); //!
+
         const response = await postScheduleItem(url, user.token, finalPostData);
         dispatch(postScheduleReducer(response));
         const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
@@ -116,7 +123,6 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
           return;
         }
 
-        console.log('스케줄 등록 성공!');
         navigation.navigate('BoardDetail', {
           name: selectedTag.name,
           color: selectedTag.color,
@@ -152,6 +158,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
         postTag={postTag}
         setPostTag={setPostTag}
         getCurrentDateStartAndEnd={getCurrentDateStartAndEnd}
+        onNotificationChange={handleNotificationChange}
       />
     </SafeAreaView>
   );

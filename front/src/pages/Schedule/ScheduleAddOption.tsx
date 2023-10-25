@@ -24,6 +24,7 @@ interface ScheduleOptionProps {
   postTag: SetBoardData;
   setPostTag: React.Dispatch<React.SetStateAction<SetBoardData>>;
   getCurrentDateStartAndEnd?: any;
+  onNotificationChange: (notifications: number[] | null) => void;
 }
 
 const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
@@ -33,6 +34,7 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
   postTag,
   setPostTag,
   getCurrentDateStartAndEnd,
+  onNotificationChange,
 }) => {
   const [boardIsOpen, setBoardIsOpen] = useState(false);
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
@@ -124,13 +126,8 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
     setPostTag(value);
   };
 
-  const onNotificationState = (value: number) => {
-    setPostSchedule((prevData: SetScheduleData) => {
-      return {
-        ...prevData,
-        alerts: [value],
-      };
-    });
+  const handleNotificationOpen = () => {
+    setNotificationIsOpen(prevState => !prevState);
   };
 
   return (
@@ -149,8 +146,8 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
       />
       <ScheduleOptionSelect
         type="알림 시간"
-        state={postSchedule.alerts.join()}
-        event={() => setNotificationIsOpen(prevState => !prevState)}
+        state={postSchedule.alerts.length ? postSchedule.alerts.join(',  ') + '분 전' : ''}
+        event={handleNotificationOpen}
         iconName="notifications-outline"
       />
       <ScheduleOptionToggle
@@ -183,6 +180,10 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
             defaultValue={postSchedule.content}
             placeholder="자세한 내용을 기록하려면 입력하세요"
             onChangeText={text => setPostSchedule(prevData => ({...prevData, content: text}))}
+            multiline={true}
+            numberOfLines={4}
+            returnKeyType="default"
+            textAlignVertical="top"
           />
         </View>
       </KeyboardAvoidingView>
@@ -195,7 +196,7 @@ const ScheduleAddOption: React.FC<ScheduleOptionProps> = ({
       <Selector
         modalVisible={notificationIsOpen}
         setModalVisible={setNotificationIsOpen}
-        onData={onNotificationState}
+        onData={onNotificationChange}
         type="notification"
       />
       <DateTimePickerModal
@@ -244,17 +245,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   contentText: {
-    padding: 0,
-    paddingTop: 10,
-    marginBottom: 10,
-    height: 30,
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: variables.line_2,
     fontFamily: variables.font_4,
     color: variables.text_3,
     fontSize: 14,
-    ...Platform.select({
-      ios: {marginTop: 10},
-      android: {marginTop: 0},
-    }),
   },
   icon: {
     fontSize: 24,
