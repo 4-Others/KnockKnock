@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
 import {notificationListener} from '../../api/notificationApi';
 
-interface notificationData {
+export interface notificationData {
   createdAt: string;
   delivered: boolean;
   modifiedAt: string;
@@ -18,7 +18,7 @@ interface notificationData {
 
 const Notifications: React.FC = () => {
   const [notificationDatas, setNotificationDatas] = useState<notificationData[]>([]);
-  const url = Config.API_APP_KEY;
+  const url = `${Config.API_APP_KEY}api/v1/notification`;
   const token = useSelector((state: any) => state.user.token);
 
   function formatDateString(inputDateString: string): string {
@@ -52,39 +52,54 @@ const Notifications: React.FC = () => {
   }
 
   useEffect(() => {
-    notificationListener
-      .getNotification(`${url}api/v1/notification`, token)
-      .then(items => setNotificationDatas(items));
-  }, []);
+    notificationListener.getNotification(url, token).then(items => setNotificationDatas(items));
+  }, [notificationListener.deleteNotification]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header title="알림" type="alarm" />
       <ScrollView style={styles.scheduleListContainer}>
-        {notificationDatas.map(data => {
-          return (
-            <TouchableOpacity style={styles.notificationContainer} key={data.notificationId}>
-              <View
-                style={{
-                  borderBottomWidth: 1,
-                  borderBottomColor: variables.line_2,
-                  paddingBottom: 10,
-                  marginBottom: 10,
-                }}>
-                <Text style={styles.notificationTitle}>{data.title}</Text>
-                <Text style={styles.notificationCreateDateText}>{`${formatDateString(
-                  data.modifiedAt,
-                )}부터 ${formatDateString(data.notifyAt)}까지`}</Text>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={styles.notificationText}>일정이 등록되었습니다.</Text>
-                <Text style={styles.notificationCreateDateText}>
-                  {formatDateString(data.createdAt)}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+        {notificationDatas.length > 0 ? (
+          notificationDatas.map(data => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  notificationListener.deleteNotification(
+                    url,
+                    token,
+                    [data.notificationId],
+                    setNotificationDatas,
+                    notificationDatas,
+                  )
+                }
+                style={styles.notificationContainer}
+                key={data.notificationId}>
+                <View
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: variables.line_2,
+                    paddingBottom: 10,
+                    marginBottom: 10,
+                  }}>
+                  <Text style={styles.notificationTitle}>{data.title}</Text>
+                  <Text style={styles.notificationCreateDateText}>{`${formatDateString(
+                    data.modifiedAt,
+                  )}부터 ${formatDateString(data.notifyAt)}까지`}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={styles.notificationText}>일정이 등록되었습니다.</Text>
+                  <Text style={styles.notificationCreateDateText}>
+                    {formatDateString(data.createdAt)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        ) : (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text>알림이 없습니다.</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
