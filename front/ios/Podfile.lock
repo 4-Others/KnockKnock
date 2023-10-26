@@ -95,6 +95,19 @@ PODS:
     - KakaoSDKCommon (= 2.11.1)
     - KakaoSDKUser (= 2.11.1)
     - React
+  - KakaoOpenSDK (1.20.0):
+    - KakaoOpenSDK/KakaoCommon (= 1.20.0)
+    - KakaoOpenSDK/KakaoLink (= 1.20.0)
+    - KakaoOpenSDK/KakaoMessageTemplate (= 1.20.0)
+    - KakaoOpenSDK/KakaoNavi (= 1.20.0)
+    - KakaoOpenSDK/KakaoOpenSDK (= 1.20.0)
+  - KakaoOpenSDK/KakaoCommon (1.20.0)
+  - KakaoOpenSDK/KakaoLink (1.20.0):
+    - KakaoOpenSDK/KakaoCommon
+  - KakaoOpenSDK/KakaoMessageTemplate (1.20.0)
+  - KakaoOpenSDK/KakaoNavi (1.20.0):
+    - KakaoOpenSDK/KakaoCommon
+  - KakaoOpenSDK/KakaoOpenSDK (1.20.0)
   - KakaoSDKAuth (2.11.1):
     - KakaoSDKCommon (= 2.11.1)
   - KakaoSDKCommon (2.11.1):
@@ -609,6 +622,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - "kakao-login (from `../node_modules/@react-native-seoul/kakao-login`)"
+  - KakaoOpenSDK (~> 1.20.0)
   - libevent (~> 2.1.12)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -677,6 +691,7 @@ SPEC REPOS:
     - GoogleSignIn
     - GTMAppAuth
     - GTMSessionFetcher
+    - KakaoOpenSDK
     - KakaoSDKAuth
     - KakaoSDKCommon
     - KakaoSDKUser
@@ -820,6 +835,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: e8647203b65cee28c5f73d0f473d096653945e72
   hermes-engine: c85f703623cb12d7e1d9db91afe53b3ea8aa7219
   kakao-login: 3d7afeb8d49d4fa9a3ee579edb1b68c65bf20dac
+  KakaoOpenSDK: 797d97ec4a7074a23d7175147f13ec274c81c9b9
   KakaoSDKAuth: bb2dfa7be30daa8403c9cfc8001aa6fde7a5b779
   KakaoSDKCommon: 555e1bb46595b842ded01cf7888cc17bbae4e113
   KakaoSDKUser: 08c0a4f40bebdebdf948a9e3d0e44ed5c2754f99
@@ -874,6 +890,6 @@ SPEC CHECKSUMS:
   Yoga: 1d6727ed193122f6adaf435c3de1a768326ff83b
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 5d87e34b91a41357909c404c302d382516bd92b7
+PODFILE CHECKSUM: 59c01b6e6b45316cdcfa250e74b62d328cdbf6f1
 
 COCOAPODS: 1.12.1

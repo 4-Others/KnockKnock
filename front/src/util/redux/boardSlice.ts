@@ -3,7 +3,7 @@ import {BoardItem} from '../dataConvert';
 
 const initialState: BoardItem[] = [];
 
-const boardSlice = createSlice({
+export const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {

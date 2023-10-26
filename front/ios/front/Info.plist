@@ -83,5 +83,13 @@
 	<string>Your message to user when the photo library is accessed for the first time</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Your message to user when the camera is accessed for the first time</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>bff8a8f390ca0effe2292e7130c7f370</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaobff8a8f390ca0effe2292e7130c7f370</string>
+		<string>kakaolink</string>
+		<string>kakaokompassauth</string>
+	</array>
 </dict>
 </plist>

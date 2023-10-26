@@ -1,8 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import Oauth2 from './Oauth2';
-import {GradientButton_L} from '../../components/GradientButton';
-import {AuthProps} from '../../navigations/StackNavigator';
-import {variables} from '../../style/variables';
 import {
   View,
   StyleSheet,
@@ -12,11 +8,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import {isPasswordValid} from '../../util/authUtil';
-import {storageSetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {isPasswordValid, storageSetValue} from '../../util/authUtil';
 import {setLogin} from '../../util/redux/userSlice';
 import {loginPost} from '../../api/authApi';
+import {variables} from '../../style/variables';
+import {GradientButton_L} from '../../components/GradientButton';
+import Oauth2 from './Oauth2';
 
 const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [data, setData] = useState({id: '', password: ''});
@@ -32,7 +31,6 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       if (autoLogin === true) storageSetValue('user', {id, token});
       dispatch(setLogin({id, token}));
       navigation.navigate('MainTab');
-      // 자동 로그인 정보 수집
     } catch (error: any) {
       console.log(error);
       setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
@@ -55,6 +53,12 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       setErrorMessage('8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.');
     else setErrorMessage('');
   }, [password, id]);
+
+  const handleSocialLoginSuccess = (id: string, token: string) => {
+    if (autoLogin === true) storageSetValue('user', {id, token});
+    dispatch(setLogin({id, token}));
+    navigation.navigate('MainTab');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -129,8 +133,9 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
         </TouchableOpacity>
       </View>
       <Oauth2
-        onLogin={function (loginState: boolean): void {
-          throw new Error('Error!');
+        onLogin={handleSocialLoginSuccess}
+        onError={(error: React.SetStateAction<string>) => {
+          setErrorMessage(error);
         }}
       />
     </SafeAreaView>
