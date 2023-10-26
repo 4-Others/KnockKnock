@@ -39,13 +39,14 @@ spring:
       client:
         registration:
           google:
+            redirect-uri: "https://knockknockofficial.shop/login/oauth2/code/google"
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_SECRET}
             scope: email, profile
           kakao:
             client-id: fdfae2918a363efc5fad0a501f3dcd55
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: "{baseurl}/{action}/oauth2/code/{registrationId}"
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
@@ -67,6 +68,6 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris: https://knockknockofficial.shop:443
+    authorizedRedirectUris: https://knockknockofficial.shop
     #oauth/redirect
     #프론트 페이지만들어지면 여기다가 넣기

@@ -1,3 +1,4 @@
+import {notificationData} from '../pages/notifications/Notifications';
 import EventSource, {EventSourceListener} from 'react-native-sse';
 import axios from 'axios';
 
@@ -44,26 +45,24 @@ const notificationListener = {
       return [];
     }
   },
-  patchNotification: async (url: string, token: string, notificationIds: number[]) => {
+  deleteNotification: async (
+    url: string,
+    token: string,
+    notificationIds: number[],
+    setItems: React.Dispatch<React.SetStateAction<notificationData[]>>,
+    items: notificationData[],
+  ) => {
     try {
-      const res = await axios.patch(
-        url,
-        {notificationIds},
-        {headers: {Authorization: `Bearer ${token}`}},
-      );
-      const resData = res.data.body.data;
-      if (res.status === 200) return resData;
+      const res = await axios.delete(url, {
+        headers: {Authorization: `Bearer ${token}`},
+        data: {notificationIds},
+      });
+      console.log(res);
+      if (res.status === 200) {
+        setItems(items.filter(item => !notificationIds.includes(item.notificationId)));
+      }
     } catch (error) {
       console.error(error);
-      return [];
-    }
-  },
-  deleteNotification: async (url: string, token: string, notificationIds: number[]) => {
-    try {
-      const res = await axios.delete(url, {headers: {Authorization: `Bearer ${token}`}});
-      if (res.status === 200) return true;
-    } catch (error) {
-      return false;
     }
   },
 };
