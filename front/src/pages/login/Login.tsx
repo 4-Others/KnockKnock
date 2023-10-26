@@ -31,6 +31,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       if (autoLogin === true) storageSetValue('user', {id, token});
       dispatch(setLogin({id, token}));
       navigation.navigate('MainTab');
+      // 자동 로그인 정보 수집
     } catch (error: any) {
       console.log(error);
       setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
@@ -53,12 +54,6 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       setErrorMessage('8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.');
     else setErrorMessage('');
   }, [password, id]);
-
-  const handleSocialLoginSuccess = (id: string, token: string) => {
-    if (autoLogin === true) storageSetValue('user', {id, token});
-    dispatch(setLogin({id, token}));
-    navigation.navigate('MainTab');
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -132,12 +127,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
           <Text style={styles.signBtn}>가입하기</Text>
         </TouchableOpacity>
       </View>
-      <Oauth2
-        onLogin={handleSocialLoginSuccess}
-        onError={(error: React.SetStateAction<string>) => {
-          setErrorMessage(error);
-        }}
-      />
+      <Oauth2 navigation={navigation} />
     </SafeAreaView>
   );
 };
