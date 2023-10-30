@@ -28,7 +28,6 @@ public class User{
     private Long userId;
 
     @Column(name = "ID", length = 64, unique = true)
-    @NotNull
     @Size(max = 64)
     private String id;
 
@@ -36,7 +35,7 @@ public class User{
     @Size(max = 100)
     private String username;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
     @JsonIgnore
@@ -59,12 +58,10 @@ public class User{
 
     @Column(name = "PROVIDER_TYPE", length = 20)
     @Enumerated(EnumType.STRING)
-    @NotNull
     private ProviderType providerType;
 
     @Column(name = "ROLE_TYPE", length = 20)
     @Enumerated(EnumType.STRING)
-    @NotNull
     private RoleType roleType;
 
     @Column(name = "CREATED_AT")

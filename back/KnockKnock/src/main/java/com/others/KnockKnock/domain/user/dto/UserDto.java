@@ -149,4 +149,15 @@ public class UserDto {
     public static class ResponseId {
         private String id;
     }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class LoginOrSignup{
+        @NotBlank
+        @NotNull
+        private String userId;
+
+        @NotNull
+        private ProviderType providerType;
+    }
 }

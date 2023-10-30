@@ -1,6 +1,9 @@
 package com.others.KnockKnock.security.oauth.controller;
 
 import com.others.KnockKnock.common.ApiResponse;
+import com.others.KnockKnock.domain.user.dto.UserDto;
+import com.others.KnockKnock.domain.user.service.UserService;
+import com.others.KnockKnock.security.oauth.entity.ProviderType;
 import com.others.KnockKnock.security.properties.AppProperties;
 import com.others.KnockKnock.domain.user.entity.User;
 import com.others.KnockKnock.domain.user.entity.UserRefreshToken;
@@ -15,16 +18,21 @@ import com.others.KnockKnock.utils.CookieUtil;
 import com.others.KnockKnock.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Provider;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,6 +41,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserRepository userRepository;
+    private final UserService userService;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
@@ -172,4 +181,56 @@ public class AuthController {
 
         return ApiResponse.success("token", newAccessToken.getToken());
     }
+    @PostMapping("/oauth")
+    public ApiResponse loginOrSignup(@Validated @RequestBody UserDto.LoginOrSignup requestBody, HttpServletRequest request, HttpServletResponse response) {
+        Optional<User> userOptional = userRepository.findById(requestBody.getUserId());
+
+        //userId로 찾았을 때 DB에 있으면, 만료됐으면 새롭게 토큰발급
+        if(userOptional.isPresent()){
+            Date now = new Date();
+            AuthToken accessToken = tokenProvider.createAuthToken(requestBody.getUserId(), new Date(now.getTime() +
+                    appProperties.getAuth().getTokenExpiry()));
+
+            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+            AuthToken refreshToken = tokenProvider.createAuthToken(
+                    appProperties.getAuth().getTokenSecret(),
+                    new Date(now.getTime() + refreshTokenExpiry)
+            );
+
+            // userId refresh token 으로 DB 확인
+            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(requestBody.getUserId());
+            if (userRefreshToken == null) {
+                // 없는 경우 새로 등록
+                userRefreshToken = new UserRefreshToken(requestBody.getUserId(), refreshToken.getToken());
+                userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+            } else {
+                // DB에 refresh 토큰 업데이트
+                userRefreshToken.setRefreshToken(refreshToken.getToken());
+            }
+
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+            return ApiResponse.success("token", accessToken.getToken());
+        } else{
+            //회원가입 처리
+            User user = userService.oauthSignup(requestBody.getUserId(), requestBody.getProviderType());
+            Date now = new Date();
+            AuthToken accessToken = tokenProvider.createAuthToken(requestBody.getUserId(), new Date(now.getTime() +
+                    appProperties.getAuth().getTokenExpiry()));
+
+            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+            AuthToken refreshToken = tokenProvider.createAuthToken(
+                    appProperties.getAuth().getTokenSecret(),
+                    new Date(now.getTime() + refreshTokenExpiry)
+            );
+            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+            return ApiResponse.success("token", accessToken.getToken());
+        }
+    }
+
 }

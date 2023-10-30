@@ -58,6 +58,24 @@ public class UserService {
         //user 저장
         return userRepository.save(newUser);
     }
+    public User oauthSignup(String userId,ProviderType providerType){
+        //중복 Id 체크
+        verifyExistsUserId(userId);
+
+        // 빌더 패턴을 사용하여 User 객체 생성
+        User newUser = User.builder()
+                .id(userId)
+                .password("abcdefg!!")
+                .pushAgree(false)
+                .emailVerifiedYn("Y")
+                .providerType(providerType)
+                .roleType(RoleType.USER)
+                .createdAt(LocalDateTime.now())
+                .modifiedAt(LocalDateTime.now())
+                .build();
+        //user 저장
+        return userRepository.save(newUser);
+    }
 
     public Optional<User> getUser(String id) {
         return userRepository.findById(id);
