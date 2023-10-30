@@ -3,7 +3,6 @@ import {SetBoardData} from '../util/dataConvert';
 
 export const fetchBoardData = async (url: string, token: string) => {
   try {
-    console.log(`보내는 토큰: ${token}`);
     const response = await axios.get(`${url}api/v1/tags`, {
       headers: {
         Authorization: `Bearer ${token}`,

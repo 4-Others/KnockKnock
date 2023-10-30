@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <Firebase.h>
 #import <KakaoOpenSDK/KakaoOpenSDK.h>
 
 @implementation AppDelegate
@@ -35,7 +36,7 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  [FIRApp configure];
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -46,6 +47,9 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+  if ([FIRApp defaultApp] == nil) { 
+      [FIRApp configure];
+  }
 }
 
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.

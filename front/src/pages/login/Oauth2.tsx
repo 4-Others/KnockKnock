@@ -1,17 +1,60 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {WebView} from 'react-native-webview';
-import {AuthProps} from '../../navigations/StackNavigator';
 import {variables} from '../../style/variables';
-import axios from 'axios';
-import Config from 'react-native-config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-const Oauth2: React.FC<any> = ({navigation}) => {
-  const OauthSignIn = (provider: string) => {
-    navigation.navigate('Redirect', {params: `${provider}`});
+interface onLoginProps {
+  onLogin: (id: string, token: string) => void;
+  onError: (error: string) => void;
+}
+
+const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
+  const GoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      const userInfo = await GoogleSignin.signIn();
+      console.log('Google Sign-In Success:', userInfo);
+    } catch (error) {
+      console.log('Google Sign-In Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com',
+    });
+  }, []);
+
+  //!-----------------------------------------------------------------------------
+
+  const KakaoSignIn = async () => {
+    KakaoLogin.login()
+      .then(result => {
+        console.log('Login Success', JSON.stringify(result, null, 2));
+        getProfile(result.accessToken);
+      })
+      .catch(error => {
+        if (error.code === 'E_CANCELLED_OPERATION') {
+          console.log('Login Cancel', error.message);
+        } else {
+          console.log(`Login Fail (code:${error.code})`, error.message);
+          onError('카카오 로그인에 실패했습니다.');
+        }
+      });
+  };
+
+  const getProfile = async (accessToken: string) => {
+    try {
+      const profile = await KakaoLogin.getProfile();
+      console.log('GetProfile Success', JSON.stringify(profile));
+
+      const id = profile.id;
+      onLogin(id, accessToken);
+    } catch (error) {
+      console.log('GetProfile Fail', error);
+      onError('프로필 정보를 가져오는 데 실패했습니다.');
+    }
   };
 
   return (
@@ -22,10 +65,10 @@ const Oauth2: React.FC<any> = ({navigation}) => {
         <View style={styles.partition} />
       </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity onPress={() => OauthSignIn('google')}>
+        <TouchableOpacity onPress={GoogleSignIn}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => OauthSignIn('kakao')}>
+        <TouchableOpacity onPress={KakaoSignIn}>
           <Image source={require('front/assets/image/kakao_login.png')} style={styles.logo} />
         </TouchableOpacity>
       </View>
@@ -33,15 +76,6 @@ const Oauth2: React.FC<any> = ({navigation}) => {
   );
 };
 
-export const OauthRedirectScreen: React.FC<AuthProps> = ({navigation, url, route}) => {
-  console.log('route:', route);
-  return (
-    <WebView
-      source={{uri: `${url}oauth2/authorization/${route.params.params}`}}
-      userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
-    />
-  );
-};
 export default Oauth2;
 
 const styles = StyleSheet.create({

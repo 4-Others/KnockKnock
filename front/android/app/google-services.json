@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "886031261795",
+    "project_id": "knockknock-1d805",
+    "storage_bucket": "knockknock-1d805.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886031261795:android:29bb0c9808f98bd6775856",
+        "android_client_info": {
+          "package_name": "com.front"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886031261795-c8pv9233po6n5dkrvil580aspetihq1a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.front",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0in_L5SqT1VSWCMdu7gK3wscyp6GZE54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

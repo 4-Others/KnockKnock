@@ -55,6 +55,12 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
     else setErrorMessage('');
   }, [password, id]);
 
+  const handleSocialLoginSuccess = (id: string, token: string) => {
+    if (autoLogin === true) storageSetValue('user', {id, token});
+    dispatch(setLogin({id, token}));
+    navigation.navigate('MainTab');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -127,10 +133,17 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
           <Text style={styles.signBtn}>가입하기</Text>
         </TouchableOpacity>
       </View>
-      <Oauth2 navigation={navigation} />
+      <Oauth2
+        onLogin={handleSocialLoginSuccess}
+        onError={(error: React.SetStateAction<string>) => {
+          setErrorMessage(error);
+        }}
+      />
     </SafeAreaView>
   );
 };
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
@@ -240,5 +253,3 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
 });
-
-export default Login;
