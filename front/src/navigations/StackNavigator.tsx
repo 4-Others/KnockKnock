@@ -16,6 +16,7 @@ import TabNavigator from './TabNavigator';
 import Search from '../pages/search/Search';
 import SearchResult from '../pages/search/SearchResult';
 import {ForgotId, ForgotPw} from '../pages/login/Forgot';
+import {OauthRedirectScreen} from '../pages/login/Oauth2';
 
 export interface AuthProps {
   route: any;
@@ -34,6 +35,9 @@ const AuthStack: React.FC = () => {
       </Stack.Screen>
       <Stack.Screen name="Login" options={{headerShown: false}}>
         {props => <Login {...props} url={url} />}
+      </Stack.Screen>
+      <Stack.Screen name="Redirect" options={{headerShown: false}}>
+        {props => <OauthRedirectScreen {...props} url={url} />}
       </Stack.Screen>
       <Stack.Screen name="ForgotId" options={{headerShown: false}}>
         {props => <ForgotId {...props} url={url} />}
