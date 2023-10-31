@@ -9,8 +9,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
-import {useNavigation, useIsFocused} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {GradientButton_L} from '../../components/GradientButton';
@@ -21,17 +19,9 @@ import {RootState} from '../../util/redux/store';
 import {updateProfile} from '../../util/redux/userSlice';
 import {VariablesKeys} from '../../style/variables';
 
-type navigationProp = StackNavigationProp<RootStackParamList, 'ProfileEdit'>;
-
-type RootStackParamList = {
-  ProfileEdit: undefined;
-};
-
 type boardDetailParams = {title: string; color: string; number: number; tagId: number};
 
 const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
-  const isFocused = useIsFocused();
-  const navigationEdit = useNavigation<navigationProp>();
   const user = useSelector((state: any) => state.user);
   const boardData = useSelector((state: RootState) => state.board);
   const dispatch = useDispatch();
@@ -48,7 +38,7 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
   };
 
   const navigateToProfileEdit = () => {
-    navigationEdit.navigate('ProfileEdit');
+    navigation.navigate('ProfileEdit');
   };
 
   const handleBoardPress = (params: boardDetailParams) => {
@@ -57,7 +47,7 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
 
   useEffect(() => {
     fetchUserInfo();
-  }, [isFocused]);
+  }, [route.params]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,15 +93,15 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
           <Text style={styles.userInfoSubTitle}>생년월일</Text>
           <Text>{user.birth ? user.birth : '생일을 입력하세요.'}</Text>
         </View>
-        <View style={styles.bottomButton}>
-          <GradientButton_L
-            text="로그아웃"
-            onPress={() => {
-              storageResetValue();
-              navigation.navigate('AuthSplach');
-            }}
-          />
-        </View>
+      </View>
+      <View style={styles.bottomButton}>
+        <GradientButton_L
+          text="로그아웃"
+          onPress={() => {
+            storageResetValue();
+            navigation.navigate('AuthSplach');
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -165,10 +155,11 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     marginTop: 'auto',
+    paddingRight: 24,
+    paddingLeft: 24,
   },
   userInfoContainer: {
     flexDirection: 'column',
-    // marginTop: 20,
   },
   boardList: {
     flexDirection: 'row',
