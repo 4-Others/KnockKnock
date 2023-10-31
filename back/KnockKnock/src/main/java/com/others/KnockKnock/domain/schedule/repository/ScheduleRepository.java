@@ -29,6 +29,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s where s.user.userId = :userId")
     List<Schedule> findAllByUserId(Long userId);
+    @Query("SELECT s FROM Schedule s where s.tag.tagId = :tagId")
+    List<Schedule> findAllByTagId(Long tagId);
 
     @Query("SELECT s FROM Schedule s join s.tag t where s.user.userId = :userId and t.name = :tagName")
     List<Schedule> findAllByUserIdAndTagName(Long userId, String tagName);

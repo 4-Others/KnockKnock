@@ -102,6 +102,10 @@ public class ScheduleService {
 
         scheduleRepository.delete(byScheduleIdAndUserId);
     }
+    public void deleteAllScheduleByTagId(Long tagId){
+        List<Schedule> schedules = scheduleRepository.findAllByTagId(tagId);
+        scheduleRepository.deleteAll(schedules);
+    }
 
     public List<ScheduleDto.Response> findAllSchedule(Long userId) {
         List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);

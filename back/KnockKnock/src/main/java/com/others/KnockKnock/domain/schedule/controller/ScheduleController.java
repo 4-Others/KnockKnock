@@ -100,4 +100,13 @@ public class ScheduleController {
 
         return ResponseEntity.noContent().build();
     }
+    @DeleteMapping("/deleteAll/{tag-id}")
+    public ResponseEntity<?> deleteAllCalendar(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @Positive @PathVariable("tag-id") Long tagId
+    ) {
+        scheduleService.deleteAllScheduleByTagId(tagId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
