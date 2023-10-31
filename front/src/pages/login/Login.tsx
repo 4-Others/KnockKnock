@@ -29,7 +29,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
     try {
       const token = await loginPost(data);
       if (autoLogin === true) storageSetValue('user', {id, token});
-      dispatch(setLogin({id, token}));
+      dispatch(setLogin({id, token, providerType: 'BASIC'}));
       navigation.navigate('MainTab');
       // 자동 로그인 정보 수집
     } catch (error: any) {
@@ -55,9 +55,9 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
     else setErrorMessage('');
   }, [password, id]);
 
-  const handleSocialLoginSuccess = (id: string, token: string) => {
+  const handleSocialLoginSuccess = (id: string, token: string, providerType: string) => {
     if (autoLogin === true) storageSetValue('user', {id, token});
-    dispatch(setLogin({id, token}));
+    dispatch(setLogin({id, token, providerType}));
     navigation.navigate('MainTab');
   };
 
@@ -134,6 +134,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
         </TouchableOpacity>
       </View>
       <Oauth2
+        url={url}
         onLogin={handleSocialLoginSuccess}
         onError={(error: React.SetStateAction<string>) => {
           setErrorMessage(error);
