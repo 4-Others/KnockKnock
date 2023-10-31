@@ -35,7 +35,7 @@ public class User{
     @Size(max = 100)
     private String username;
 
-    @Column(name = "EMAIL", unique = true)
+    @Column(name = "EMAIL")
     private String email;
 
     @JsonIgnore
