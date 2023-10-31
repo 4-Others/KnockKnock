@@ -1,37 +1,59 @@
+import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import React from 'react';
 import {variables} from '../../style/variables';
+import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import KakaoLogins from '@react-native-seoul/kakao-login';
-
-GoogleSignin.configure({
-  webClientId: '340169174026-hp6l0uudlrjnsiu2phk5mmf7mb91srrt.apps.googleusercontent.com',
-  offlineAccess: true,
-});
 
 interface onLoginProps {
-  onLogin: (loginState: boolean) => void;
+  onLogin: (id: string, token: string) => void;
+  onError: (error: string) => void;
 }
 
-const Oauth2: React.FC<onLoginProps> = ({onLogin}) => {
+const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
   const GoogleSignIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const userInfo = await GoogleSignin.signIn();
       console.log('Google Sign-In Success:', userInfo);
-      onLogin(true);
     } catch (error) {
       console.log('Google Sign-In Error:', error);
     }
   };
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com',
+    });
+  }, []);
+
+  //!-----------------------------------------------------------------------------
+
   const KakaoSignIn = async () => {
+    KakaoLogin.login()
+      .then(result => {
+        console.log('Login Success', JSON.stringify(result, null, 2));
+        getProfile(result.accessToken);
+      })
+      .catch(error => {
+        if (error.code === 'E_CANCELLED_OPERATION') {
+          console.log('Login Cancel', error.message);
+        } else {
+          console.log(`Login Fail (code:${error.code})`, error.message);
+          onError('카카오 로그인에 실패했습니다.');
+        }
+      });
+  };
+
+  const getProfile = async (accessToken: string) => {
     try {
-      const token = await KakaoLogins.login();
-      console.log('Kakao Sign-In Success:', token);
-      onLogin(true);
+      const profile = await KakaoLogin.getProfile();
+      console.log('GetProfile Success', JSON.stringify(profile));
+
+      const id = profile.id;
+      onLogin(id, accessToken);
     } catch (error) {
-      console.log('Kakao Sign-In Error:', error);
+      console.log('GetProfile Fail', error);
+      onError('프로필 정보를 가져오는 데 실패했습니다.');
     }
   };
 

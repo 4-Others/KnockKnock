@@ -23,7 +23,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
   const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
   const [openSwipeable, setOpenSwipeable] = React.useState<Swipeable | null>(null);
-
+  console.log('items:', JSON.stringify(items, null, 2)); //!
   const handleCloseSwipeable = () => {
     if (openSwipeable) {
       openSwipeable.close();
