@@ -1,22 +1,38 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {variables} from '../../style/variables';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import axios from 'axios';
 
 interface onLoginProps {
-  onLogin: (id: string, token: string) => void;
+  url?: string;
+  onLogin: (id: string, token: string, providerType: string) => void;
   onError: (error: string) => void;
 }
 
-const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
-  const GoogleSignIn = async () => {
+const Oauth2: React.FC<onLoginProps> = ({url, onLogin, onError}) => {
+  const oauthLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
     try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      const userInfo = await GoogleSignin.signIn();
-      console.log('Google Sign-In Success:', userInfo);
+      if (providerType === 'GOOGLE') {
+        const userInfo = await GoogleSignin.signIn();
+        oauthLogin2(userInfo.user.id, providerType);
+      } else {
+        const kakaoLogin = await KakaoLogin.login();
+        const profile = await KakaoLogin.getProfile();
+        oauthLogin2(profile.id, providerType);
+      }
     } catch (error) {
-      console.log('Google Sign-In Error:', error);
+      console.error(error);
+      onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
+    }
+  };
+
+  const oauthLogin2 = (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
+    if (url) {
+      axios
+        .post(`${url}api/v1/auth/oauth`, {userId, providerType})
+        .then(res => onLogin(userId, res.data.body.token, providerType));
     }
   };
 
@@ -26,37 +42,6 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
     });
   }, []);
 
-  //!-----------------------------------------------------------------------------
-
-  const KakaoSignIn = async () => {
-    KakaoLogin.login()
-      .then(result => {
-        console.log('Login Success', JSON.stringify(result, null, 2));
-        getProfile(result.accessToken);
-      })
-      .catch(error => {
-        if (error.code === 'E_CANCELLED_OPERATION') {
-          console.log('Login Cancel', error.message);
-        } else {
-          console.log(`Login Fail (code:${error.code})`, error.message);
-          onError('카카오 로그인에 실패했습니다.');
-        }
-      });
-  };
-
-  const getProfile = async (accessToken: string) => {
-    try {
-      const profile = await KakaoLogin.getProfile();
-      console.log('GetProfile Success', JSON.stringify(profile));
-
-      const id = profile.id;
-      onLogin(id, accessToken);
-    } catch (error) {
-      console.log('GetProfile Fail', error);
-      onError('프로필 정보를 가져오는 데 실패했습니다.');
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -65,10 +50,10 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
         <View style={styles.partition} />
       </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity onPress={GoogleSignIn}>
+        <TouchableOpacity onPress={() => oauthLogin('GOOGLE')}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={KakaoSignIn}>
+        <TouchableOpacity onPress={() => oauthLogin('KAKAO')}>
           <Image source={require('front/assets/image/kakao_login.png')} style={styles.logo} />
         </TouchableOpacity>
       </View>

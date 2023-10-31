@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
@@ -30,6 +30,7 @@ type RootStackParamList = {
 type boardDetailParams = {title: string; color: string; number: number; tagId: number};
 
 const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
+  const isFocused = useIsFocused();
   const navigationEdit = useNavigation<navigationProp>();
   const user = useSelector((state: any) => state.user);
   const boardData = useSelector((state: RootState) => state.board);
@@ -56,7 +57,7 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
 
   useEffect(() => {
     fetchUserInfo();
-  });
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,9 +99,9 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
             )}
           </ScrollView>
           <Text style={styles.userInfoSubTitle}>이름</Text>
-          <Text>{user.username}</Text>
+          <Text>{user.username ? user.username : '이름을 입력하세요.'}</Text>
           <Text style={styles.userInfoSubTitle}>생년월일</Text>
-          <Text>{user.birth}</Text>
+          <Text>{user.birth ? user.birth : '생일을 입력하세요.'}</Text>
         </View>
         <View style={styles.bottomButton}>
           <GradientButton_L

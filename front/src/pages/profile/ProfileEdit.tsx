@@ -169,46 +169,52 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
                 />
               </View>
             </View>
-            <View style={styles.listContainer}>
-              <Text style={styles.inputTitle}>비밀번호 변경</Text>
-              <View style={styles.inputContainer}>
-                <View style={styles.inputItem}>
-                  <TextInput
-                    placeholder="변경할 비밀번호"
-                    placeholderTextColor={variables.text_5}
-                    secureTextEntry={encryption}
-                    style={styles.input}
-                    onChangeText={text => changeUserInfoValue('password', text)}
-                    value={password}
-                  />
-                  <TouchableOpacity onPress={handleVisible}>
-                    {encryption ? (
-                      <Icon name="eye-off-outline" style={styles.icon} />
-                    ) : (
-                      <Icon name="eye-outline" style={styles.icon} />
-                    )}
-                  </TouchableOpacity>
+            {initialUserInfo.providerType === 'BASIC' ? (
+              <View style={styles.listContainer}>
+                <Text style={styles.inputTitle}>비밀번호 변경</Text>
+                <View style={styles.inputContainer}>
+                  <View style={styles.inputItem}>
+                    <TextInput
+                      placeholder="변경할 비밀번호"
+                      placeholderTextColor={variables.text_5}
+                      secureTextEntry={encryption}
+                      style={styles.input}
+                      onChangeText={text => changeUserInfoValue('password', text)}
+                      value={password}
+                    />
+                    <TouchableOpacity onPress={handleVisible}>
+                      {encryption ? (
+                        <Icon name="eye-off-outline" style={styles.icon} />
+                      ) : (
+                        <Icon name="eye-outline" style={styles.icon} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.inputItemLast}>
+                    <TextInput
+                      placeholder="변경할 비밀번호 확인"
+                      placeholderTextColor={variables.text_5}
+                      secureTextEntry={encryption}
+                      style={styles.input}
+                      onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
+                      value={passwordConfirm}
+                    />
+                    <TouchableOpacity onPress={handleVisible}>
+                      {encryption ? (
+                        <Icon name="eye-off-outline" style={styles.icon} />
+                      ) : (
+                        <Icon name="eye-outline" style={styles.icon} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.inputItemLast}>
-                  <TextInput
-                    placeholder="변경할 비밀번호 확인"
-                    placeholderTextColor={variables.text_5}
-                    secureTextEntry={encryption}
-                    style={styles.input}
-                    onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
-                    value={passwordConfirm}
-                  />
-                  <TouchableOpacity onPress={handleVisible}>
-                    {encryption ? (
-                      <Icon name="eye-off-outline" style={styles.icon} />
-                    ) : (
-                      <Icon name="eye-outline" style={styles.icon} />
-                    )}
-                  </TouchableOpacity>
-                </View>
+                {
+                  <Text style={styles.errormessage}>
+                    {passwordError(password, passwordConfirm)}
+                  </Text>
+                }
               </View>
-              {<Text style={styles.errormessage}>{passwordError(password, passwordConfirm)}</Text>}
-            </View>
+            ) : null}
           </View>
         </ScrollView>
         <View style={styles.bottomButton}>

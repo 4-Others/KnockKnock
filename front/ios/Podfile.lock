@@ -540,8 +540,6 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
-  - react-native-webview (13.6.2):
-    - React-Core
   - React-NativeModulesApple (0.72.0):
     - hermes-engine
     - React-callinvoker
@@ -766,7 +764,6 @@ DEPENDENCIES:
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -891,8 +888,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
-  react-native-webview:
-    :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-perflogger:
@@ -1012,7 +1007,6 @@ SPEC CHECKSUMS:
   react-native-image-picker: 3250bb87252d2e7b2236a57bc3e6e227ce1826bf
   react-native-pager-view: 64a540ca9d09bca730626c4714e56a303620c25f
   react-native-safe-area-context: 2f4cee1dc8828f67fcc33cc865a9093dfedab446
-  react-native-webview: 9821d1582b667123b133c81577ef27ea48aa93d2
   React-NativeModulesApple: 038cd625999ff352fc13d11fd335ea7509794599
   React-perflogger: 684a11499a0589cc42135d6d5cc04d0e4e0e261a
   React-RCTActionSheet: 00b0a4c382a13b834124fa3f541a7d8d1d56efb9

@@ -8,6 +8,7 @@ const initialState = {
   birth: '',
   pushAgree: false,
   token: '',
+  providerType: '',
 };
 
 export const userSlice = createSlice({
@@ -18,6 +19,7 @@ export const userSlice = createSlice({
     setLogin(state, action) {
       state.id = action.payload.id;
       state.token = action.payload.token;
+      state.providerType = action.payload.providerType;
     },
     setProfile(state, action) {
       state.userId = action.payload.userId;
