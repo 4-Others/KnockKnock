@@ -91,7 +91,7 @@ public class User{
         this.userId = userId;
         this.id = id;
         this.password = "NO_PASS";
-        this.email = email;
+        this.email = email != null ? email : "NO_EMAIL";
         this.emailVerifiedYn = emailVerifiedYn;
         this.birth = birth;
         this.pushAgree = pushAgree;
