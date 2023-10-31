@@ -117,8 +117,8 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
       <Header
         title="프로필 편집"
         nextFunc={() => {
-          changeProfileFetch();
-          navigation.goBack();
+          const newItems = changeProfileFetch();
+          navigation.navigate('Profile', userInfo);
         }}
       />
       <View style={styles.contentLayout}>
