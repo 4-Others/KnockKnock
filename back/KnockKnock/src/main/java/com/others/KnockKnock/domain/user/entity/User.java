@@ -7,6 +7,8 @@ import com.others.KnockKnock.security.oauth.entity.RoleType;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
+import reactor.util.annotation.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,6 +38,7 @@ public class User{
     private String username;
 
     @Column(name = "EMAIL")
+    @Nullable
     private String email;
 
     @JsonIgnore
@@ -88,7 +91,7 @@ public class User{
         this.userId = userId;
         this.id = id;
         this.password = "NO_PASS";
-        this.email = email != null ? email : "NO_EMAIL";
+        this.email = email;
         this.emailVerifiedYn = emailVerifiedYn;
         this.birth = birth;
         this.pushAgree = pushAgree;
