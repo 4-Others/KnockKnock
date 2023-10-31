@@ -65,6 +65,7 @@ public class UserService {
         // 빌더 패턴을 사용하여 User 객체 생성
         User newUser = User.builder()
                 .id(userId)
+                .email(null)
                 .password("abcdefg!!")
                 .pushAgree(false)
                 .emailVerifiedYn("Y")
