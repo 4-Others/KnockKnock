@@ -17,7 +17,6 @@ export const userSlice = createSlice({
   reducers: {
     // 모든 사용자 정보 저장
     setLogin(state, action) {
-      state.id = action.payload.id;
       state.token = action.payload.token;
       state.providerType = action.payload.providerType;
     },

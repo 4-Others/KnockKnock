@@ -74,7 +74,7 @@ export interface SearchData {
   endAt: string;
 }
 
-export const convertItemList = (res: ScheduleData[]) => {
+export const convertScheduleData = (res: ScheduleData[]) => {
   const newItems: ScheduleItems = {};
 
   res.forEach((item: ScheduleData) => {
@@ -93,3 +93,25 @@ export const convertItemList = (res: ScheduleData[]) => {
   });
   return newItems;
 };
+
+export const convertTagData = (fetchedData: ScheduleData[]) => {
+  const newItems: ScheduleItems = {};
+  const formatDateToUnifiedFormat = (dateString: string): string => {
+    return format(new Date(dateString), 'yyyy-MM-dd HH:mm:ss');
+  };
+
+  fetchedData.forEach((item: ScheduleData) => {
+    item.startAt = formatDateToUnifiedFormat(item.startAt);
+    item.endAt = formatDateToUnifiedFormat(item.endAt);
+
+    const convertedData: ScheduleData = item;
+    const dateKey = format(new Date(convertedData.startAt), 'yyyy-MM-dd');
+    if (!newItems[dateKey]) {
+      newItems[dateKey] = [];
+    }
+    newItems[dateKey].push(convertedData);
+  });
+  return newItems;
+};
+
+export {};

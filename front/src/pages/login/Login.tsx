@@ -12,12 +12,12 @@ import {useDispatch} from 'react-redux';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {isPasswordValid, storageSetValue} from '../../util/authUtil';
 import {setLogin} from '../../util/redux/userSlice';
-import {loginPost} from '../../api/authApi';
+import {userAPI} from '../../api/commonApi';
 import {variables} from '../../style/variables';
 import {GradientButton_L} from '../../components/GradientButton';
 import Oauth2 from './Oauth2';
 
-const Login: React.FC<AuthProps> = ({url, navigation}) => {
+const Login: React.FC<AuthProps> = ({navigation}) => {
   const [data, setData] = useState({id: '', password: ''});
   const {password, id} = data;
   const [masking, setMasking] = React.useState(true);
@@ -25,17 +25,20 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
 
-  const loginAuth = async () => {
-    try {
-      const token = await loginPost(data);
-      if (autoLogin === true) storageSetValue('user', {id, token});
-      dispatch(setLogin({id, token, providerType: 'BASIC'}));
-      navigation.navigate('MainTab');
-      // 자동 로그인 정보 수집
-    } catch (error: any) {
-      console.log(error);
-      setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
-    }
+  const onLogin = (token: string, providerType: string) => {
+    if (autoLogin === true) storageSetValue('token', {token});
+    dispatch(setLogin({token, providerType}));
+    navigation.navigate('MainTab');
+  };
+
+  const loginAuth = () => {
+    userAPI
+      .post(`auth/login`, data)
+      .then(res => onLogin(res.data.body.token, 'BASIC'))
+      .catch(error => {
+        console.log(error);
+        setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
+      });
   };
 
   const handleSignUp = () => {
@@ -54,12 +57,6 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
       setErrorMessage('8자리 이상 영문, 숫자, 특수문자 1개를 포함한 비밀번호를 입력하세요.');
     else setErrorMessage('');
   }, [password, id]);
-
-  const handleSocialLoginSuccess = (id: string, token: string, providerType: string) => {
-    if (autoLogin === true) storageSetValue('user', {id, token});
-    dispatch(setLogin({id, token, providerType}));
-    navigation.navigate('MainTab');
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -134,8 +131,7 @@ const Login: React.FC<AuthProps> = ({url, navigation}) => {
         </TouchableOpacity>
       </View>
       <Oauth2
-        url={url}
-        onLogin={handleSocialLoginSuccess}
+        onLogin={onLogin}
         onError={(error: React.SetStateAction<string>) => {
           setErrorMessage(error);
         }}

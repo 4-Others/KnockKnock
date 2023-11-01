@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, Text, SafeAreaView, StyleSheet, Alert, ScrollView} from 'react-native';
+import {View, Text, SafeAreaView, StyleSheet, Alert, ScrollView} from 'react-native';
 import Header from '../../components/Header';
 import {variables} from '../../style/variables';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {InputArea} from '../signUp/SignUpComponent';
 import {isEmaildValid} from '../../util/authUtil';
-import {GradientButton_L} from '../../components/GradientButton';
-import axios from 'axios';
+import {userAPI} from '../../api/commonApi';
 
-const ForgotId: React.FC<AuthProps> = ({url, navigation}) => {
+const ForgotId: React.FC<AuthProps> = ({navigation}) => {
   const [inputInfo, setInputInfo] = useState({email: '', randomKey: ''});
   const {email, randomKey} = inputInfo;
   const [complete, setComplete] = useState({resEmail: false, resRandomKey: false});
@@ -21,29 +20,22 @@ const ForgotId: React.FC<AuthProps> = ({url, navigation}) => {
       : setComplete({...complete, [type]: value});
   };
 
-  const emailPost = async () => {
-    try {
-      if (url) {
-        const res = await axios.post(`${url}api/v1/users/me/id`, {email});
-        if (res.status) changeState('resEmail', true);
-      }
-    } catch (error) {
-      setError('유효하지 않은 이메일입니다.');
-    }
+  const emailPost = () => {
+    userAPI
+      .post('/users/me/id', {email})
+      .then(res => changeState('resEmail', true))
+      .catch(error => setError('유효하지 않은 이메일입니다.'));
   };
 
-  const randomKeyPost = async () => {
-    try {
-      if (url) {
-        const res = await axios.post(`${url}api/v1/users/me/confirm-id`, {email, randomKey});
-        console.log(res);
+  const randomKeyPost = () => {
+    userAPI
+      .post('/users/me/confirm-id', {email, randomKey})
+      .then(res => {
         changeState('resRandomKey', true);
         Alert.alert('입력하신 이메일로 회원 아이디를 전송했습니다.');
         navigation.goBack();
-      }
-    } catch (error: any) {
-      setError('회원정보를 찾을 수 없습니다.');
-    }
+      })
+      .catch(error => setError('회원정보를 찾을 수 없습니다.'));
   };
 
   useEffect(() => {
@@ -93,29 +85,24 @@ const ForgotPw: React.FC<AuthProps> = ({url, navigation}) => {
       : setComplete({...complete, [type]: value});
   };
 
-  const emailPost = async () => {
-    try {
-      if (url) {
-        const res = await axios.post(`${url}api/v1/users/me/pw`, {id, email});
-        if (res.status) changeState('resEmail', true);
-      }
-    } catch (error) {
-      console.error('유효하지 않은 회원정보입니다.');
-    }
+  const emailPost = () => {
+    userAPI
+      .post('/users/me/pw', {id, email})
+      .then(res => {
+        changeState('resEmail', true);
+      })
+      .catch(error => setError('유효하지 않은 회원정보입니다.'));
   };
 
-  const randomKeyPost = async () => {
-    try {
-      if (url) {
-        const res = await axios.post(`${url}api/v1/users/me/confirm-pw`, {id, email, randomKey});
-        console.log(res);
+  const randomKeyPost = () => {
+    userAPI
+      .post('/users/me/confirm-pw', {id, email, randomKey})
+      .then(res => {
         changeState('resRandomKey', true);
         Alert.alert('입력하신 이메일로 회원 아이디를 전송했습니다.');
         navigation.goBack();
-      }
-    } catch (error: any) {
-      console.error('회원정보를 찾을 수 없습니다.');
-    }
+      })
+      .catch(error => setError('회원정보를 찾을 수 없습니다.'));
   };
 
   useEffect(() => {

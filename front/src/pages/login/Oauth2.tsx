@@ -1,17 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {variables} from '../../style/variables';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import axios from 'axios';
-
+import {userAPI} from '../../api/commonApi';
 interface onLoginProps {
-  url?: string;
-  onLogin: (id: string, token: string, providerType: string) => void;
+  onLogin: (token: string, providerType: string) => void;
   onError: (error: string) => void;
 }
 
-const Oauth2: React.FC<onLoginProps> = ({url, onLogin, onError}) => {
+const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
   const oauthLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       if (providerType === 'GOOGLE') {
@@ -23,17 +21,15 @@ const Oauth2: React.FC<onLoginProps> = ({url, onLogin, onError}) => {
         oauthLogin2(profile.id, providerType);
       }
     } catch (error) {
-      console.error(error);
       onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
     }
   };
 
   const oauthLogin2 = (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
-    if (url) {
-      axios
-        .post(`${url}api/v1/auth/oauth`, {userId, providerType})
-        .then(res => onLogin(userId, res.data.body.token, providerType));
-    }
+    userAPI
+      .post(`/auth/oauth`, {userId, providerType})
+      .then(res => onLogin(res.data.body.token, providerType))
+      .catch(error => onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`));
   };
 
   useEffect(() => {

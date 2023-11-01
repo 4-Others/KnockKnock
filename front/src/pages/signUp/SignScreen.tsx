@@ -1,13 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {variables} from '../../style/variables';
 import {isEmaildValid, validErrorMessage, isBirthValid, isPasswordValid} from '../../util/authUtil';
 import {InputArea, CheckBtn} from './SignUpComponent';
 import {GradientButton_L} from '../../components/GradientButton';
-import {loginPost} from '../../api/authApi';
 import {setLogin} from '../../util/redux/userSlice';
+import {userAPI} from '../../api/commonApi';
 
 type SignScreenProps = {
   route: any;
@@ -219,7 +218,7 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
 
   const userInfoThenEmailPost = async () => {
     try {
-      const response = await axios.post(`${url}api/v1/users/signup`, userInfo);
+      const response = await userAPI.post(`users/signup`, userInfo);
       if (response.status === 200) {
         console.log('usersAPI 성공');
         const formData = new FormData();
@@ -236,7 +235,7 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
           ],
         };
         try {
-          const emailResponse = await axios.post(`${url}api/v1/emails/send`, formData, headers);
+          const emailResponse = await userAPI.post(`emails/send`, formData, headers);
           if (emailResponse.status === 200) {
             console.log('emailAPI 성공');
             setError('');
@@ -307,14 +306,18 @@ const SignVerifyEmalInfo: React.FC<DataPostScreenProps> = ({route, navigation, u
     if (route.params) {
       const {id, email, password} = route.params;
       try {
-        const key = {tokenOrKey, email, password};
-        const response = await axios.post(`${url}api/v1/emails/verify`, key);
+        const response = await userAPI.post('emails/verify', {
+          tokenOrKey,
+          email,
+          password,
+        });
         if (response.status === 200) {
           console.log('verifyKeyAPI 성공');
           try {
-            const token = await loginPost({id, password});
+            const res = await userAPI.post('auth/login', {id, password});
+            const token = res.data.body.token;
             setError('');
-            dispatch(setLogin({id, token}));
+            dispatch(setLogin({token, providerType: 'BASIC'}));
             setComplete(true);
           } catch (error: any) {
             console.log('로그인 실패', error.request);
