@@ -65,8 +65,8 @@ cors:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    #1분 / 하루는 86400000
-    tokenExpiry: 60000
+    #5분 / 하루는 86400000
+    tokenExpiry: 300000
     #7일
     refreshTokenExpiry: 604800000
   oauth2:
