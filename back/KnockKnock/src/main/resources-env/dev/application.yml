@@ -65,7 +65,9 @@ cors:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpiry: 1800000
+    #하루
+    tokenExpiry: 86400000
+    #7일
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris: https://knockknockofficial.shop
