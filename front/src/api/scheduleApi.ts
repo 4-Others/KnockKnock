@@ -3,7 +3,7 @@ import {ScheduleData, SetScheduleData} from '../util/dataConvert';
 import {format} from 'date-fns';
 
 type ScheduleItems = Record<string, ScheduleData[]>;
-
+//! 변경완료
 export const fetchScheduleItems = async (url: string, token: string): Promise<ScheduleItems> => {
   try {
     const response = await axios.get(`${url}api/v1/schedule`, {
@@ -34,6 +34,7 @@ export const fetchScheduleItems = async (url: string, token: string): Promise<Sc
   }
 };
 
+//! 변경완료
 export const fetchScheduleWithTag = async (
   url: string,
   token: string,
@@ -69,6 +70,7 @@ export const fetchScheduleWithTag = async (
   }
 };
 
+//! 변경완료
 export const postScheduleItem = async (url: string, token: string, data: SetScheduleData) => {
   try {
     const response = await axios.post(`${url}api/v1/schedule`, data, {
@@ -80,7 +82,7 @@ export const postScheduleItem = async (url: string, token: string, data: SetSche
     throw error;
   }
 };
-
+//! 변경완료
 export const patchScheduleItem = async (
   url: string,
   token: string,
@@ -97,7 +99,7 @@ export const patchScheduleItem = async (
     return false;
   }
 };
-
+//! 변경완료
 export const deleteScheduleItem = async (url: string, token: string, scheduleId: number) => {
   try {
     const response = await axios.delete(`${url}api/v1/schedule/${scheduleId}`, {

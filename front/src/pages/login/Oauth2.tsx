@@ -4,37 +4,40 @@ import {variables} from '../../style/variables';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {userAPI} from '../../api/commonApi';
+import Config from 'react-native-config';
+
 interface onLoginProps {
-  onLogin: (token: string, providerType: string) => void;
+  onLogin: (token: string) => void;
   onError: (error: string) => void;
 }
 
 const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
-  const oauthLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
+  const socialLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       if (providerType === 'GOOGLE') {
         const userInfo = await GoogleSignin.signIn();
-        oauthLogin2(userInfo.user.id, providerType);
+        postId(userInfo.user.id, providerType);
       } else {
         const kakaoLogin = await KakaoLogin.login();
         const profile = await KakaoLogin.getProfile();
-        oauthLogin2(profile.id, providerType);
+        postId(profile.id, providerType);
       }
     } catch (error) {
       onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
     }
   };
-
-  const oauthLogin2 = (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
-    userAPI
-      .post(`/auth/oauth`, {userId, providerType})
-      .then(res => onLogin(res.data.body.token, providerType))
-      .catch(error => onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`));
+  const postId = async (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
+    try {
+      const res = await userAPI.post(`auth/oauth`, {userId, providerType});
+      const {token} = res.data.body;
+      onLogin(token);
+    } catch (error) {
+      onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
+    }
   };
-
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com',
+      webClientId: Config.API_GOOGLE_ID,
     });
   }, []);
 
@@ -46,10 +49,10 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
         <View style={styles.partition} />
       </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity onPress={() => oauthLogin('GOOGLE')}>
+        <TouchableOpacity onPress={() => socialLogin('GOOGLE')}>
           <Image source={require('front/assets/image/google_login.png')} style={styles.logo} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => oauthLogin('KAKAO')}>
+        <TouchableOpacity onPress={() => socialLogin('KAKAO')}>
           <Image source={require('front/assets/image/kakao_login.png')} style={styles.logo} />
         </TouchableOpacity>
       </View>

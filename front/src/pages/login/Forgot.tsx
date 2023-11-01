@@ -22,14 +22,14 @@ const ForgotId: React.FC<AuthProps> = ({navigation}) => {
 
   const emailPost = () => {
     userAPI
-      .post('/users/me/id', {email})
+      .post('users/me/id', {email})
       .then(res => changeState('resEmail', true))
       .catch(error => setError('유효하지 않은 이메일입니다.'));
   };
 
   const randomKeyPost = () => {
     userAPI
-      .post('/users/me/confirm-id', {email, randomKey})
+      .post('users/me/confirm-id', {email, randomKey})
       .then(res => {
         changeState('resRandomKey', true);
         Alert.alert('입력하신 이메일로 회원 아이디를 전송했습니다.');
@@ -87,7 +87,7 @@ const ForgotPw: React.FC<AuthProps> = ({url, navigation}) => {
 
   const emailPost = () => {
     userAPI
-      .post('/users/me/pw', {id, email})
+      .post('users/me/pw', {id, email})
       .then(res => {
         changeState('resEmail', true);
       })
@@ -96,7 +96,7 @@ const ForgotPw: React.FC<AuthProps> = ({url, navigation}) => {
 
   const randomKeyPost = () => {
     userAPI
-      .post('/users/me/confirm-pw', {id, email, randomKey})
+      .post('users/me/confirm-pw', {id, email, randomKey})
       .then(res => {
         changeState('resRandomKey', true);
         Alert.alert('입력하신 이메일로 회원 아이디를 전송했습니다.');

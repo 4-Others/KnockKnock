@@ -17,16 +17,13 @@ export const userSlice = createSlice({
   reducers: {
     // 모든 사용자 정보 저장
     setLogin(state, action) {
-      state.token = action.payload.token;
-      state.providerType = action.payload.providerType;
-    },
-    setProfile(state, action) {
       state.userId = action.payload.userId;
       state.id = action.payload.id;
       state.email = action.payload.email;
       state.username = action.payload.username;
       state.birth = action.payload.birth;
       state.pushAgree = action.payload.pushAgree;
+      state.providerType = action.payload.providerType;
       state.token = action.payload.token;
     },
     updateProfile(state, action) {
@@ -38,5 +35,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const {setLogin, setProfile, updateProfile} = userSlice.actions;
+export const {setLogin, updateProfile} = userSlice.actions;
 export default userSlice;

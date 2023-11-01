@@ -15,51 +15,42 @@ import {Switch} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {validErrorMessage} from '../../util/authUtil';
 import {AuthProps} from '../../navigations/StackNavigator';
-import axios from 'axios';
+import {updateProfile} from '../../util/redux/userSlice';
 import {GradientButton_L} from '../../components/GradientButton';
 import {storageResetValue} from '../../util/authUtil';
+import {userAPI} from '../../api/commonApi';
 
 const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
-  const initialUserInfo = useSelector((state: any) => state.user);
+  const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.user);
   const [userInfo, setUserInfo] = useState({username: '', id: '', birth: '', pushAgree: false});
-  const [passwordInfo, setPasswordInfo] = useState({password: '', passwordConfirm: ''});
+  const [passwordInfo, setPasswordInfo] = useState({password: '', newPassword: ''});
   const [encryption, setEncryption] = useState(false);
   const [visible, setVisible] = useState(false);
   const {username, id, birth, pushAgree} = userInfo;
-  const {password, passwordConfirm} = passwordInfo;
-  const header = {
-    headers: {Authorization: `Bearer ${initialUserInfo.token}`},
-  };
+  const {password, newPassword} = passwordInfo;
 
   const changeProfileFetch = async () => {
     try {
-      if (url) {
-        const changeUserInfo = {
-          username: username !== '' ? username : initialUserInfo.username,
-          id: id !== '' ? id : initialUserInfo.id,
-          birth: birth !== '' ? birth : initialUserInfo.birth,
-          pushAgree,
-        };
-        const userInfoRes = await axios.patch(`${url}api/v1/users`, changeUserInfo, header);
-        if (password.length > 0 && passwordConfirm.length > 0) {
-          const passwordRes = await axios.patch(
-            `${url}api/v1/users/password`,
-            {newPassword: passwordConfirm},
-            header,
-          );
-        }
-        Alert.alert('회원정보가 변경되었습니다.');
+      const userInfoRes = await userAPI.patch('users', user.token, userInfo);
+      if (password.length > 0 && newPassword.length > 0) {
+        const passwordRes = await userAPI.patch('users/password', user.token, {
+          newPassword,
+        });
       }
+      dispatch(updateProfile({birth, id, pushAgree, username}));
+      Alert.alert('회원정보가 변경되었습니다.');
+      navigation.navigate('Profile');
     } catch (error) {
       console.error('회원정보 변경 실패');
     }
   };
 
   const changeUserInfoValue = (type: string, value: string | Boolean) => {
-    type.includes('password')
+    type.toLowerCase().includes('password')
       ? setPasswordInfo({...passwordInfo, [type]: value})
       : setUserInfo({...userInfo, [type]: value});
   };
@@ -100,27 +91,25 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
 
   const cancellationUser = async () => {
     try {
-      const res = await axios.delete(`${url}api/v1/users/delete`, header);
+      const res = await userAPI.delete('users/delete', user.token);
       if (res) Alert.alert('회원탈퇴가 완료되었습니다.');
     } catch (error) {
       if (error) Alert.alert('회원탈퇴가 실패하었습니다.');
     }
   };
 
+  const profileBack = () => {
+    changeProfileFetch();
+  };
+
   useEffect(() => {
-    const {username, id, birth, pushAgree} = initialUserInfo;
+    const {username, id, birth, pushAgree} = user;
     setUserInfo({username, id, birth, pushAgree});
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="프로필 편집"
-        nextFunc={() => {
-          const newItems = changeProfileFetch();
-          navigation.navigate('Profile', userInfo);
-        }}
-      />
+      <Header title="프로필 편집" nextFunc={profileBack} />
       <View style={styles.contentLayout}>
         <ScrollView>
           <View style={styles.listContainer}>
@@ -169,7 +158,7 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
                 />
               </View>
             </View>
-            {initialUserInfo.providerType === 'BASIC' ? (
+            {user.providerType === 'LOCAL' ? (
               <View style={styles.listContainer}>
                 <Text style={styles.inputTitle}>비밀번호 변경</Text>
                 <View style={styles.inputContainer}>
@@ -196,8 +185,8 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
                       placeholderTextColor={variables.text_5}
                       secureTextEntry={encryption}
                       style={styles.input}
-                      onChangeText={text => changeUserInfoValue('passwordConfirm', text)}
-                      value={passwordConfirm}
+                      onChangeText={text => changeUserInfoValue('newPassword', text)}
+                      value={newPassword}
                     />
                     <TouchableOpacity onPress={handleVisible}>
                       {encryption ? (
@@ -208,11 +197,7 @@ const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                {
-                  <Text style={styles.errormessage}>
-                    {passwordError(password, passwordConfirm)}
-                  </Text>
-                }
+                {<Text style={styles.errormessage}>{passwordError(password, newPassword)}</Text>}
               </View>
             ) : null}
           </View>

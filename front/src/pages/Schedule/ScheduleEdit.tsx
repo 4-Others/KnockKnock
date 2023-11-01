@@ -6,11 +6,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {postBoardReducer, setBoardReducer} from '../../util/redux/boardSlice';
-import {patchScheduleItem} from '../../api/scheduleApi';
-import {fetchBoardData, postBoardData} from '../../api/boardApi';
 import {SetBoardData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleEditOption from './ScheduleEditOption';
+import {scheduleAPI} from '../../api/commonApi';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {
@@ -79,7 +78,7 @@ const ScheduleEdit = ({route}: any) => {
           );
 
           if (!tagExists && updateData.tag.name && updateData.tag.color) {
-            boardResponse = await postBoardData(url, user.token, updateData.tag);
+            boardResponse = await scheduleAPI.tagPost(user.token, updateData.tag);
             dispatch(postBoardReducer(boardResponse.body.data));
             const newBoardId = boardResponse.body.data.tagId;
             finalUpdateData.tagId = newBoardId;
@@ -88,15 +87,14 @@ const ScheduleEdit = ({route}: any) => {
           }
         }
 
-        const result = await patchScheduleItem(
-          url,
+        const result = await scheduleAPI.schedulePatch(
           user.token,
           updateData.scheduleId,
           finalUpdateData,
         );
         if (typeof result !== 'boolean' && result !== undefined) {
           dispatch(setScheduleReducer(result));
-          const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
+          const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
           dispatch(setBoardReducer(tagResponse));
 
           navigation.goBack();

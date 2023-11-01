@@ -6,11 +6,9 @@ import {SearchData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import {AuthProps} from '../../navigations/StackNavigator';
-import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
-import {ScheduleData} from '../../util/dataConvert';
-import {format} from 'date-fns';
+import {scheduleAPI} from '../../api/commonApi';
 
 const Search: React.FC<AuthProps> = ({url, navigation}) => {
   const dateFormat = (date: Date) => date.toISOString().split('T')[0];
@@ -59,31 +57,8 @@ const Search: React.FC<AuthProps> = ({url, navigation}) => {
 
   const fetchSearchData = async () => {
     try {
-      const res = await axios.get(`${url}api/v1/schedule/search`, {
-        headers: {Authorization: `Bearer ${user.token}`},
-        params: {
-          keyword,
-          startAt: `${startAt} 00:00:00`,
-          endAt: `${endAt} 23:59:59`,
-        },
-      });
-      const fetchedData = res.data.body.data;
-
-      const newItems: ScheduleItems = {};
-
-      fetchedData.forEach((item: ScheduleData) => {
-        if (item.tag === null) {
-          item.tag = {
-            name: '전체',
-            color: '#757575',
-            tagId: 0,
-          };
-        }
-        const dateKey = format(new Date(item.startAt), 'yyyy-MM-dd');
-        if (!newItems[dateKey]) {
-          newItems[dateKey] = [];
-        }
-        newItems[dateKey].push(item);
+      const newItems = await scheduleAPI.searchGet(user.token, {
+        params: {keyword, startAt: `${startAt} 00:00:00`, endAt: `${endAt} 23:59:59`},
       });
       setItems(newItems);
     } catch (error: any) {

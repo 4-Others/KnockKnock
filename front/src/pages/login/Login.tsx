@@ -25,20 +25,26 @@ const Login: React.FC<AuthProps> = ({navigation}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
 
-  const onLogin = (token: string, providerType: string) => {
-    if (autoLogin === true) storageSetValue('token', {token});
-    dispatch(setLogin({token, providerType}));
-    navigation.navigate('MainTab');
+  const onLogin = async (token: string) => {
+    try {
+      const res = await userAPI.get('users', token);
+      const {userId, birth, id, email, providerType, pushAgree, username} = res.data.body.data;
+      dispatch(setLogin({token, userId, birth, id, email, providerType, pushAgree, username}));
+      if (autoLogin === true) storageSetValue('token', {token});
+      navigation.navigate('MainTab');
+    } catch (error) {
+      setErrorMessage('유저 정보를 불러오지 못했습니다.');
+    }
   };
 
-  const loginAuth = () => {
-    userAPI
-      .post(`auth/login`, data)
-      .then(res => onLogin(res.data.body.token, 'BASIC'))
-      .catch(error => {
-        console.log(error);
-        setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
-      });
+  const loginAuth = async () => {
+    try {
+      const res = await userAPI.post('auth/login', data);
+      const {token} = res.data.body;
+      onLogin(token);
+    } catch (error) {
+      setErrorMessage('아이디와 비밀번호를 확인해 주세요.');
+    }
   };
 
   const handleSignUp = () => {

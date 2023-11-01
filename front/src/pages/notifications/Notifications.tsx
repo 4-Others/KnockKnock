@@ -4,7 +4,7 @@ import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
-import {notificationListener} from '../../api/notificationApi';
+import {scheduleAPI} from '../../api/commonApi';
 
 export interface notificationData {
   createdAt: string;
@@ -52,8 +52,8 @@ const Notifications: React.FC = () => {
   }
 
   useEffect(() => {
-    notificationListener.getNotification(url, token).then(items => setNotificationDatas(items));
-  }, [notificationListener.deleteNotification]);
+    scheduleAPI.notificationGet(token).then(items => setNotificationDatas(items));
+  }, [scheduleAPI.notificationDelete]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -63,15 +63,14 @@ const Notifications: React.FC = () => {
           notificationDatas.map(data => {
             return (
               <TouchableOpacity
-                onPress={() =>
-                  notificationListener.deleteNotification(
-                    url,
-                    token,
-                    [data.notificationId],
-                    setNotificationDatas,
-                    notificationDatas,
-                  )
-                }
+                onPress={() => {
+                  scheduleAPI.notificationDelete(token, [data.notificationId]);
+                  setNotificationDatas(
+                    notificationDatas.filter(
+                      item => ![data.notificationId].includes(item.notificationId),
+                    ),
+                  );
+                }}
                 style={styles.notificationContainer}
                 key={data.notificationId}>
                 <View

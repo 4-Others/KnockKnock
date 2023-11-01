@@ -15,9 +15,9 @@ import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
 import {variables} from '../../../style/variables';
-import {deleteBoardData} from '../../../api/boardApi';
 import {BoardItem} from '../../../util/dataConvert';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {scheduleAPI} from '../../../api/commonApi';
 
 interface BoardItemProps {
   tagId: number;
@@ -72,7 +72,7 @@ const Board: React.FC<BoardItemProps> = ({
         `해당 보드에 ${boardToDelete.scheduleCount}개의 스케줄이 있어\n보드를 삭제할 수 없습니다.`,
       );
     } else {
-      const success = await deleteBoardData(url, user.token, boardId);
+      const success = await scheduleAPI.tagdelete(user.token, boardId);
       if (success) {
         const updatedItems = boardData.filter((item: BoardItem) => item.tagId !== boardId);
         setBoardData(updatedItems);
