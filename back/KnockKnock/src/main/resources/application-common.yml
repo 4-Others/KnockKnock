@@ -1,9 +1,9 @@
 jwt:
   secret: ${JWT_SECRET_KEY}
-  expirationMs: 3600000
+  expirationMs: 1800000
 token:
   expiration:
-    access: 86400000
+    access: 1800000
     refresh: 31536000000
 spring:
   security:
@@ -49,7 +49,7 @@ cors:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpiry: 86400000
+    tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris: http://localhost:8080

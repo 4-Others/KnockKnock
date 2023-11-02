@@ -123,9 +123,10 @@ public class AuthController {
         // access token 확인
         String accessToken = HeaderUtil.getAccessToken(request);
         AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
-        if (!authToken.validate()) {
-            return ApiResponse.invalidAccessToken();
-        }
+
+//        if (!authToken.validate()) {
+//            return ApiResponse.invalidAccessToken();
+//        }
 
         // expired access token 인지 확인
         Claims claims = authToken.getExpiredTokenClaims();
@@ -140,17 +141,19 @@ public class AuthController {
         String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
                 .map(Cookie::getValue)
                 .orElse((null));
-        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
+        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);  //주어진 토큰문자열을 사용해 AuthToken 객체를 만들고 반환함.
 
-        if (authRefreshToken.validate()) {
-            return ApiResponse.invalidRefreshToken();
-        }
+//        //refresh token 만료된경우 예외발생
+//        if (authRefreshToken.validate()) {
+//            return ApiResponse.invalidRefreshToken();   //"Invalid refresh token."
+//        }
 
         // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken);
-        if (userRefreshToken == null) {
-            return ApiResponse.invalidRefreshToken();
-        }
+//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken);
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+//        if (userRefreshToken == null) {
+//            return ApiResponse.invalidRefreshToken();
+//        }
 
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(

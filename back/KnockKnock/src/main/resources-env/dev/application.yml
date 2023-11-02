@@ -1,5 +1,3 @@
-jwt:
-  expirationMs: 60000
 logging:
   level:
     org.hibernate.SQL: trace
@@ -67,8 +65,8 @@ cors:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    #1분 / 하루는 86400000
-    tokenExpiry: 60000
+    #30분
+    tokenExpiry: 1800000
     #7일
     refreshTokenExpiry: 604800000
   oauth2:
