@@ -13,6 +13,36 @@ const apiClient = axios.create({
   baseURL: Config.API_APP_KEY,
 });
 
+const refreshTokenAPI = async (token: string) => {
+  try {
+    const res = await axios.post('auth/refresh', {headers: {Authorization: `Bearer ${token}`}});
+    const {token: newToken} = res.data.body;
+    return newToken;
+  } catch (error) {
+    throw error as AxiosError;
+  }
+};
+
+apiClient.interceptors.response.use(
+  response => {
+    return response;
+  },
+  async error => {
+    if (error.response?.status === 401 && error.config && !error.config.__isRetryRequest) {
+      error.config.__isRetryRequest = true;
+      try {
+        console.log(error.config.headers.Authorization);
+        const newAccessToken = await refreshTokenAPI(error.config.headers.Authorization);
+        error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(error.config);
+      } catch (error) {
+        throw error as AxiosError;
+      }
+    }
+    throw error;
+  },
+);
+
 //? 회원가입, 로그인 관련 api 모두 요청 가능
 const userAPI = {
   get: async (url: string, token: string) => {
