@@ -15,7 +15,6 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
   const socialLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       if (providerType === 'GOOGLE') {
-        console.log(Config.API_GOOGLE_ID);
         const userInfo = await GoogleSignin.signIn();
         console.log(userInfo);
         postId(userInfo.user.id, providerType);
@@ -32,7 +31,6 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
   const postId = async (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       const res = await userAPI.post(`auth/oauth`, {userId, providerType});
-      console.log(res);
       const {token} = res.data.body;
       onLogin(token);
     } catch (error) {
