@@ -1,4 +1,4 @@
-package com.front;
+package com.knockknock_v1;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

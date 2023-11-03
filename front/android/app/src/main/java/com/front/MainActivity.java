@@ -1,4 +1,4 @@
-package com.front;
+package com.knockknock_v1;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

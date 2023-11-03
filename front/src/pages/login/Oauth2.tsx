@@ -15,24 +15,28 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
   const socialLogin = async (providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       if (providerType === 'GOOGLE') {
+        console.log(Config.API_GOOGLE_ID);
         const userInfo = await GoogleSignin.signIn();
+        console.log(userInfo);
         postId(userInfo.user.id, providerType);
       } else {
         const kakaoLogin = await KakaoLogin.login();
         const profile = await KakaoLogin.getProfile();
         postId(profile.id, providerType);
       }
-    } catch (error) {
-      onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
+    } catch (error: any) {
+      console.log(error);
+      onError(`${providerType.toLowerCase()} 인증서버 로그인에 실패했습니다.`);
     }
   };
   const postId = async (userId: string, providerType: 'GOOGLE' | 'KAKAO') => {
     try {
       const res = await userAPI.post(`auth/oauth`, {userId, providerType});
+      console.log(res);
       const {token} = res.data.body;
       onLogin(token);
     } catch (error) {
-      onError(`${providerType.toLowerCase()} 로그인에 실패했습니다.`);
+      onError(`${providerType.toLowerCase()} 토큰 전달에 실패했습니다.`);
     }
   };
   useEffect(() => {
