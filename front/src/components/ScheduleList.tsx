@@ -4,12 +4,11 @@ import {variables} from '../style/variables';
 import {useNavigation, StackActions} from '@react-navigation/native';
 import Config from 'react-native-config';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteScheduleItem, patchScheduleItem} from '../api/scheduleApi';
-import {deleteBoardData, fetchBoardData} from '../api/boardApi';
 import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {setBoardReducer} from '../util/redux/boardSlice';
 import {Swipeable} from 'react-native-gesture-handler';
+import {scheduleAPI} from '../api/commonApi';
 
 interface ScheduleItemProps {
   items: any;
@@ -49,7 +48,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
         return;
       }
 
-      const result = await patchScheduleItem(url, token, scheduleId, updatedItem);
+      const result = await scheduleAPI.schedulePatch(token, scheduleId, updatedItem);
       if (typeof result !== 'boolean' && result !== undefined) {
         const updatedItems: ScheduleItems = {...items};
         for (let date in updatedItems) {
@@ -66,7 +65,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
   };
 
   const handleDelete = async (scheduleId: number) => {
-    const success = await deleteScheduleItem(url, token, scheduleId);
+    const success = await scheduleAPI.scheduleDelete(token, scheduleId);
     if (success) {
       const updatedItems: ScheduleItems = {...items};
       for (let date in updatedItems) {
@@ -77,7 +76,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
       setItems(updatedItems);
 
       try {
-        const tagResponse = await fetchBoardData(url, token);
+        const tagResponse = await scheduleAPI.tagGet(token);
         dispatch(setBoardReducer(tagResponse));
         const boardToDelete = tagResponse.find(
           (board: {scheduleCount: number; name: string}) =>
@@ -85,9 +84,9 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
         );
 
         if (boardToDelete) {
-          const deleteSuccess = await deleteBoardData(url, token, boardToDelete.tagId);
+          const deleteSuccess = await scheduleAPI.tagdelete(token, boardToDelete.tagId);
           if (deleteSuccess) {
-            const updatedTagResponse = await fetchBoardData(url, token);
+            const updatedTagResponse = await scheduleAPI.tagGet(token);
             dispatch(setBoardReducer(updatedTagResponse));
             navigation.goBack();
           } else {

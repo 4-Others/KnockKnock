@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,34 +8,20 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import axios from 'axios';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {GradientButton_L} from '../../components/GradientButton';
 import {storageResetValue} from '../../util/authUtil';
 import {AuthProps} from '../../navigations/StackNavigator';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
-import {updateProfile} from '../../util/redux/userSlice';
 import {VariablesKeys} from '../../style/variables';
 
 type boardDetailParams = {title: string; color: string; number: number; tagId: number};
 
-const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
+const Profile: React.FC<AuthProps> = ({navigation}) => {
   const user = useSelector((state: any) => state.user);
   const boardData = useSelector((state: RootState) => state.board);
-  const dispatch = useDispatch();
-  const fetchUserInfo = async () => {
-    try {
-      const res = await axios.get(`${url}api/v1/users`, {
-        headers: {Authorization: `Bearer ${user.token}`},
-      });
-      const {birth, id, pushAgree, username} = res.data.body.data;
-      dispatch(updateProfile({birth, id, pushAgree, username}));
-    } catch (error) {
-      console.error('userInfo 불러오기 실패');
-    }
-  };
 
   const navigateToProfileEdit = () => {
     navigation.navigate('ProfileEdit');
@@ -44,10 +30,6 @@ const Profile: React.FC<AuthProps> = ({route, url, navigation}) => {
   const handleBoardPress = (params: boardDetailParams) => {
     navigation.navigate('BoardDetail', params);
   };
-
-  useEffect(() => {
-    fetchUserInfo();
-  }, [route.params]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -9,7 +9,7 @@ import {Positions} from 'react-native-calendars/src/expandableCalendar';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
 import ScheduleList from '../../components/ScheduleList';
 import format from 'date-fns/format';
-import {fetchScheduleItems} from '../../api/scheduleApi';
+import {scheduleAPI} from '../../api/commonApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -113,7 +113,7 @@ const Calendar: React.FC<AuthProps> = ({url, route}) => {
   const fetchData = async () => {
     try {
       if (url) {
-        let newItems = await fetchScheduleItems(url, token);
+        let newItems = await scheduleAPI.scheduleGet(token);
         dispatch(setScheduleReducer(newItems));
         setNewCalendarItems(newItems, selectDate);
       }

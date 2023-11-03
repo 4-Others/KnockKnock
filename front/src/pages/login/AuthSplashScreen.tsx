@@ -6,16 +6,15 @@ import {storageGetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
 import {setLogin} from '../../util/redux/userSlice';
 
-const AuthSplashScreen: React.FC<AuthProps> = props => {
+const AuthSplashScreen: React.FC<AuthProps> = ({navigation}) => {
   const dispatch = useDispatch();
 
-  const verifyTokens = async ({navigation}: any) => {
+  const verifyTokens = async () => {
     // 메모리에 저장된 토큰 호출
-    const user = await storageGetValue('user');
-    if (user) {
-      const {id, token} = user;
-      dispatch(setLogin({id, token}));
-      // 로그인 성공 후 메인탭 이동
+    const initialToken = await storageGetValue('token');
+    if (initialToken) {
+      const {token} = initialToken;
+      dispatch(setLogin({token}));
       navigation.navigate('MainTab');
     } else {
       navigation.navigate('Login');
@@ -23,12 +22,12 @@ const AuthSplashScreen: React.FC<AuthProps> = props => {
   };
 
   useEffect(() => {
-    return props.navigation.addListener('focus', () => {
+    return navigation.addListener('focus', () => {
       setTimeout(() => {
-        verifyTokens(props);
+        verifyTokens();
       }, 1000);
     });
-  }, [props.navigation]);
+  }, [navigation]);
 
   return (
     <LinearGradient

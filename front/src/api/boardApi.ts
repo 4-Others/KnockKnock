@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {SetBoardData} from '../util/dataConvert';
 
+//! 변경완료
 export const fetchBoardData = async (url: string, token: string) => {
   try {
     const response = await axios.get(`${url}api/v1/tags`, {
@@ -15,6 +16,7 @@ export const fetchBoardData = async (url: string, token: string) => {
   }
 };
 
+//! 변경완료
 export const postBoardData = async (url: string, token: string, tag: SetBoardData) => {
   try {
     const response = await axios.post(`${url}api/v1/tags`, tag, {
@@ -27,6 +29,7 @@ export const postBoardData = async (url: string, token: string, tag: SetBoardDat
   }
 };
 
+//! 변경완료
 export const patchBoardData = async (
   url: string,
   token: string,
@@ -46,6 +49,7 @@ export const patchBoardData = async (
   }
 };
 
+//! 변경완료
 export const deleteBoardData = async (url: string, token: string, tagId: number) => {
   try {
     const response = await axios.delete(`${url}api/v1/tags/${tagId}`, {

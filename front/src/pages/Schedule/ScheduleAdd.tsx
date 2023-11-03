@@ -9,11 +9,10 @@ import {postScheduleReducer} from '../../util/redux/scheduleSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {fetchBoardData, postBoardData} from '../../api/boardApi';
-import {postScheduleItem} from '../../api/scheduleApi';
 import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import Header from '../../components/Header';
 import ScheduleAddOption from './ScheduleAddOption';
+import {scheduleAPI} from '../../api/commonApi';
 
 type RootStackParamList = {
   BoardDetail: {name: string; color: string; scheduleCount: number; tagId: number};
@@ -101,7 +100,7 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
             (tag: any) => tag.name === postTag.name && tag.color === postTag.color,
           );
           if (!tagExists && postTag.name && postTag.color) {
-            boardResponse = await postBoardData(url, user.token, postTag);
+            boardResponse = await scheduleAPI.tagPost(user.token, postTag);
             dispatch(postBoardReducer(boardResponse.body.data));
             const newBoardId = boardResponse.body.data.tagId;
             finalPostData.tagId = newBoardId;
@@ -110,9 +109,9 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
           }
         }
 
-        const response = await postScheduleItem(url, user.token, finalPostData);
+        const response = await scheduleAPI.schedulePost(user.token, finalPostData);
         dispatch(postScheduleReducer(response));
-        const tagResponse: SetBoardData[] = await fetchBoardData(url, user.token);
+        const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
         dispatch(setBoardReducer(tagResponse));
 
         const selectedTag = tagResponse.find(

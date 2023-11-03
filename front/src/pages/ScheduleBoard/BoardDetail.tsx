@@ -8,9 +8,9 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
-import {fetchScheduleItems, fetchScheduleWithTag} from '../../api/scheduleApi';
 import {ScheduleData} from '../../util/dataConvert';
 import {AuthProps} from '../../navigations/StackNavigator';
+import {scheduleAPI} from '../../api/commonApi';
 
 const {width, height} = Dimensions.get('window');
 
@@ -30,7 +30,7 @@ type RootStackParamList = {
 
 type BoardDetailRouteProp = RouteProp<RootStackParamList, 'BoardDetail'>;
 
-const BoardDetail: React.FC<AuthProps> = ({url}) => {
+const BoardDetail: React.FC<AuthProps> = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<navigationProp>();
   const route = useRoute<BoardDetailRouteProp>();
@@ -57,19 +57,18 @@ const BoardDetail: React.FC<AuthProps> = ({url}) => {
   };
 
   const loadScheduleItems = async () => {
-    if (url) {
-      try {
-        let fetchedItems: ScheduleItems = {};
-        if (name === '전체' && color === '#757575') {
-          fetchedItems = await fetchScheduleItems(url, token);
-        } else {
-          fetchedItems = await fetchScheduleWithTag(url, token, tagId);
-        }
-        return fetchedItems;
-      } catch (error) {
-        console.error('Failed to load schedules:', error);
+    try {
+      let fetchedItems: ScheduleItems = {};
+      if (name === '전체' && color === '#757575') {
+        fetchedItems = await scheduleAPI.scheduleGet(token);
+      } else {
+        fetchedItems = await scheduleAPI.tagIdScheduleGet(token, tagId);
       }
+      return fetchedItems;
+    } catch (error) {
+      console.error('Failed to load schedules:', error);
     }
+
     return {};
   };
 

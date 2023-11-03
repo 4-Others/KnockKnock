@@ -12,12 +12,12 @@ import React, {useState} from 'react';
 import Config from 'react-native-config';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {patchBoardData} from '../../api/boardApi';
 import {setBoardReducer} from '../../util/redux/boardSlice';
 import {variables} from '../../style/variables';
 import {VariablesKeys} from '../../style/variables';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from '../../components/Header';
+import {scheduleAPI} from '../../api/commonApi';
 
 const {width, height} = Dimensions.get('window');
 
@@ -39,7 +39,7 @@ const BoardEdit = ({route}: any) => {
   const handleEditBoard = async () => {
     try {
       const {tagId, ...finalUpdateBoard} = updateBoard;
-      const response = await patchBoardData(url, user.token, updateBoard.tagId, finalUpdateBoard);
+      const response = await scheduleAPI.tagPatch(user.token, updateBoard.tagId, finalUpdateBoard);
       if (response) {
         dispatch(setBoardReducer(response));
         console.log('보드 수정 성공!');

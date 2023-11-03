@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:886031261795:android:29bb0c9808f98bd6775856",
         "android_client_info": {
-          "package_name": "com.front"
+          "package_name": "com.knockknock_v1"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "886031261795-c8pv9233po6n5dkrvil580aspetihq1a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.front",
+            "package_name": "com.knockknock_v1",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },

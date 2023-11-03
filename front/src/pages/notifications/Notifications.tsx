@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
-import Config from 'react-native-config';
 import {variables} from '../../style/variables';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
-import {notificationListener} from '../../api/notificationApi';
+import {scheduleAPI} from '../../api/commonApi';
 
 export interface notificationData {
   createdAt: string;
@@ -16,9 +15,14 @@ export interface notificationData {
   title: string;
 }
 
-const Notifications: React.FC = () => {
+interface RouteProps {
+  route: any;
+  navigation: any;
+  setBadge: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Notifications: React.FC<RouteProps> = ({setBadge}) => {
   const [notificationDatas, setNotificationDatas] = useState<notificationData[]>([]);
-  const url = `${Config.API_APP_KEY}api/v1/notification`;
   const token = useSelector((state: any) => state.user.token);
 
   function formatDateString(inputDateString: string): string {
@@ -52,8 +56,12 @@ const Notifications: React.FC = () => {
   }
 
   useEffect(() => {
-    notificationListener.getNotification(url, token).then(items => setNotificationDatas(items));
-  }, [notificationListener.deleteNotification]);
+    scheduleAPI.notificationGet(token).then(items => setNotificationDatas(items));
+  }, [scheduleAPI.notificationDelete]);
+
+  useEffect(() => {
+    setBadge(notificationDatas.length);
+  });
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -63,15 +71,14 @@ const Notifications: React.FC = () => {
           notificationDatas.map(data => {
             return (
               <TouchableOpacity
-                onPress={() =>
-                  notificationListener.deleteNotification(
-                    url,
-                    token,
-                    [data.notificationId],
-                    setNotificationDatas,
-                    notificationDatas,
-                  )
-                }
+                onPress={() => {
+                  scheduleAPI.notificationDelete(token, [data.notificationId]);
+                  setNotificationDatas(
+                    notificationDatas.filter(
+                      item => ![data.notificationId].includes(item.notificationId),
+                    ),
+                  );
+                }}
                 style={styles.notificationContainer}
                 key={data.notificationId}>
                 <View

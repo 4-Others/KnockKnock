@@ -6,12 +6,12 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {setBoardReducer} from '../../util/redux/boardSlice';
 import {RootState} from '../../util/redux/store';
-import {fetchBoardData} from '../../api/boardApi';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {BoardItem} from '../../util/dataConvert';
 import ProfileHeader from '../../components/ProfileHeader';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
+import {scheduleAPI} from '../../api/commonApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -30,7 +30,7 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
     if (url) {
       const fetchData = async () => {
         try {
-          const data = await fetchBoardData(url, token);
+          const data = await scheduleAPI.tagGet(token);
           dispatch(setBoardReducer(data));
         } catch (error) {
           console.error(error);

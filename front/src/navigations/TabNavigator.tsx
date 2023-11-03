@@ -15,6 +15,7 @@ const TabNavigator = () => {
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
   const [lastTab, setLastTab] = useState('Schedule Board');
+  const [badge, setBadge] = useState(0);
 
   return (
     <Tab.Navigator
@@ -112,14 +113,14 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Notifications"
-        component={Notifications}
         listeners={{
           focus: () => {
             setLastTab('Notifications');
           },
         }}
-        options={{tabBarBadge: 3, unmountOnBlur: true}}
-      />
+        options={{tabBarBadge: badge, unmountOnBlur: true}}>
+        {props => <Notifications {...props} setBadge={setBadge} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
