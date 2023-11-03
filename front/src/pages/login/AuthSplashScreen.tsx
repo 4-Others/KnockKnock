@@ -5,17 +5,27 @@ import LinearGradient from 'react-native-linear-gradient';
 import {storageGetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
 import {setLogin} from '../../util/redux/userSlice';
+import {userAPI} from '../../api/commonApi';
 
 const AuthSplashScreen: React.FC<AuthProps> = ({navigation}) => {
   const dispatch = useDispatch();
 
+  const onLogin = async (token: string) => {
+    try {
+      const res = await userAPI.get('users', token);
+      const {userId, birth, id, email, providerType, pushAgree, username} = res.data.body.data;
+      dispatch(setLogin({token, userId, birth, id, email, providerType, pushAgree, username}));
+      navigation.navigate('MainTab');
+    } catch (error) {
+      navigation.navigate('Login');
+    }
+  };
   const verifyTokens = async () => {
     // 메모리에 저장된 토큰 호출
     const initialToken = await storageGetValue('token');
     if (initialToken) {
       const {token} = initialToken;
-      dispatch(setLogin({token}));
-      navigation.navigate('MainTab');
+      onLogin(token);
     } else {
       navigation.navigate('Login');
     }
