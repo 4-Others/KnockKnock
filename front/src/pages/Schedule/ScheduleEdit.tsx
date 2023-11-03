@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from 'react';
 import {SafeAreaView, Alert} from 'react-native';
-import Config from 'react-native-config';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
@@ -13,7 +12,6 @@ import {scheduleAPI} from '../../api/commonApi';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {
-  const url = Config.API_APP_KEY as string;
   const user = useSelector((state: any) => state.user);
   const boardData = useSelector((state: RootState) => state.board);
   const navigation = useNavigation();
@@ -68,44 +66,42 @@ const ScheduleEdit = ({route}: any) => {
       tagId: updateData.tagId,
     };
 
-    if (url) {
-      try {
-        let boardResponse;
+    try {
+      let boardResponse;
 
-        if (updateData.tag.name !== '전체') {
-          const tagExists = boardData.find(
-            (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
-          );
-
-          if (!tagExists && updateData.tag.name && updateData.tag.color) {
-            boardResponse = await scheduleAPI.tagPost(user.token, updateData.tag);
-            dispatch(postBoardReducer(boardResponse.body.data));
-            const newBoardId = boardResponse.body.data.tagId;
-            finalUpdateData.tagId = newBoardId;
-          } else if (tagExists) {
-            finalUpdateData.tagId = tagExists.tagId;
-          }
-        }
-
-        const result = await scheduleAPI.schedulePatch(
-          user.token,
-          updateData.scheduleId,
-          finalUpdateData,
+      if (updateData.tag.name !== '전체') {
+        const tagExists = boardData.find(
+          (tag: any) => tag.name === updateData.tag.name && tag.color === updateData.tag.color,
         );
-        if (typeof result !== 'boolean' && result !== undefined) {
-          dispatch(setScheduleReducer(result));
-          const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
-          dispatch(setBoardReducer(tagResponse));
 
-          navigation.goBack();
+        if (!tagExists && updateData.tag.name && updateData.tag.color) {
+          boardResponse = await scheduleAPI.tagPost(user.token, updateData.tag);
+          dispatch(postBoardReducer(boardResponse.body.data));
+          const newBoardId = boardResponse.body.data.tagId;
+          finalUpdateData.tagId = newBoardId;
+        } else if (tagExists) {
+          finalUpdateData.tagId = tagExists.tagId;
         }
-      } catch (error) {
-        Alert.alert(
-          'Error',
-          '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
-        );
-        console.log('Error editing data', error);
       }
+
+      const result = await scheduleAPI.schedulePatch(
+        user.token,
+        updateData.scheduleId,
+        finalUpdateData,
+      );
+      if (typeof result !== 'boolean' && result !== undefined) {
+        dispatch(setScheduleReducer(result));
+        const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
+        dispatch(setBoardReducer(tagResponse));
+
+        navigation.goBack();
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
+      );
+      console.log('Error editing data', error);
     }
   };
 
@@ -121,7 +117,6 @@ const ScheduleEdit = ({route}: any) => {
     <SafeAreaView style={{flex: 1}}>
       <Header title="스케줄 편집" nextFunc={handleEditSchedule} />
       <ScheduleEditOption
-        url={url}
         updateData={updateData}
         setUpdateData={setUpdateData}
         onNotificationChange={handleNotificationChange}

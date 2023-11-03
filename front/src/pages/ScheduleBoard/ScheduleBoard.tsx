@@ -15,7 +15,7 @@ import {scheduleAPI} from '../../api/commonApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
+const ScheduleBoard: React.FC<AuthProps> = () => {
   const carouselRef = useRef<Carousel<BoardItem>>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -25,21 +25,18 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
     dispatch(setBoardReducer(newItems));
   };
   const [active, setActive] = useState<number | null>(boardData[0] ? boardData[0].tagId : null);
-  console.log('boardData:', JSON.stringify(boardData, null, 2)); //!
   useEffect(() => {
-    if (url) {
-      const fetchData = async () => {
-        try {
-          const data = await scheduleAPI.tagGet(token);
-          dispatch(setBoardReducer(data));
-        } catch (error) {
-          console.error(error);
-        }
-      };
+    const fetchData = async () => {
+      try {
+        const data = await scheduleAPI.tagGet(token);
+        dispatch(setBoardReducer(data));
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      fetchData();
-    }
-  }, [url, token, dispatch]);
+    fetchData();
+  }, [token, dispatch]);
 
   useEffect(() => {
     if (boardData.length > 0) {
@@ -57,10 +54,6 @@ const ScheduleBoard: React.FC<AuthProps> = ({url}) => {
     setActive(newValue);
   }, []);
 
-  if (!url) {
-    navigation.goBack();
-    return null;
-  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />

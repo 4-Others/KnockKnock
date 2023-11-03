@@ -11,13 +11,11 @@ import {userAPI} from '../../api/commonApi';
 type SignScreenProps = {
   route: any;
   navigation: any;
-  url?: string;
 };
 
 type DataPostScreenProps = {
   route: any;
   navigation: any;
-  url?: string;
 };
 
 //! step1: 약관동의 스크린
@@ -196,7 +194,7 @@ const SignPasswordInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
 };
 
 //! step4: 아이디&이메일 입력
-const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation}) => {
+const SignIDandEmailInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
   const [complete, setComplete] = useState(false);
   const [userInfo, setUserInfo] = useState({
     id: '',
@@ -292,7 +290,7 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({url, route, navigation})
   );
 };
 
-const SignVerifyEmalInfo: React.FC<DataPostScreenProps> = ({route, navigation, url}) => {
+const SignVerifyEmalInfo: React.FC<DataPostScreenProps> = ({route, navigation}) => {
   const dispatch = useDispatch();
   const [complete, setComplete] = useState(false);
   const [tokenOrKey, setTokenOrKey] = useState('');

@@ -10,14 +10,12 @@ import {
 import Header from '../../components/Header';
 import {SafeAreaView} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import Config from 'react-native-config';
 import React from 'react';
 import {AuthProps} from '../../navigations/StackNavigator';
 
 const Tab = createMaterialTopTabNavigator();
 
 const SignUpTab: React.FC<AuthProps> = () => {
-  const url = Config.API_APP_KEY;
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.progressBar}></View>
@@ -30,10 +28,10 @@ const SignUpTab: React.FC<AuthProps> = () => {
         <Tab.Screen name="SignPersonalInfo">{props => <SignPersonalInfo {...props} />}</Tab.Screen>
         <Tab.Screen name="SignPasswordInfo">{props => <SignPasswordInfo {...props} />}</Tab.Screen>
         <Tab.Screen name="SignIDandEmailInfo">
-          {props => <SignIDandEmailInfo {...props} url={url} />}
+          {props => <SignIDandEmailInfo {...props} />}
         </Tab.Screen>
         <Tab.Screen name="SignVerifyEmalInfo">
-          {props => <SignVerifyEmalInfo {...props} url={url} />}
+          {props => <SignVerifyEmalInfo {...props} />}
         </Tab.Screen>
         <Tab.Screen name="SignSuccess">{props => <SignSuccess {...props} />}</Tab.Screen>
       </Tab.Navigator>

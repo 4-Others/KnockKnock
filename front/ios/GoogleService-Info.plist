@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>886031261795-biitts3ar0q46dcfnsi6kkprgac5j0ab.apps.googleusercontent.com</string>
+	<string>886031261795-galpp8cj5kr3atufpous4rgdruql1m32.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.886031261795-biitts3ar0q46dcfnsi6kkprgac5j0ab</string>
+	<string>com.googleusercontent.apps.886031261795-galpp8cj5kr3atufpous4rgdruql1m32</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>886031261795-c8pv9233po6n5dkrvil580aspetihq1a.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,29 +15,22 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>front</string>
+	<string>com.knockknock-v1</string>
 	<key>PROJECT_ID</key>
 	<string>knockknock-1d805</string>
 	<key>STORAGE_BUCKET</key>
 	<string>knockknock-1d805.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:886031261795:ios:588e311f7c06255c775856</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.googleusercontent.apps.886031261795-biitts3ar0q46dcfnsi6kkprgac5j0ab</string>
-		</dict>
-	</array>
+	<string>1:886031261795:ios:7cfd6fd831b08593775856</string>
 </dict>
 </plist>

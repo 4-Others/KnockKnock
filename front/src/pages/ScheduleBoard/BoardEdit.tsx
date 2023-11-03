@@ -9,7 +9,6 @@ import {
   Alert,
 } from 'react-native';
 import React, {useState} from 'react';
-import Config from 'react-native-config';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {setBoardReducer} from '../../util/redux/boardSlice';
@@ -22,7 +21,6 @@ import {scheduleAPI} from '../../api/commonApi';
 const {width, height} = Dimensions.get('window');
 
 const BoardEdit = ({route}: any) => {
-  const url = Config.API_APP_KEY as string;
   const user = useSelector((state: any) => state.user);
   const initialData = route.params.item;
   const navigation = useNavigation();

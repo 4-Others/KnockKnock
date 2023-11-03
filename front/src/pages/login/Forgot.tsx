@@ -72,7 +72,7 @@ const ForgotId: React.FC<AuthProps> = ({navigation}) => {
   );
 };
 
-const ForgotPw: React.FC<AuthProps> = ({url, navigation}) => {
+const ForgotPw: React.FC<AuthProps> = ({navigation}) => {
   const [inputInfo, setInputInfo] = useState({id: '', email: '', randomKey: ''});
   const {id, email, randomKey} = inputInfo;
   const [complete, setComplete] = useState({resEmail: false, resRandomKey: false});

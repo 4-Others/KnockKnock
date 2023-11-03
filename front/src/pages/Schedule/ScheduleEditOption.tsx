@@ -18,14 +18,12 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface ScheduleOptionProps {
-  url?: string;
   updateData: SetScheduleData & BoardData;
   setUpdateData: React.Dispatch<React.SetStateAction<SetScheduleData & BoardData>>;
   onNotificationChange: (notifications: number[] | null) => void;
 }
 
 const ScheduleOption: React.FC<ScheduleOptionProps> = ({
-  url,
   updateData,
   setUpdateData,
   onNotificationChange,

@@ -7,14 +7,22 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:886031261795:android:29bb0c9808f98bd6775856",
+        "mobilesdk_app_id": "1:886031261795:android:4eac4a463500efee775856",
         "android_client_info": {
           "package_name": "com.knockknock_v1"
         }
       },
       "oauth_client": [
         {
-          "client_id": "886031261795-c8pv9233po6n5dkrvil580aspetihq1a.apps.googleusercontent.com",
+          "client_id": "886031261795-h41drqj048b1u1l6h1in5c7kf5ot7hoh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.knockknock_v1",
+            "certificate_hash": "6eae56ae9146057904568618e7c1508d6ea86b7e"
+          }
+        },
+        {
+          "client_id": "886031261795-nk6451e4sgri7psblsdvasl2qo86n7l3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.knockknock_v1",
@@ -37,6 +45,13 @@
             {
               "client_id": "886031261795-u8dfvcjm836g9oiet9ilvd2u7m3f3bdp.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "886031261795-biitts3ar0q46dcfnsi6kkprgac5j0ab.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "front"
+              }
             }
           ]
         }

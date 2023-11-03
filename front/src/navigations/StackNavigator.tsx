@@ -1,5 +1,4 @@
 import React from 'react';
-import Config from 'react-native-config';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../pages/login/Login';
 import AuthSplashScreen from '../pages/login/AuthSplashScreen';
@@ -20,29 +19,27 @@ import {ForgotId, ForgotPw} from '../pages/login/Forgot';
 export interface AuthProps {
   route: any;
   navigation: any;
-  url?: string;
 }
 
 const Stack = createStackNavigator();
-const url = Config.API_APP_KEY;
 
 const AuthStack: React.FC = () => {
   return (
     <Stack.Navigator initialRouteName="AuthSplach">
       <Stack.Screen name="AuthSplach" options={{headerShown: false}}>
-        {props => <AuthSplashScreen {...props} url={url} />}
+        {props => <AuthSplashScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen name="Login" options={{headerShown: false}}>
-        {props => <Login {...props} url={url} />}
+        {props => <Login {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ForgotId" options={{headerShown: false}}>
-        {props => <ForgotId {...props} url={url} />}
+        {props => <ForgotId {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ForgotPw" options={{headerShown: false}}>
-        {props => <ForgotPw {...props} url={url} />}
+        {props => <ForgotPw {...props} />}
       </Stack.Screen>
       <Stack.Screen name="SignUpTab" options={{headerShown: false}}>
-        {props => <SignUpTab {...props} url={url} />}
+        {props => <SignUpTab {...props} />}
       </Stack.Screen>
       <Stack.Screen name="MainTab" component={TabNavigator} options={{headerShown: false}} />
     </Stack.Navigator>
@@ -53,19 +50,19 @@ const StackSchedule = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ScheduleBoard" options={{headerShown: false}}>
-        {props => <ScheduleBoard {...props} url={url} />}
+        {props => <ScheduleBoard {...props} />}
       </Stack.Screen>
       <Stack.Screen name="BoardDetail" options={{headerShown: false}}>
-        {props => <BoardDetail {...props} url={url} />}
+        {props => <BoardDetail {...props} />}
       </Stack.Screen>
       <Stack.Screen name="BoardEdit" component={BoardEdit} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
       <Stack.Screen name="Profile" options={{headerShown: false}}>
-        {props => <Profile {...props} url={url} />}
+        {props => <Profile {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ProfileEdit" options={{headerShown: false}}>
-        {props => <ProfileEdit {...props} url={url} />}
+        {props => <ProfileEdit {...props} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -75,7 +72,7 @@ const StackCalendar = () => {
   return (
     <Stack.Navigator initialRouteName="Calendar">
       <Stack.Screen name="Calendar" options={{headerShown: false}}>
-        {props => <Calendar {...props} url={url} />}
+        {props => <Calendar {...props} />}
       </Stack.Screen>
       <Stack.Screen name="ScheduleAdd" component={ScheduleAdd} options={{headerShown: false}} />
       <Stack.Screen name="ScheduleEdit" component={ScheduleEdit} options={{headerShown: false}} />
@@ -87,7 +84,7 @@ const StackSearch = () => {
   return (
     <Stack.Navigator initialRouteName="SearchOption">
       <Stack.Screen name="SearchOption" options={{headerShown: false}}>
-        {props => <Search {...props} url={url} />}
+        {props => <Search {...props} />}
       </Stack.Screen>
       <Stack.Screen name="SearchResult" options={{headerShown: false}}>
         {props => <SearchResult {...props} />}

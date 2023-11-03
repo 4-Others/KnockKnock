@@ -1,6 +1,5 @@
 import React, {useState, useCallback} from 'react';
 import {SafeAreaView, Alert} from 'react-native';
-import Config from 'react-native-config';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
@@ -20,7 +19,6 @@ type RootStackParamList = {
 type ScheduleAddNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const ScheduleAdd: React.FC<AuthProps> = () => {
-  const url = Config.API_APP_KEY;
   const navigation = useNavigation<ScheduleAddNavigationProp>();
   const boardData = useSelector((state: RootState) => state.board);
 
@@ -91,50 +89,48 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
       endAt: formattedEndAt,
     };
 
-    if (url) {
-      try {
-        let boardResponse;
+    try {
+      let boardResponse;
 
-        if (postTag.name !== '전체') {
-          const tagExists = boardData.find(
-            (tag: any) => tag.name === postTag.name && tag.color === postTag.color,
-          );
-          if (!tagExists && postTag.name && postTag.color) {
-            boardResponse = await scheduleAPI.tagPost(user.token, postTag);
-            dispatch(postBoardReducer(boardResponse.body.data));
-            const newBoardId = boardResponse.body.data.tagId;
-            finalPostData.tagId = newBoardId;
-          } else if (tagExists) {
-            finalPostData.tagId = tagExists.tagId;
-          }
-        }
-
-        const response = await scheduleAPI.schedulePost(user.token, finalPostData);
-        dispatch(postScheduleReducer(response));
-        const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
-        dispatch(setBoardReducer(tagResponse));
-
-        const selectedTag = tagResponse.find(
-          tag => tag.name === postTag.name && tag.color === postTag.color,
+      if (postTag.name !== '전체') {
+        const tagExists = boardData.find(
+          (tag: any) => tag.name === postTag.name && tag.color === postTag.color,
         );
-        if (!selectedTag) {
-          console.error('보드 정보를 찾을 수 없습니다!');
-          return;
+        if (!tagExists && postTag.name && postTag.color) {
+          boardResponse = await scheduleAPI.tagPost(user.token, postTag);
+          dispatch(postBoardReducer(boardResponse.body.data));
+          const newBoardId = boardResponse.body.data.tagId;
+          finalPostData.tagId = newBoardId;
+        } else if (tagExists) {
+          finalPostData.tagId = tagExists.tagId;
         }
-
-        navigation.navigate('BoardDetail', {
-          name: selectedTag.name,
-          color: selectedTag.color,
-          tagId: selectedTag.tagId ?? 0,
-          scheduleCount: selectedTag.scheduleCount ?? 0,
-        });
-      } catch (error) {
-        Alert.alert(
-          'Error',
-          '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
-        );
-        console.log('Error saving data', error);
       }
+
+      const response = await scheduleAPI.schedulePost(user.token, finalPostData);
+      dispatch(postScheduleReducer(response));
+      const tagResponse: SetBoardData[] = await scheduleAPI.tagGet(user.token);
+      dispatch(setBoardReducer(tagResponse));
+
+      const selectedTag = tagResponse.find(
+        tag => tag.name === postTag.name && tag.color === postTag.color,
+      );
+      if (!selectedTag) {
+        console.error('보드 정보를 찾을 수 없습니다!');
+        return;
+      }
+
+      navigation.navigate('BoardDetail', {
+        name: selectedTag.name,
+        color: selectedTag.color,
+        tagId: selectedTag.tagId ?? 0,
+        scheduleCount: selectedTag.scheduleCount ?? 0,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        '예상치 못한 에러가 발생했습니다.\n프로그램 종료 후 다시 시도해 주세요.',
+      );
+      console.log('Error saving data', error);
     }
   };
 
@@ -151,7 +147,6 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     <SafeAreaView style={{flex: 1}}>
       <Header title="스케줄 등록" nextFunc={handleAddSchedule} />
       <ScheduleAddOption
-        url={url}
         postSchedule={postSchedule}
         setPostSchedule={setPostSchedule}
         postTag={postTag}

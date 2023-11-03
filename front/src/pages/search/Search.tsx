@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {scheduleAPI} from '../../api/commonApi';
 
-const Search: React.FC<AuthProps> = ({url, navigation}) => {
+const Search: React.FC<AuthProps> = ({navigation}) => {
   const dateFormat = (date: Date) => date.toISOString().split('T')[0];
   const data: SearchData = {
     keyword: '',

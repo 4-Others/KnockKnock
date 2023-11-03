@@ -23,7 +23,7 @@ import {GradientButton_L} from '../../components/GradientButton';
 import {storageResetValue} from '../../util/authUtil';
 import {userAPI} from '../../api/commonApi';
 
-const ProfileEdit: React.FC<AuthProps> = ({url, navigation}) => {
+const ProfileEdit: React.FC<AuthProps> = ({navigation}) => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user);
   const [userInfo, setUserInfo] = useState({username: '', id: '', birth: '', pushAgree: false});

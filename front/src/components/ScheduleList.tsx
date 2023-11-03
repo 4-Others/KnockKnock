@@ -2,7 +2,6 @@ import React, {useRef} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
 import {variables} from '../style/variables';
 import {useNavigation, StackActions} from '@react-navigation/native';
-import Config from 'react-native-config';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
@@ -19,10 +18,8 @@ interface ScheduleItemProps {
 const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const url = Config.API_APP_KEY as string;
   const token = useSelector((state: any) => state.user.token);
   const [openSwipeable, setOpenSwipeable] = React.useState<Swipeable | null>(null);
-  console.log('items:', JSON.stringify(items, null, 2)); //!
   const handleCloseSwipeable = () => {
     if (openSwipeable) {
       openSwipeable.close();

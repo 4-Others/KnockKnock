@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo, useRef} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {ExpandableCalendar, CalendarProvider} from 'react-native-calendars';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,11 +13,10 @@ import {scheduleAPI} from '../../api/commonApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
-const Calendar: React.FC<AuthProps> = ({url, route}) => {
+const Calendar: React.FC<AuthProps> = () => {
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.schedule.items);
   const token = useSelector((state: any) => state.user.token);
-  const prevItemsRef = useRef(items);
   const [calendarItems, setCalendarItems] = useState<ScheduleItems>({});
   const [selectDate, setSelectDate] = useState<string[]>([format(new Date(), 'yyyy-MM-dd')]);
   const selectedDateHandller = (dateString: string) => {
@@ -112,11 +111,9 @@ const Calendar: React.FC<AuthProps> = ({url, route}) => {
 
   const fetchData = async () => {
     try {
-      if (url) {
-        let newItems = await scheduleAPI.scheduleGet(token);
-        dispatch(setScheduleReducer(newItems));
-        setNewCalendarItems(newItems, selectDate);
-      }
+      let newItems = await scheduleAPI.scheduleGet(token);
+      dispatch(setScheduleReducer(newItems));
+      setNewCalendarItems(newItems, selectDate);
     } catch (error) {
       console.error('Failed to load calendar in ScheduleItems:', error);
       return null;

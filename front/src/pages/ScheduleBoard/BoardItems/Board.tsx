@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
-import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
 import {variables} from '../../../style/variables';
 import {BoardItem} from '../../../util/dataConvert';
@@ -40,7 +39,6 @@ const Board: React.FC<BoardItemProps> = ({
   boardData,
   setBoardData,
 }) => {
-  const url = Config.API_APP_KEY as string;
   const user = useSelector((state: any) => state.user);
   const swipeRef = useRef<Swipeable>(null);
   const navigation = useNavigation<any>();
