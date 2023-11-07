@@ -2,9 +2,8 @@ import React, {useState} from 'react';
 import {Platform, Dimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StackSchedule, StackCalendar} from './StackNavigator';
+import {StackSchedule, StackCalendar, StackSearch} from './StackNavigator';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
-import {StackSearch} from './StackNavigator';
 import Notifications from '../pages/notifications/Notifications';
 import CustomIcon from '../components/CustomIcon';
 

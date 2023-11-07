@@ -13,11 +13,10 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {variables} from '../style/variables';
-import {VariablesKeys} from '../style/variables';
 import {useSelector} from 'react-redux';
 import {RootState} from '../util/redux/store';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {variables, VariablesKeys} from '../style/variables';
 
 type SelectorProps = {
   modalVisible: boolean;
@@ -42,10 +41,12 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
 
   const screenHeight = Dimensions.get('screen').height;
   const panY = useRef(new Animated.Value(screenHeight)).current;
+
   const translateY = panY.interpolate({
     inputRange: [-1, 0, 1],
     outputRange: [0, 0, 1],
   });
+
   const resetBottomSheet = Animated.timing(panY, {
     toValue: 0,
     duration: 300,
@@ -246,6 +247,7 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
     </Modal>
   );
 };
+
 export default Selector;
 
 const styles = StyleSheet.create({

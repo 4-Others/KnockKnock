@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {Image} from 'react-native';
-import {AuthProps} from '../../navigations/StackNavigator';
-import LinearGradient from 'react-native-linear-gradient';
-import {storageGetValue} from '../../util/authUtil';
 import {useDispatch} from 'react-redux';
 import {setLogin} from '../../util/redux/userSlice';
+import {storageGetValue} from '../../util/authUtil';
 import {userAPI} from '../../api/commonApi';
+import {AuthProps} from '../../navigations/StackNavigator';
+import LinearGradient from 'react-native-linear-gradient';
 
 const AuthSplashScreen: React.FC<AuthProps> = ({navigation}) => {
   const dispatch = useDispatch();

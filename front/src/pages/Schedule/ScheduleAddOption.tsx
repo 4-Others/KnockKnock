@@ -9,13 +9,13 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
-import {variables} from '../../style/variables';
-import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
 import ScheduleOptionToggle from '../../components/ScheduleOptionToggle';
+import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
 import Selector from '../../components/BottomSheet';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {variables} from '../../style/variables';
 
 interface ScheduleOptionProps {
   postSchedule: SetScheduleData;

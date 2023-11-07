@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {variables} from '../../style/variables';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {userAPI} from '../../api/commonApi';
 import Config from 'react-native-config';
+import {userAPI} from '../../api/commonApi';
+import {variables} from '../../style/variables';
 
 interface onLoginProps {
   onLogin: (token: string) => void;
@@ -21,7 +21,7 @@ const Oauth2: React.FC<onLoginProps> = ({onLogin, onError}) => {
       } else {
         const kakaoLogin = await KakaoLogin.login();
         const profile = await KakaoLogin.getProfile();
-        postId(profile.id, providerType);
+        postId(`${profile.id}`, providerType);
       }
     } catch (error: any) {
       console.log(error);

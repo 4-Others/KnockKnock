@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet, Platform} from 'react-native';
 import React, {useEffect} from 'react';
+import {View, Text, StyleSheet, Platform} from 'react-native';
 import {
   createMaterialTopTabNavigator,
   MaterialTopTabNavigationProp,

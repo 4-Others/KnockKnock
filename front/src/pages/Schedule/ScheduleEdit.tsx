@@ -6,9 +6,9 @@ import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {postBoardReducer, setBoardReducer} from '../../util/redux/boardSlice';
 import {SetBoardData} from '../../util/dataConvert';
+import {scheduleAPI} from '../../api/commonApi';
 import Header from '../../components/Header';
 import ScheduleEditOption from './ScheduleEditOption';
-import {scheduleAPI} from '../../api/commonApi';
 
 //? 스케줄 편집하는 스크린
 const ScheduleEdit = ({route}: any) => {

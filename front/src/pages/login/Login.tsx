@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
 import {AuthProps} from '../../navigations/StackNavigator';
-import {isPasswordValid, storageSetValue} from '../../util/authUtil';
+import {useDispatch} from 'react-redux';
 import {setLogin} from '../../util/redux/userSlice';
+import {isPasswordValid, storageSetValue} from '../../util/authUtil';
 import {userAPI} from '../../api/commonApi';
-import {variables} from '../../style/variables';
-import {GradientButton_L} from '../../components/GradientButton';
 import Oauth2 from './Oauth2';
+import {GradientButton_L} from '../../components/GradientButton';
+import {variables} from '../../style/variables';
 
 const Login: React.FC<AuthProps> = ({navigation}) => {
   const [data, setData] = useState({id: '', password: ''});

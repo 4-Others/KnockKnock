@@ -5,12 +5,12 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../util/redux/store';
 import {setScheduleReducer} from '../../util/redux/scheduleSlice';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {ScheduleData} from '../../util/dataConvert';
+import {scheduleAPI} from '../../api/commonApi';
 import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
 import {variables} from '../../style/variables';
-import {ScheduleData} from '../../util/dataConvert';
-import {AuthProps} from '../../navigations/StackNavigator';
-import {scheduleAPI} from '../../api/commonApi';
 
 const {width, height} = Dimensions.get('window');
 

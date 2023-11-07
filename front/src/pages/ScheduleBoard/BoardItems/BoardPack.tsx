@@ -1,10 +1,10 @@
 import React, {RefObject} from 'react';
 import {View, StyleSheet, Platform, Dimensions} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import LinearGradient from 'react-native-linear-gradient';
-import {variables, VariablesKeys} from '../../../style/variables';
 import {BoardItem} from '../../../util/dataConvert';
 import Board from './Board';
+import LinearGradient from 'react-native-linear-gradient';
+import {variables, VariablesKeys} from '../../../style/variables';
 
 const deviceHeight = Dimensions.get('window').height;
 
@@ -77,6 +77,7 @@ const BoardPack = ({
     </View>
   );
 };
+
 export default BoardPack;
 
 const styles = StyleSheet.create({

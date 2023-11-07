@@ -1,17 +1,16 @@
 import React, {useState, useCallback} from 'react';
 import {SafeAreaView, Alert} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {useFocusEffect} from '@react-navigation/native';
 import {postBoardReducer, setBoardReducer} from '../../util/redux/boardSlice';
 import {postScheduleReducer} from '../../util/redux/scheduleSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {SetBoardData, SetScheduleData} from '../../util/dataConvert';
+import {scheduleAPI} from '../../api/commonApi';
 import Header from '../../components/Header';
 import ScheduleAddOption from './ScheduleAddOption';
-import {scheduleAPI} from '../../api/commonApi';
 
 type RootStackParamList = {
   BoardDetail: {name: string; color: string; scheduleCount: number; tagId: number};
@@ -157,4 +156,5 @@ const ScheduleAdd: React.FC<AuthProps> = () => {
     </SafeAreaView>
   );
 };
+
 export default ScheduleAdd;

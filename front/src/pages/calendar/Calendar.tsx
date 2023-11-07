@@ -1,15 +1,15 @@
 import React, {useEffect, useState, useMemo} from 'react';
+import {SafeAreaView, Platform, Dimensions, StyleSheet, View, Text} from 'react-native';
 import {ExpandableCalendar, CalendarProvider} from 'react-native-calendars';
+import {Positions} from 'react-native-calendars/src/expandableCalendar';
+import format from 'date-fns/format';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {useSelector, useDispatch} from 'react-redux';
-import ProfileHeader from '../../components/ProfileHeader';
-import {SafeAreaView, Platform, Dimensions, StyleSheet, View, Text} from 'react-native';
-import {variables} from '../../style/variables';
-import {Positions} from 'react-native-calendars/src/expandableCalendar';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
+import ProfileHeader from '../../components/ProfileHeader';
 import ScheduleList from '../../components/ScheduleList';
-import format from 'date-fns/format';
 import {scheduleAPI} from '../../api/commonApi';
+import {variables} from '../../style/variables';
 
 const deviceWidth = Dimensions.get('window').width;
 

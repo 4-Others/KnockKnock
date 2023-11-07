@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
-import {variables} from '../../style/variables';
-import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
 import {scheduleAPI} from '../../api/commonApi';
+import Header from '../../components/Header';
+import {variables} from '../../style/variables';
 
 export interface notificationData {
   createdAt: string;

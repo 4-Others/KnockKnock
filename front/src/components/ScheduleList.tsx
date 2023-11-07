@@ -1,13 +1,13 @@
 import React, {useRef} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity, View, Text, Image} from 'react-native';
-import {variables} from '../style/variables';
 import {useNavigation, StackActions} from '@react-navigation/native';
+import {Swipeable} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
-import {ScheduleData} from '../util/dataConvert';
 import {ScheduleItems} from '../util/redux/scheduleSlice';
 import {setBoardReducer} from '../util/redux/boardSlice';
-import {Swipeable} from 'react-native-gesture-handler';
 import {scheduleAPI} from '../api/commonApi';
+import {ScheduleData} from '../util/dataConvert';
+import {variables} from '../style/variables';
 
 interface ScheduleItemProps {
   items: any;
@@ -122,6 +122,7 @@ const ScheduleList: React.FC<ScheduleItemProps> = ({items, setItems, tagId}) => 
     </ScrollView>
   );
 };
+
 const ScheduleItem = ({item, onPress, onDelete, tagId, onOpenSwipeable, onCloseSwipeable}: any) => {
   const navigation = useNavigation();
   const swipeableRef = useRef<Swipeable | null>(null);

@@ -13,10 +13,10 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {Swipeable, RectButton} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
-import {variables} from '../../../style/variables';
+import {scheduleAPI} from '../../../api/commonApi';
 import {BoardItem} from '../../../util/dataConvert';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {scheduleAPI} from '../../../api/commonApi';
+import {variables} from '../../../style/variables';
 
 interface BoardItemProps {
   tagId: number;

@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,15 +9,13 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 import {setBoardReducer} from '../../util/redux/boardSlice';
-import {variables} from '../../style/variables';
-import {VariablesKeys} from '../../style/variables';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Header from '../../components/Header';
 import {scheduleAPI} from '../../api/commonApi';
+import Header from '../../components/Header';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {variables, VariablesKeys} from '../../style/variables';
 
 const {width, height} = Dimensions.get('window');
 
