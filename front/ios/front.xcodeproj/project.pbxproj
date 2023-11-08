@@ -514,7 +514,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7VB899FXS;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = front/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Knock Knock";
@@ -548,7 +548,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7VB899FXS;
 				INFOPLIST_FILE = front/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Knock Knock";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
