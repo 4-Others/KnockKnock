@@ -1,4 +1,8 @@
+import React from 'react';
+import {View, SafeAreaView, StyleSheet} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {AuthProps} from '../../navigations/StackNavigator';
+import Header from '../../components/Header';
 import {
   SignVerifyEmalInfo,
   SignPersonalInfo,
@@ -7,11 +11,6 @@ import {
   SignAgree,
   SignSuccess,
 } from './SignScreen';
-import Header from '../../components/Header';
-import {SafeAreaView} from 'react-native';
-import {View, StyleSheet} from 'react-native';
-import React from 'react';
-import {AuthProps} from '../../navigations/StackNavigator';
 
 const Tab = createMaterialTopTabNavigator();
 

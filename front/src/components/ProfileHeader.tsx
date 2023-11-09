@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {useNavigation, StackActions} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LogoMark from '../../assets/image/LogoMark';
 import {variables} from '../style/variables';
-import {useNavigation, StackActions} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 
 type DrawerNavigatorParamList = {
   TabNavigator: undefined;

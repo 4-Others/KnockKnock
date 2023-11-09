@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {variables} from '../../style/variables';
+import {setLogin} from '../../util/redux/userSlice';
 import {isEmaildValid, validErrorMessage, isBirthValid, isPasswordValid} from '../../util/authUtil';
+import {userAPI} from '../../api/commonApi';
 import {InputArea, CheckBtn} from './SignUpComponent';
 import {GradientButton_L} from '../../components/GradientButton';
-import {setLogin} from '../../util/redux/userSlice';
-import {userAPI} from '../../api/commonApi';
+import {variables} from '../../style/variables';
 
 type SignScreenProps = {
   route: any;

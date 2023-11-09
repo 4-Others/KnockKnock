@@ -1,8 +1,8 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import React from 'react';
-import {variables} from '../style/variables';
+import {StyleSheet, Text, View, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import * as Progress from 'react-native-progress';
 import {useNavigation} from '@react-navigation/native';
+import {variables} from '../style/variables';
 
 interface HeaderProps {
   title: string;

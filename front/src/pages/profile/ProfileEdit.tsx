@@ -1,3 +1,4 @@
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,19 +10,17 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Switch} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {variables} from '../../style/variables';
-import Header from '../../components/Header';
 import {useSelector, useDispatch} from 'react-redux';
-import {validErrorMessage} from '../../util/authUtil';
-import {AuthProps} from '../../navigations/StackNavigator';
 import {updateProfile} from '../../util/redux/userSlice';
-import {GradientButton_L} from '../../components/GradientButton';
-import {storageResetValue} from '../../util/authUtil';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {validErrorMessage, storageResetValue} from '../../util/authUtil';
 import {userAPI} from '../../api/commonApi';
+import Header from '../../components/Header';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {GradientButton_L} from '../../components/GradientButton';
+import {variables} from '../../style/variables';
 
 const ProfileEdit: React.FC<AuthProps> = ({navigation}) => {
   const dispatch = useDispatch();

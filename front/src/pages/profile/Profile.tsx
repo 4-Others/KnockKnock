@@ -8,14 +8,13 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {variables} from '../../style/variables';
-import Header from '../../components/Header';
-import {GradientButton_L} from '../../components/GradientButton';
-import {storageResetValue} from '../../util/authUtil';
-import {AuthProps} from '../../navigations/StackNavigator';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../util/redux/store';
-import {VariablesKeys} from '../../style/variables';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {storageResetValue} from '../../util/authUtil';
+import Header from '../../components/Header';
+import {GradientButton_L} from '../../components/GradientButton';
+import {variables, VariablesKeys} from '../../style/variables';
 
 type boardDetailParams = {title: string; color: string; number: number; tagId: number};
 

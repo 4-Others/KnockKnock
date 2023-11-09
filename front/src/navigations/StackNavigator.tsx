@@ -1,20 +1,20 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import Login from '../pages/login/Login';
 import AuthSplashScreen from '../pages/login/AuthSplashScreen';
+import Login from '../pages/login/Login';
+import {ForgotId, ForgotPw} from '../pages/login/Forgot';
+import SignUpTab from '../pages/signUp/SignUpTab';
+import TabNavigator from './TabNavigator';
 import ScheduleBoard from '../pages/ScheduleBoard/ScheduleBoard';
-import Calendar from '../pages/calendar/Calendar';
-import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import BoardDetail from '../pages/ScheduleBoard/BoardDetail';
+import BoardEdit from '../pages/ScheduleBoard/BoardEdit';
 import ScheduleAdd from '../pages/Schedule/ScheduleAdd';
 import ScheduleEdit from '../pages/Schedule/ScheduleEdit';
 import Profile from '../pages/profile/Profile';
 import ProfileEdit from '../pages/profile/ProfileEdit';
-import SignUpTab from '../pages/signUp/SignUpTab';
-import TabNavigator from './TabNavigator';
+import Calendar from '../pages/calendar/Calendar';
 import Search from '../pages/search/Search';
 import SearchResult from '../pages/search/SearchResult';
-import {ForgotId, ForgotPw} from '../pages/login/Forgot';
 
 export interface AuthProps {
   route: any;

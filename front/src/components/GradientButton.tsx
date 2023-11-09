@@ -1,8 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {variables} from '../style/variables';
-import {StyleProp, ViewStyle} from 'react-native';
+import {Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {variables} from '../style/variables';
 
 interface ComponentType {
   text: string;
@@ -43,6 +42,8 @@ const GradientButton_L: React.FC<ComponentType> = ({text, onPress, disabled, sty
   );
 };
 
+export {GradientButton_S, GradientButton_L};
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -70,5 +71,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export {GradientButton_S, GradientButton_L};

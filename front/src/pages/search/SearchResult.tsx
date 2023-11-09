@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {Text, StyleSheet, SafeAreaView, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
-import Header from '../../components/Header';
-import {variables} from '../../style/variables';
 import {AuthProps} from '../../navigations/StackNavigator';
+import Header from '../../components/Header';
 import ScheduleList from '../../components/ScheduleList';
+import {variables} from '../../style/variables';
 
 const SearchResult: React.FC<AuthProps> = ({navigation, route}) => {
   const items = useSelector((state: any) => state.schedule.items);
@@ -56,6 +56,7 @@ const EmptySearch = () => {
     </View>
   );
 };
+
 export default SearchResult;
 
 const styles = StyleSheet.create({
