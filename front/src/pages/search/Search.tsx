@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {StyleSheet, SafeAreaView, View, TextInput} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {variables} from '../../style/variables';
-import {SearchData} from '../../util/dataConvert';
-import Header from '../../components/Header';
-import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
-import {AuthProps} from '../../navigations/StackNavigator';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
+import {AuthProps} from '../../navigations/StackNavigator';
+import {SearchData} from '../../util/dataConvert';
 import {scheduleAPI} from '../../api/commonApi';
+import Header from '../../components/Header';
+import ScheduleOptionSelect from '../../components/ScheduleOptionSelect';
+import {variables} from '../../style/variables';
 
 const Search: React.FC<AuthProps> = ({navigation}) => {
   const dateFormat = (date: Date) => date.toISOString().split('T')[0];
@@ -21,7 +21,6 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
   const [timeType, setTimeType] = useState('');
   const [searchData, setSearchData] = useState(data);
   const {keyword, startAt, endAt} = searchData;
-  const items = useSelector((state: any) => state.schedule.items);
   const dispatch = useDispatch();
   const setItems = (newItems: ScheduleItems) => {
     dispatch(setScheduleReducer(newItems));
@@ -98,6 +97,8 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
   );
 };
 
+export default Search;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -131,5 +132,3 @@ const styles = StyleSheet.create({
     color: variables.main,
   },
 });
-
-export default Search;

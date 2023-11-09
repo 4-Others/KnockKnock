@@ -8,16 +8,15 @@ import {setBoardReducer} from '../../util/redux/boardSlice';
 import {RootState} from '../../util/redux/store';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {BoardItem} from '../../util/dataConvert';
+import {scheduleAPI} from '../../api/commonApi';
 import ProfileHeader from '../../components/ProfileHeader';
 import BoardPack from './BoardItems/BoardPack';
 import BoardTab from './BoardItems/BoardTab';
-import {scheduleAPI} from '../../api/commonApi';
 
 const deviceWidth = Dimensions.get('window').width;
 
 const ScheduleBoard: React.FC<AuthProps> = () => {
   const carouselRef = useRef<Carousel<BoardItem>>(null);
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const token = useSelector((state: any) => state.user.token);
   const boardData = useSelector((state: RootState) => state.board);

@@ -21,7 +21,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'front' do
+target 'Knock Knock' do
   use_modular_headers! 
   config = use_native_modules!
 
@@ -51,7 +51,7 @@ target 'front' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'frontTests' do
+  target 'Knock KnockTests' do
     inherit! :complete
     # Pods for testing
   end

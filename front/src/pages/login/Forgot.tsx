@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StyleSheet, Alert, ScrollView} from 'react-native';
-import Header from '../../components/Header';
-import {variables} from '../../style/variables';
 import {AuthProps} from '../../navigations/StackNavigator';
 import {InputArea} from '../signUp/SignUpComponent';
-import {isEmaildValid} from '../../util/authUtil';
 import {userAPI} from '../../api/commonApi';
+import {isEmaildValid} from '../../util/authUtil';
+import Header from '../../components/Header';
+import {variables} from '../../style/variables';
 
 const ForgotId: React.FC<AuthProps> = ({navigation}) => {
   const [inputInfo, setInputInfo] = useState({email: '', randomKey: ''});
@@ -140,6 +140,8 @@ const ForgotPw: React.FC<AuthProps> = ({navigation}) => {
   );
 };
 
+export {ForgotId, ForgotPw};
+
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
@@ -157,5 +159,3 @@ const styles = StyleSheet.create({
     lineHeight: 34,
   },
 });
-
-export {ForgotId, ForgotPw};
