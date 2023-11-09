@@ -93,49 +93,21 @@ const SignAgree: React.FC<SignScreenProps> = ({navigation}) => {
 
 //! step2: 인적사항 입력
 const SignPersonalInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
-  const [complete, setComplete] = useState(false);
-  const [personalInfo, setPersonalInfo] = useState({username: '', birth: ''});
-  const {username, birth} = personalInfo;
-
-  const changeInputText = (type: string, text: string) => {
-    setPersonalInfo({
-      ...personalInfo,
-      [type]: text,
-    });
-  };
+  const [username, setUsername] = useState('');
 
   const handleNextPage = () => {
     if (route.params)
       navigation.navigate('SignPasswordInfo', {
-        userData: {...personalInfo, pushAgree: route.params.pushAgree},
+        userData: {...{username}, pushAgree: route.params.pushAgree},
       });
   };
 
-  useEffect(() => {
-    if (isBirthValid(birth) && username.length > 1) setComplete(true);
-  }, [personalInfo]);
-
   return (
     <SafeAreaView style={styles.screenContainer}>
-      <Text style={styles.title}>{'이름과 생년월일을\n입력해 주세요.'}</Text>
-      <InputArea
-        type="이름"
-        input={username}
-        setInput={text => changeInputText('username', text)}
-      />
-      <InputArea
-        type="생년월일"
-        input={birth}
-        setInput={text => changeInputText('birth', text)}
-        errorMessage={validErrorMessage.birth(birth)}
-        maxLength={8}
-      />
+      <Text style={styles.title}>{'이름을\n입력해 주세요.'}</Text>
+      <InputArea type="이름" input={username} setInput={text => setUsername(text)} />
       <View style={styles.bottomButton}>
-        <GradientButton_L
-          text="다음"
-          onPress={handleNextPage}
-          disabled={complete === false ? true : false}
-        />
+        <GradientButton_L text="다음" onPress={handleNextPage} disabled={username.length <= 0} />
       </View>
     </SafeAreaView>
   );
@@ -160,9 +132,8 @@ const SignPasswordInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
 
   const handleNextPage = () => {
     if (route.params) {
-      const {birth, pushAgree, username} = route.params.userData;
       navigation.navigate('SignIDandEmailInfo', {
-        userData: {...pwInfo, birth, pushAgree, username},
+        userData: {...pwInfo, ...route.params.userData},
       });
     }
   };
@@ -206,7 +177,6 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
   });
   const [error, setError] = useState('');
   const {id, email, password} = userInfo;
-
   const changeInputText = (type: string, text: string) => {
     setUserInfo({
       ...userInfo,
@@ -258,17 +228,20 @@ const SignIDandEmailInfo: React.FC<SignScreenProps> = ({route, navigation}) => {
 
   useEffect(() => {
     if (route.params) {
-      const {birth, pushAgree, username, password} = route.params.userData;
-      const sendDataBirth = `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`;
+      const {pushAgree, username, password} = route.params.userData;
       setUserInfo({
         ...userInfo,
-        birth: sendDataBirth,
+        birth: '',
         pushAgree,
         username,
         password,
       });
     }
   }, [route]);
+
+  useEffect(() => {
+    setError('');
+  }, [userInfo]);
 
   return (
     <SafeAreaView style={styles.screenContainer}>
@@ -312,11 +285,17 @@ const SignVerifyEmalInfo: React.FC<DataPostScreenProps> = ({route, navigation}) 
         if (response.status === 200) {
           console.log('verifyKeyAPI 성공');
           try {
-            const res = await userAPI.post('auth/login', {id, password});
-            const token = res.data.body.token;
-            setError('');
-            dispatch(setLogin({token, providerType: 'BASIC'}));
-            setComplete(true);
+            await userAPI.post('auth/login', {id, password}).then(async res => {
+              const token = res.data.body.token;
+              const getUserInfoRes = await userAPI.get('users', token);
+              const {userId, birth, id, email, providerType, pushAgree, username} =
+                getUserInfoRes.data.body.data;
+              dispatch(
+                setLogin({token, userId, birth, id, email, providerType, pushAgree, username}),
+              );
+              setError('');
+              setComplete(true);
+            });
           } catch (error: any) {
             console.log('로그인 실패', error.request);
           }
