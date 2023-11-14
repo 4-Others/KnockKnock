@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, StatusBar} from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {AuthStack} from './src/navigations/StackNavigator';
 import {Provider} from 'react-redux';
@@ -16,6 +16,7 @@ const App = () => {
           },
         }}
         independent={true}>
+        <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
         <View style={styles.container}>
           <AuthStack />
         </View>
