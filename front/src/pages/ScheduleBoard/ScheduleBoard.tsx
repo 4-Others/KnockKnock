@@ -55,7 +55,6 @@ const ScheduleBoard: React.FC<AuthProps> = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ProfileHeader />
       <BoardTab boardData={boardData} active={active} onActiveChange={handleActiveChange} />
       <View style={styles.body}>
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     ...Platform.select({
-      ios: {top: (deviceWidth - 30) / 5},
+      ios: {top: (deviceWidth - 30) / 5, marginTop: 31},
       android: {top: (deviceWidth - 80) / 5},
     }),
   },

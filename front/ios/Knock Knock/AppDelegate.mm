@@ -6,15 +6,15 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-                                      sourceApplication:(NSString *)sourceApplication
-                                              annotation:(id)annotation {
-    if ([KOSession isKakaoAccountLoginCallback:url]) {
-        return [KOSession handleOpenURL:url];
-    }
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//                                       sourceApplication:(NSString *)sourceApplication
+//                                               annotation:(id)annotation {
+//     if ([KOSession isKakaoAccountLoginCallback:url]) {
+//         return [KOSession handleOpenURL:url];
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
                                                 options:(NSDictionary<NSString *,id> *)options {
@@ -42,14 +42,15 @@
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
+    if ([FIRApp defaultApp] == nil) { 
+      [FIRApp configure];
+  }
+
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-  if ([FIRApp defaultApp] == nil) { 
-      [FIRApp configure];
-  }
 }
 
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
