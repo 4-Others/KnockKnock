@@ -6,7 +6,7 @@
 
 <br/>
 
-<div  align="center">
+<div align="center">
   <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/mainImage.png" alt="roobits">
 </div>
 
