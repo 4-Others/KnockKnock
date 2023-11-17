@@ -10,6 +10,8 @@
   <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/mainImage.png" alt="roobits">
 </div>
 
+<br/>
+
 - **`팀 명` :**  💪🏼 4Others 👨‍👦‍👦
 - **`프로젝트 명` :** KnockKnock
 - **`프로젝트 기간` :** 2023.05 - 2023.11
