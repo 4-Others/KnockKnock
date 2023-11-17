@@ -7,7 +7,7 @@
 <br/>
 
 <div  align="center">
-  <img width="80%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/mainImage.png" alt="roobits">
+  <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/mainImage.png" alt="roobits">
 </div>
 
 - **`팀 명` :**  💪🏼 4Others 👨‍👦‍👦
