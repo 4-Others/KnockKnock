@@ -33,7 +33,7 @@ const Profile: React.FC<AuthProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header title="내 프로필" type="edit" nextFunc={navigateToProfileEdit} />
-      <View style={styles.contentLayout}>
+      <ScrollView style={styles.contentLayout}>
         <View style={styles.contentContainer}>
           <View style={styles.imageFrame}>
             <Image
@@ -74,7 +74,7 @@ const Profile: React.FC<AuthProps> = ({navigation}) => {
           <Text style={styles.userInfoSubTitle}>생년월일</Text>
           <Text>{user.birth ? user.birth : '생일을 입력하세요.'}</Text>
         </View>
-      </View>
+      </ScrollView>
       <View style={styles.bottomButton}>
         <GradientButton_L
           text="로그아웃"
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
   },
   contentLayout: {
     flex: 1,
+    marginBottom: 35,
     paddingRight: 24,
     paddingLeft: 24,
   },
