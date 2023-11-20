@@ -19,7 +19,7 @@
 기분 좋은 하루를 보낼 수 있게 도와주는 일정 관리 모바일 어플리케이션
 - **`팀원` :** 김준희(팀장), 김영재, 김태형, 현지원
 - **`사용자 요구사항 정의서`:**
-   추가중
+   <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/스크린샷 2023-11-20 오후 2.52.38.png" alt="roobits">
 - **`개발자 테스트 체크리스트`:**
    추가중
 
@@ -29,7 +29,7 @@
 
 | **김준희 (FE)** | **김영재 (FE)** | **김태형 (BE)** | **현지원 (BE)** |
 | -------------- | -------------- | -------------- | -------------- |
-| · App design & Style Guide 제작<br/> · App UI&UX 구현<br/> ·Multy Dots, 다중 일정 선택을 제공하는 커스텀 캘린더 구현<br/> ·회원가입 프로세스 구축 및 기능 구현, 에러 핸들링 시각화<br/> ·Google / Kakao 소셜 로그인 및 일반로그인 구현<br/> ·회원데이터 / 일정데이터,전역상태 관리 및 CRUD 구현<br/> · 기간 및 일정 선택 일정 데이터 검색 기능 구현<br/> | ·영재님 작업 내용<br/> | ·태형님 작업 내용<br/> | ·지원님 작업 내용<br/> |
+| · App design & Style Guide 제작<br/> · App UI&UX 구현<br/> ·Multy Dots, 다중 일정 선택을 제공하는 커스텀 캘린더 구현<br/> ·회원가입 프로세스 구축 및 기능 구현, 에러 핸들링 시각화<br/> ·Google / Kakao 소셜 로그인 및 일반로그인 구현<br/> ·회원데이터 / 일정데이터,전역상태 관리 및 CRUD 구현<br/> · 기간 및 일정 선택 일정 데이터 검색 기능 구현<br/> | ·영재님 작업 내용<br/> | · Local User, Oauth2 User api 개발<br/> · AWS EC2에 서버 배포<br/>· 도메인 구매 및 연결<br/>· HTTPS 적용(ACM, Route 53)<br/> · GitHub Actions를 활용한 CI/CD 구현<br/> · Docker 이미지 빌드 및 컨테이너 생성<br/> · RDS를 이용한 MySQL 데이터베이스 관리<br/> | ·지원님 작업 내용<br/> |
 
 | name | Github                                     |
 |:----:|:-------------------------------------------|
@@ -72,15 +72,12 @@
 
 ## 🔖 DB Diagram
 
-작성중
-
-##### 💡레스트 독스 API 문서
-
-작성중
+<img width="100%" src="https://github.com/4-Others/4-Others-readmeImg/blob/main/erd.png"/>
 
 ##### 💡Postman API 문서
 
-작성중
+[User apis](https://documenter.getpostman.com/view/24687418/2s9Y5eNzLG) <br/>
+[Schedule, tags, notification apis](https://documenter.getpostman.com/view/5042575/2s946k7BFe#4d553411-90b8-4a36-b0f3-be4d11692bb3)
 
 <br/>
 
