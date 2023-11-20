@@ -21,7 +21,7 @@
 - **`사용자 요구사항 정의서`:**
    <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/스크린샷 2023-11-20 오후 2.52.38.png" alt="roobits">
 - **`개발자 테스트 체크리스트`:**
-   추가중
+   <img width="100%" src="https://raw.githubusercontent.com/4-Others/4-Others-readmeImg/main/스크린샷 2023-11-20 오후 3.48.30.png" alt="roobits">
 
 <br/>
 
