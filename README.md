@@ -29,7 +29,7 @@
 
 | **김준희 (FE)** | **김영재 (FE)** | **김태형 (BE)** | **현지원 (BE)** |
 | -------------- | -------------- | -------------- | -------------- |
-| · App design & Style Guide 제작<br/> · App UI&UX 구현<br/> ·Multy Dots, 다중 일정 선택을 제공하는 커스텀 캘린더 구현<br/> ·회원가입 프로세스 구축 및 기능 구현, 에러 핸들링 시각화<br/> ·Google / Kakao 소셜 로그인 및 일반로그인 구현<br/> ·회원데이터 / 일정데이터,전역상태 관리 및 CRUD 구현<br/> · 기간 및 일정 선택 일정 데이터 검색 기능 구현<br/> | ·영재님 작업 내용<br/> | · Local User, Oauth2 User api 개발<br/> · AWS EC2에 서버 배포<br/>· 도메인 구매 및 연결<br/>· HTTPS 적용(ACM, Route 53)<br/> · GitHub Actions를 활용한 CI/CD 구현<br/> · Docker 이미지 빌드 및 컨테이너 생성<br/> · RDS를 이용한 MySQL 데이터베이스 관리<br/> | ·지원님 작업 내용<br/> |
+| ·App design & Style Guide 제작<br/> ·App UI&UX 구현<br/> ·Multy Dots, 다중 일정 선택을 제공하는 커스텀 캘린더 구현<br/> ·회원가입 프로세스 구축 및 기능 구현, 에러 핸들링 시각화<br/> ·Google / Kakao 소셜 로그인 및 일반로그인 구현<br/> ·회원데이터 / 일정데이터,전역상태 관리 및 CRUD 구현<br/> ·기간 및 일정 선택 일정 데이터 검색 기능 구현<br/> | ·App design & Style Guide 제작<br/> ·스택과 탭 Navigation의 조합을 사용하며 App 구조 구축<br/> ·App UI&UX 구현<br/> ·보드를 조회할 수 있는 캐러셀 및 상단탭 구현<br/> ·보드 및 일정등록 프로세스 구축 및 CRUD 기능 구현<br/> ·Google / Kakao / Apple 소셜 로그인 구현<br/> ·보드데이터 / 일정데이터 전역상태 관리<br/> | ·Local User, Oauth2 User api 개발<br/> ·AWS EC2에 서버 배포<br/> ·도메인 구매 및 연결<br/> ·HTTPS 적용(ACM, Route 53)<br/> ·GitHub Actions를 활용한 CI/CD 구현<br/> ·Docker 이미지 빌드 및 컨테이너 생성<br/> ·RDS를 이용한 MySQL 데이터베이스 관리<br/> | ·지원님 작업 내용<br/> |
 
 | name | Github                                     |
 |:----:|:-------------------------------------------|
