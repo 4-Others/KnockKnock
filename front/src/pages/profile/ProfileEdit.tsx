@@ -101,6 +101,29 @@ const ProfileEdit: React.FC<AuthProps> = ({navigation}) => {
     changeProfileFetch();
   };
 
+  const confirmCancellation = () => {
+    Alert.alert(
+      '회원 탈퇴',
+      '정말로 탈퇴하시겠습니까?',
+      [
+        {
+          text: '취소',
+          onPress: () => console.log('탈퇴 취소'),
+          style: 'cancel',
+        },
+        {
+          text: '확인',
+          onPress: () => {
+            storageResetValue();
+            cancellationUser();
+            navigation.navigate('AuthSplach');
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   useEffect(() => {
     const {username, id, birth, pushAgree} = user;
     setUserInfo({username, id, birth, pushAgree});
@@ -202,14 +225,7 @@ const ProfileEdit: React.FC<AuthProps> = ({navigation}) => {
           </View>
         </ScrollView>
         <View style={styles.bottomButton}>
-          <GradientButton_L
-            text="회원 탈퇴"
-            onPress={() => {
-              storageResetValue();
-              cancellationUser();
-              navigation.navigate('AuthSplach');
-            }}
-          />
+          <GradientButton_L text="회원 탈퇴" onPress={confirmCancellation} />
         </View>
       </View>
       <DateTimePickerModal

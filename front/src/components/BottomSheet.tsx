@@ -12,6 +12,7 @@ import {
   ScrollView,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../util/redux/store';
@@ -114,6 +115,7 @@ const Selector: React.FC<SelectorProps> = ({modalVisible, setModalVisible, onDat
         <TextInput
           style={styles.boardNameInput}
           placeholder="새로운 보드 이름을 입력하세요."
+          placeholderTextColor={variables.text_4}
           onChangeText={text => handleBoardValue('name', text)}
           value={newBoard.name}
         />
@@ -310,6 +312,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     marginBottom: 20,
+    ...Platform.select({
+      ios: {paddingBottom: 20},
+      android: {paddingBottom: 0},
+    }),
   },
   colorChipContainer: {
     flexDirection: 'row',

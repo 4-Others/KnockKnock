@@ -125,6 +125,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
       <TextInput
         defaultValue={updateData.title}
         placeholder="스케줄을 입력해 주세요."
+        placeholderTextColor={variables.text_4}
         style={styles.contentTitleInput}
         onChangeText={text => setUpdateData(prevData => ({...prevData, title: text}))}
       />
@@ -160,8 +161,8 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
       />
       <KeyboardAvoidingView
         style={styles.contentInput}
-        behavior={Platform.OS === 'android' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'android' ? 64 : 0}>
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'android' ? 64 : 220}>
         <Icon name="create-outline" style={styles.icon} />
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>메모</Text>
@@ -169,6 +170,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
             style={styles.contentText}
             defaultValue={updateData.content}
             placeholder="자세한 내용을 기록하려면 입력하세요"
+            placeholderTextColor={variables.text_4}
             onChangeText={text => setUpdateData(prevData => ({...prevData, content: text}))}
             multiline={true}
             numberOfLines={4}
@@ -195,6 +197,7 @@ const ScheduleOption: React.FC<ScheduleOptionProps> = ({
         onConfirm={handleConfirm}
         onCancel={onCancel}
         date={date}
+        locale="ko"
       />
     </ScrollView>
   );
@@ -215,6 +218,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     paddingBottom: 16,
+    ...Platform.select({
+      ios: {marginTop: 10},
+      android: {marginTop: 0},
+    }),
   },
   contentInput: {
     marginTop: 20,
@@ -225,7 +232,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
     ...Platform.select({
-      ios: {paddingBottom: 16},
+      ios: {paddingBottom: 8},
       android: {paddingBottom: 0},
     }),
   },
@@ -236,13 +243,17 @@ const styles = StyleSheet.create({
   },
   contentText: {
     padding: 10,
-    marginVertical: 10,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: variables.line_2,
     fontFamily: variables.font_4,
     color: variables.text_3,
     fontSize: 14,
+    minHeight: 80,
+    ...Platform.select({
+      ios: {marginTop: 10},
+      android: {marginVertical: 10},
+    }),
   },
   icon: {
     fontSize: 24,
