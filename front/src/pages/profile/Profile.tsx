@@ -41,7 +41,9 @@ const Profile: React.FC<AuthProps> = ({navigation}) => {
               source={require('front/assets/image/DefaultIMG.png')}
             />
           </View>
-          <Text style={styles.profileName}>{user.id}</Text>
+          <Text style={styles.profileName}>
+            {user.username ? user.username : '닉네임을 설정하세요.'}
+          </Text>
           <Text style={styles.profileMail}>{user.email}</Text>
         </View>
         <View style={styles.userInfoContainer}>
@@ -69,8 +71,8 @@ const Profile: React.FC<AuthProps> = ({navigation}) => {
               <Text style={styles.boardSeclector}>보드가 없습니다.</Text>
             )}
           </ScrollView>
-          <Text style={styles.userInfoSubTitle}>이름</Text>
-          <Text>{user.username ? user.username : '이름을 입력하세요.'}</Text>
+          <Text style={styles.userInfoSubTitle}>ID</Text>
+          <Text>{user.id}</Text>
           <Text style={styles.userInfoSubTitle}>생년월일</Text>
           <Text>{user.birth ? user.birth : '생일을 입력하세요.'}</Text>
         </View>

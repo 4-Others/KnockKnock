@@ -33,6 +33,7 @@ const ScheduleOptionSelect: React.FC<inputProps> = ({type, state, event, iconNam
             <TextInput
               value={state && typeof state !== 'string' ? state.name : state}
               placeholder={`${type} 선택하세요.`}
+              placeholderTextColor={variables.text_4}
               style={{color: variables.text_3}}
               editable={false}
             />
@@ -64,6 +65,10 @@ const styles = StyleSheet.create({
     fontFamily: variables.font_3,
     color: variables.text_2,
     fontSize: 14,
+    ...Platform.select({
+      ios: {marginBottom: 16},
+      android: {marginBottom: 0},
+    }),
   },
   arrowIcon: {
     width: 16,

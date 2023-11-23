@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView, View, TextInput} from 'react-native';
+import {StyleSheet, SafeAreaView, View, TextInput, Platform} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScheduleItems, setScheduleReducer} from '../../util/redux/scheduleSlice';
@@ -71,6 +71,7 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
       <View style={styles.contentLayout}>
         <TextInput
           placeholder="검색어를 입력해 주세요."
+          placeholderTextColor={variables.text_4}
           onChangeText={text => setSearchData(prevState => ({...prevState, keyword: text}))}
           style={styles.contentTitleInput}
         />
@@ -92,6 +93,7 @@ const Search: React.FC<AuthProps> = ({navigation}) => {
         mode={'date'}
         onConfirm={handleConfirm}
         onCancel={onCancel}
+        locale="ko"
       />
     </SafeAreaView>
   );
@@ -108,13 +110,16 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
   contentTitleInput: {
-    marginTop: 24,
     paddingBottom: 16,
     fontFamily: variables.font_3,
     color: variables.text_2,
     fontSize: 14,
     borderBottomWidth: 1,
     borderBottomColor: variables.line_1,
+    ...Platform.select({
+      ios: {marginTop: 44},
+      android: {marginTop: 24},
+    }),
   },
   toggleButton: {
     alignItems: 'center',

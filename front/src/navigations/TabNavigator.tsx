@@ -117,7 +117,7 @@ const TabNavigator = () => {
             setLastTab('Notifications');
           },
         }}
-        options={{tabBarBadge: badge, unmountOnBlur: true}}>
+        options={{tabBarBadge: badge === 0 ? undefined : badge, unmountOnBlur: true}}>
         {props => <Notifications {...props} setBadge={setBadge} />}
       </Tab.Screen>
     </Tab.Navigator>
