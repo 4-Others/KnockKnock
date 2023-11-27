@@ -25,7 +25,12 @@ const Stack = createStackNavigator();
 
 const AuthStack: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="AuthSplach">
+    <Stack.Navigator
+      initialRouteName="AuthSplach"
+      screenOptions={{
+        gestureEnabled: false,
+        animationEnabled: false,
+      }}>
       <Stack.Screen name="AuthSplach" options={{headerShown: false}}>
         {props => <AuthSplashScreen {...props} />}
       </Stack.Screen>
@@ -82,7 +87,12 @@ const StackCalendar = () => {
 
 const StackSearch = () => {
   return (
-    <Stack.Navigator initialRouteName="SearchOption">
+    <Stack.Navigator
+      initialRouteName="SearchOption"
+      screenOptions={{
+        gestureEnabled: false,
+        animationEnabled: false,
+      }}>
       <Stack.Screen name="SearchOption" options={{headerShown: false}}>
         {props => <Search {...props} />}
       </Stack.Screen>
