@@ -6,7 +6,7 @@
 </div>
 
 ### iOS : https://apps.apple.com/us/app/knock-knock/id6471225726
-### Android : 
+### Android : https://play.google.com/store/apps/details?id=com.knockknock_v1
 
 ---
 
