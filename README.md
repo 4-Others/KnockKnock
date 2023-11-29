@@ -8,6 +8,13 @@
 ### iOS : https://apps.apple.com/us/app/knock-knock/id6471225726
 ### Android : https://play.google.com/store/apps/details?id=com.knockknock_v1
 
+<br/>
+
+| ✨ 테스트 계정 ✨ |
+| -------------- |
+| ID: **KnockKnockOfficial** |
+| password: **ADSDS123!@** |
+
 ---
 
 <br/>
@@ -113,7 +120,7 @@ dev <- feat : 김준희, 김영재, 김태형, 현지원
 
 <br/>
 
-## ✨ Git Commit & PR Message
+## 🦄 Git Commit & PR Message
 
 | 태그이름 | 설명                                                  |
 | -------- | ----------------------------------------------------- |
